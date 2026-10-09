@@ -1,91 +1,925 @@
 <!doctype html>
-<html lang="en">
-
+<html lang="ko">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>나만의 중고마켓</title>
-    <link rel="stylesheet"
-        href="https://s3.ap-northeast-2.amazonaws.com/materials.spartacodingclub.kr/easygpt/default.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-        crossorigin="anonymous"></script>
-    <style>
-        .hero {
-            margin-bottom: 20px;
-            /* 원하는 만큼의 공백을 설정하세요 */
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>유씨네 집들이</title>
+<meta name="description" content="튜브와 도리아가 안내하는 우리 집 구경 · 숨은 선물 찾기">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Gaegu:wght@700&display=swap">
+<style>
+/* Layout: one-screen app — header / floor-plan stage / dog dock; gift cards rise as bottom sheets.
+   Look: the house itself at night — greige tile plan on charcoal, black-film kitchen, brass downlight accent. */
+:root {
+  color-scheme: dark;
+  --night: #161514;      /* page ground */
+  --panel: #211f1d;      /* sheets, dock */
+  --rule: #3a3633;       /* hairlines on dark */
+  --tile: #e6e1da;       /* floor-plan floor (greige tile) */
+  --wall: #2a2725;       /* plan walls */
+  --film: #1d1f20;       /* black film / ceramic */
+  --brass: #c9a46c;      /* downlight accent */
+  --brass-dim: #8c7350;
+  --text: #f1ede6;
+  --muted: #a69f95;
+  --ok: #8fb59a;
+  --font-display: "Hahmlet", "Nanum Myeongjo", serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-dog: "Gaegu", "IBM Plex Sans KR", cursive;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--night); color: var(--text);
+  font: 15px/1.55 var(--font-body);
+  overflow: hidden; -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+.room-hit:focus, .spot:focus { outline: none; }
+.room-hit:focus-visible { fill: rgba(201,164,108,.16); }
 
-        .card {
-            overflow: hidden;
-        }
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding-inline: 16px; padding-top: env(safe-area-inset-top, 0px); }
 
-        .card-img-top {
-            transition: transform 0.3s ease;
-        }
+/* header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 14px 8px; }
+.brand { min-width: 0; }
+.brand h1 { margin: 0; font: 700 21px/1.2 var(--font-display); letter-spacing: -0.01em; text-wrap: balance; }
+.brand p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+.count { flex: none; display: flex; align-items: center; gap: 7px; padding: 7px 12px; border: 1px solid var(--rule); border-radius: 999px; font-variant-numeric: tabular-nums; font-size: 13px; background: none; cursor: pointer; }
+.count svg { width: 16px; height: 16px; }
+.count b { color: var(--brass); font-weight: 600; }
 
-        .card:hover .card-img-top {
-            transform: scale(1.1);
-        }
-    </style>
+/* stage */
+.stage { position: relative; min-height: 0; }
+#plan { width: 100%; height: 100%; display: block; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.back {
+  position: absolute; left: 0; top: 4px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px 7px 9px;
+  background: rgba(22,21,20,.82); border: 1px solid var(--rule); border-radius: 999px; font-size: 13px; cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+.room-title { position: absolute; right: 0; top: 4px; z-index: 2; font: 700 15px var(--font-display); padding: 6px 2px; color: var(--text); text-shadow: 0 1px 6px var(--night); }
+
+/* plan */
+.floor { fill: var(--tile); }
+.room-hit { fill: transparent; cursor: pointer; transition: fill .25s; }
+.room-hit:hover { fill: rgba(201,164,108,.10); }
+.zoomed .room-hit.current { fill: transparent; cursor: default; }
+.walls { fill: none; stroke: var(--wall); stroke-width: 4; stroke-linecap: square; }
+.wall-black { stroke: #0b0b0b; stroke-width: 5; }
+.demolished { fill: none; stroke: #a59d92; stroke-width: 1; stroke-dasharray: 3 3; }
+.window { stroke: #c9d3d8; stroke-width: 2.2; stroke-linecap: butt; }
+.f { fill: #f8f6f2; stroke: #8b847b; stroke-width: .8; }
+.f-soft { fill: #d9d3ca; stroke: #8b847b; stroke-width: .8; }
+.f-dark { fill: var(--film); stroke: #0b0b0b; stroke-width: .8; }
+.f-line { stroke: #8b847b; stroke-width: .6; fill: none; }
+.lbl { font: 600 9.5px var(--font-body); fill: #6f685f; text-anchor: middle; pointer-events: none; letter-spacing: .02em; }
+.lbl-dark { fill: #b9b2a7; }
+.zoomed .lbl { opacity: .35; }
+.badge circle { fill: var(--brass); }
+.badge text { font: 700 7.5px var(--font-body); fill: #1b1a19; text-anchor: middle; dominant-baseline: central; }
+.zoomed .badge { display: none; }
+.fan { transform-box: fill-box; transform-origin: center; animation: spin 6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* hidden gift spots */
+.spot { pointer-events: none; }
+.zoomed .spot.here { pointer-events: auto; cursor: pointer; }
+.spot .hit { fill: transparent; }
+.spot .glint { fill: #fff8e8; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.zoomed .spot.here:not(.found) .glint { animation: glint var(--p, 4s) ease-in-out var(--d, 0s) infinite; }
+@keyframes glint { 0%, 70%, 100% { opacity: 0; transform: scale(.4) rotate(0deg); } 80% { opacity: .95; transform: scale(1.15) rotate(30deg); } 90% { opacity: .2; transform: scale(.8) rotate(45deg); } }
+.spot .tag { display: none; }
+.spot.found .tag { display: inline; }
+.zoomed .spot.found { pointer-events: auto; cursor: pointer; }
+.tag circle { fill: var(--brass); stroke: #fff; stroke-width: .8; }
+.spot.claimed .tag circle { fill: #6b8f76; }
+.tag path { fill: none; stroke: #1b1a19; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+
+/* dogs */
+.dog { cursor: pointer; }
+.dog .bob { animation: bob 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+.dog:nth-of-type(2) .bob { animation-delay: -1.1s; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.6px); } }
+
+/* dock */
+.dock { display: flex; align-items: flex-end; gap: 10px; padding-block: 10px calc(14px + env(safe-area-inset-bottom, 0px)); }
+.avatar { flex: none; width: 46px; height: 46px; border-radius: 50%; background: var(--panel); border: 1px solid var(--rule); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.avatar svg { width: 38px; height: 38px; }
+.bubble { position: relative; flex: 1; min-width: 0; background: var(--tile); color: #26221f; border-radius: 16px 16px 16px 4px; padding: 9px 13px; font: 700 16.5px/1.3 var(--font-dog); min-height: 46px; display: flex; align-items: center; }
+.bubble small { display: block; font: 600 11px var(--font-body); color: #7a7168; margin-bottom: 1px; }
+
+/* sheets */
+.scrim { position: fixed; inset: 0; background: rgba(8,8,7,.55); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 10; }
+.scrim.on { opacity: 1; pointer-events: auto; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 11; max-height: 86%; overflow-y: auto;
+  background: var(--panel); border-top: 1px solid var(--rule); border-radius: 22px 22px 0 0;
+  padding: 10px 20px calc(22px + env(safe-area-inset-bottom, 0px));
+  transform: translateY(105%); transition: transform .32s cubic-bezier(.2,.8,.2,1);
+  max-width: 560px; margin: 0 auto;
+}
+.sheet.on { transform: none; }
+.grip { width: 38px; height: 4px; border-radius: 4px; background: var(--rule); margin: 0 auto 14px; }
+.eyebrow { font-size: 11.5px; letter-spacing: .08em; color: var(--brass); font-weight: 600; }
+.gift-hero { display: flex; gap: 14px; align-items: center; margin-top: 6px; }
+.gift-emoji { flex: none; width: 64px; height: 64px; border-radius: 18px; background: var(--night); border: 1px solid var(--rule); display: grid; place-items: center; font-size: 34px; }
+.gift-hero h2 { margin: 0; font: 700 21px/1.25 var(--font-display); text-wrap: balance; }
+.price { color: var(--muted); font-size: 13.5px; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.note { margin: 16px 0 0; padding: 12px 14px; background: var(--night); border-radius: 12px; font: 700 17px/1.35 var(--font-dog); color: var(--tile); }
+.note small { display: block; font: 500 11.5px var(--font-body); color: var(--muted); margin-top: 4px; }
+.link { display: inline-block; margin-top: 12px; color: var(--brass); font-size: 13.5px; }
+.actions { display: grid; gap: 8px; margin-top: 18px; }
+.btn { height: 50px; border-radius: 14px; border: 0; font-weight: 600; font-size: 15.5px; cursor: pointer; }
+.btn-primary { background: var(--brass); color: #1b1a19; }
+.btn-ghost { background: none; border: 1px solid var(--rule); color: var(--text); }
+.btn[disabled] { opacity: .55; cursor: default; }
+.status { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--rule); font-size: 14px; }
+.status .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+.status.mine { border-color: var(--brass-dim); }
+.status.mine .dot { background: var(--brass); }
+.confirm-q { font-size: 14.5px; margin: 0 0 2px; }
+.err { color: #e4a08f; font-size: 13px; margin-top: 8px; }
+
+.nb-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.nb-head h2 { margin: 0; font: 700 20px var(--font-display); }
+.nb-head span { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.nb-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 1px; background: var(--rule); border-radius: 14px; overflow: hidden; }
+.nb-list li { background: var(--panel); }
+.nb-item { width: 100%; display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 11px 12px; background: none; border: 0; text-align: left; cursor: pointer; }
+.nb-item .em { font-size: 24px; text-align: center; }
+.nb-item .t { min-width: 0; }
+.nb-item .t b { display: block; font-weight: 600; font-size: 14.5px; }
+.nb-item .t span { color: var(--muted); font-size: 12.5px; }
+.nb-item .st { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
+.nb-item .st.claimed { color: var(--ok); }
+.nb-item .st.mine { color: var(--brass); }
+.nb-item.locked { cursor: default; }
+.nb-item.locked .em { opacity: .4; filter: grayscale(1); }
+.nb-item.locked b { color: var(--muted); letter-spacing: .1em; }
+.demo-note { margin-top: 14px; font-size: 12px; color: var(--muted); }
+
+/* intro */
+.intro {
+  position: fixed; inset: 0; z-index: 20; background: var(--night);
+  display: grid; place-items: center; padding: calc(24px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto; transition: opacity .5s .5s, visibility 0s 1s;
+}
+.intro.gone { opacity: 0; visibility: hidden; }
+.intro-inner { width: 100%; max-width: 360px; display: grid; gap: 22px; justify-items: center; text-align: center; }
+.intro .kicker { font-size: 12px; letter-spacing: .14em; color: var(--brass); font-weight: 600; }
+.intro h1 { margin: 6px 0 0; font: 700 34px/1.15 var(--font-display); text-wrap: balance; }
+.intro p { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+.door-frame { width: 150px; height: 232px; border-radius: 4px; background: #e9e5df; padding: 9px 9px 0; perspective: 600px; box-shadow: 0 0 0 1px var(--rule), 0 30px 60px -30px rgba(201,164,108,.45); position: relative; }
+.door-frame::before { content: ""; position: absolute; inset: 9px 9px 0; background: radial-gradient(ellipse at 50% 20%, #fff7e6 0%, #e9dfcf 45%, #c9bfb0 100%); }
+.door { position: relative; height: 100%; background: #5a3b2e; transform-origin: left center; transition: transform 1s cubic-bezier(.5,0,.2,1); box-shadow: inset -2px 0 0 rgba(0,0,0,.25); }
+.door .lock { position: absolute; right: 12px; top: 46%; width: 13px; height: 34px; border-radius: 3px; background: #1d1d1d; box-shadow: inset 0 0 0 1px #444; }
+.door .lock::after { content: ""; position: absolute; left: 4px; top: 6px; width: 5px; height: 5px; border-radius: 50%; background: #6fc3ff; opacity: .8; }
+.door .handle { position: absolute; right: 6px; top: 58%; width: 22px; height: 4px; border-radius: 2px; background: #b9b4ad; }
+.door .plate { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); font: 700 11px var(--font-display); color: #d8c3a5; letter-spacing: .06em; }
+.door.open { transform: rotateY(-78deg); }
+.enter { width: 100%; display: grid; gap: 10px; }
+.enter label { font-size: 13px; color: var(--muted); text-align: left; }
+.enter input { height: 50px; border-radius: 14px; border: 1px solid var(--rule); background: var(--panel); color: var(--text); padding: 0 16px; font-size: 16px; }
+.enter input::placeholder { color: #6f685f; }
+
+/* confetti */
+.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 30; overflow: hidden; }
+.confetti i { position: absolute; top: -12px; width: 7px; height: 12px; border-radius: 1px; animation: fall var(--t, 1.6s) cubic-bezier(.25,.6,.4,1) forwards; }
+@keyframes fall { to { transform: translate(var(--x, 0), 105vh) rotate(var(--r, 540deg)); opacity: .9; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fan, .dog .bob, .zoomed .spot.here:not(.found) .glint { animation: none; }
+  .zoomed .spot.here:not(.found) .glint { opacity: .8; }
+  .door, .sheet, .intro { transition-duration: .01s; }
+  .confetti { display: none; }
+}
+</style>
 </head>
-
 <body>
-    <div class="hero bg-dark text-center py-5">
-        <h1 class="text-white">나만의 르탄마켓</h1>
-        <h2 class="text-white">집에 있는 물건을 팝니다!</h2>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?rice-cooker" class="card-img-top" alt="전기밥솥">
-                    <div class="card-body">
-                        <h5 class="card-title">전기밥솥</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">5만원</h6>
-                        <p class="card-text">한 번 밖에 안쓴 전기밥솥 팝니다. 부모님이 독립 할 때 주신 거에요!</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?chair" class="card-img-top" alt="의자">
-                    <div class="card-body">
-                        <h5 class="card-title">의자</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">1만원</h6>
-                        <p class="card-text">사무실에서 사용한 의자 팝니다. 조절 가능한 팔걸이가 달려있어요.</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?laptop" class="card-img-top" alt="노트북">
-                    <div class="card-body">
-                        <h5 class="card-title">노트북</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">30만원</h6>
-                        <p class="card-text">삼성 노트북 판매합니다. 사용기간은 1년 정도이며, 상태는 깨끗합니다.</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="https://source.unsplash.com/1600x900/?laptop" class="card-img-top" alt="노트북">
-                    <div class="card-body">
-                        <h5 class="card-title">노트북</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">30만원</h6>
-                        <p class="card-text">삼성 노트북 판매합니다. 사용기간은 1년 정도이며, 상태는 깨끗합니다.</p>
-                        <a href="https://spartacodingclub.kr/" class="card-link stretched-link" target="_blank"></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1 id="siteTitle">유씨네 집들이</h1>
+      <p id="siteSub">반짝이는 곳을 찾아보세요</p>
+    </div>
+    <button class="count" id="countBtn" aria-label="선물 수첩 열기">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="6" width="12" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6h13M8 6v8M8 6C6 2 3.5 3 5 5.2 6 6 8 6 8 6zm0 0c2-4 4.5-3 3-0.8C10 6 8 6 8 6z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+      <span>선물 수첩 <b id="foundN">0</b>/<span id="totalN">0</span></span>
+    </button>
+  </header>
+
+  <main class="stage" id="stage">
+    <button class="back" id="backBtn" hidden>
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M9 2 4 7l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      집 전체 보기
+    </button>
+    <div class="room-title" id="roomTitle" hidden></div>
+
+    <svg id="plan" viewBox="-8 -8 356 556" preserveAspectRatio="xMidYMid meet" role="img" aria-label="우리 집 평면도">
+      <defs>
+        <pattern id="tiles" width="12" height="24" patternUnits="userSpaceOnUse">
+          <rect width="12" height="24" fill="#e6e1da"/>
+          <path d="M0 0H12M0 0V24" stroke="#d6d0c7" stroke-width=".5"/>
+        </pattern>
+        <pattern id="balconyTiles" width="8" height="8" patternUnits="userSpaceOnUse">
+          <rect width="8" height="8" fill="#dcd6cd"/>
+          <path d="M0 0H8M0 0V8" stroke="#cbc4ba" stroke-width=".5"/>
+        </pattern>
+        <path id="glintShape" d="M0 -5 L1.1 -1.1 L5 0 L1.1 1.1 L0 5 L-1.1 1.1 L-5 0 L-1.1 -1.1Z"/>
+      </defs>
+
+      <!-- floors -->
+      <g>
+        <path class="floor" fill="url(#tiles)" d="M60 0H340V400H250V500H120V540H0V80H60Z" style="fill:url(#tiles)"/>
+        <rect x="0" y="80" width="40" height="120" style="fill:url(#balconyTiles)"/>
+        <rect x="120" y="420" width="130" height="80" fill="#f1eeea"/>
+        <rect x="120" y="390" width="20" height="30" fill="#f1eeea"/>
+      </g>
+
+      <!-- ceiling cove light in living room -->
+      <rect x="14" y="214" width="150" height="104" rx="2" fill="none" stroke="#c9a46c" stroke-width=".8" stroke-dasharray="2 3" opacity=".55"/>
+
+      <!-- furniture -->
+      <g id="furniture">
+        <!-- 현관: full-height cabinets + mirror niche -->
+        <rect class="f-soft" x="142" y="487" width="104" height="11"/>
+        <rect x="176" y="488" width="30" height="9" fill="#bfc9cb" stroke="#8b847b" stroke-width=".6"/>
+        <rect x="178" y="489" width="26" height="3" fill="#efe6d6"/>
+        <path class="f-line" d="M159 487v11M226 487v11"/>
+
+        <!-- 작은방(현관 옆): 붙박이장, 창가 침대, 6단 수납장 + TV -->
+        <rect class="f-soft" x="8" y="393" width="92" height="12"/>
+        <path class="f-line" d="M31 393v12M54 393v12M77 393v12"/>
+        <rect class="f" x="5" y="428" width="56" height="72" rx="3"/>
+        <rect class="f" x="8" y="433" width="12" height="28" rx="3"/>
+        <rect class="f" x="8" y="466" width="12" height="28" rx="3"/>
+        <rect x="24" y="430" width="35" height="68" rx="2" fill="#d9d3ca" stroke="#8b847b" stroke-width=".6"/>
+        <rect class="f-soft" x="101" y="478" width="16" height="44"/>
+        <path class="f-line" d="M101 485h16M101 492h16M101 499h16M101 506h16M101 514h16"/>
+        <rect x="97" y="482" width="3" height="36" fill="#1b1b1b"/>
+
+        <!-- 거실: 빔 스크린, 빈백 2, 좌탁, 프로젝터 -->
+        <polygon points="66,252 18,383 112,383" fill="#c9a46c" opacity=".10"/>
+        <rect x="16" y="383" width="98" height="3.5" fill="#fff" stroke="#8b847b" stroke-width=".6"/>
+        <rect x="60" y="246" width="12" height="7" rx="1.5" fill="#2b2b2b"/>
+        <circle cx="66" cy="253" r="1.6" fill="#c9a46c"/>
+        <ellipse cx="38" cy="308" rx="15" ry="13" fill="#8d8780" stroke="#5f5a54" stroke-width=".8"/>
+        <ellipse cx="38" cy="304" rx="9" ry="6" fill="#a29c94"/>
+        <ellipse cx="96" cy="310" rx="15" ry="13" fill="#bdb6ac" stroke="#7d776f" stroke-width=".8"/>
+        <ellipse cx="96" cy="306" rx="9" ry="6" fill="#ccc6bd"/>
+        <rect x="50" y="330" width="34" height="20" rx="4" fill="#efeae2" stroke="#8b847b" stroke-width=".8"/>
+
+        <!-- 주방: 블랙 키큰장 벽 + 블랙 세라믹 아일랜드 -->
+        <rect class="f-dark" x="178" y="202" width="160" height="16"/>
+        <path d="M198 202v16M218 202v16M238 202v16M282 202v16M302 202v16M322 202v16" stroke="#3c3f41" stroke-width=".6"/>
+        <rect x="248" y="203" width="30" height="14" fill="#cdc6ba"/>
+        <rect x="251" y="207" width="9" height="9" fill="#1c1c1c"/>
+        <rect x="204" y="252" width="112" height="32" rx="1" fill="#141414" stroke="#000" stroke-width=".8"/>
+        <path d="M206 262c14 -4 22 6 38 2s22 -8 36 -2M224 284c4-8 12-12 22-12M268 252c-4 8 2 14 12 18s20 2 34 10" fill="none" stroke="#e9e6e1" stroke-width=".8" opacity=".75"/>
+        <rect x="282" y="258" width="22" height="12" rx="1.5" fill="#333" stroke="#555" stroke-width=".6"/>
+        <circle cx="309" cy="264" r="1.6" fill="#0b0b0b" stroke="#777" stroke-width=".6"/>
+        <rect x="238" y="257" width="26" height="22" fill="none" stroke="#cfcac2" stroke-width=".8" stroke-dasharray="2 1.5"/>
+
+        <!-- 다용도실 -->
+        <rect class="f" x="300" y="350" width="32" height="34" rx="3"/>
+        <circle cx="316" cy="367" r="10" fill="#e9e6e1" stroke="#8b847b" stroke-width=".8"/>
+        <circle cx="316" cy="367" r="6" fill="#c8d0d3"/>
+        <rect class="f-soft" x="256" y="336" width="34" height="9"/>
+
+        <!-- 거실 욕실 -->
+        <rect class="f" x="148" y="338" width="26" height="16" rx="2"/>
+        <ellipse cx="161" cy="346" rx="7" ry="4.5" fill="#e9e6e1"/>
+        <ellipse class="f" cx="232" cy="352" rx="8" ry="11"/>
+        <rect class="f" x="226" y="337" width="12" height="6" rx="1"/>
+        <path d="M200 380v38" stroke="#c9d3d8" stroke-width="1.4"/>
+
+        <!-- 작은 거실: 책상 2 + 컴퓨터 2, 전자드럼, 전자피아노, 강아지 집 + 울타리 -->
+        <rect x="50" y="86" width="72" height="20" rx="1.5" fill="#efeae2" stroke="#8b847b" stroke-width=".8"/>
+        <rect x="128" y="86" width="72" height="20" rx="1.5" fill="#efeae2" stroke="#8b847b" stroke-width=".8"/>
+        <rect x="70" y="88" width="32" height="4" rx="1" fill="#1d1d1d"/>
+        <rect x="148" y="88" width="32" height="4" rx="1" fill="#1d1d1d"/>
+        <rect x="56" y="90" width="9" height="13" rx="1" fill="#2a2a2a"/>
+        <rect x="186" y="90" width="9" height="13" rx="1" fill="#2a2a2a"/>
+        <circle cx="86" cy="116" r="7" fill="#3b3b3b"/>
+        <circle cx="164" cy="116" r="7" fill="#3b3b3b"/>
+        <rect x="211" y="96" width="15" height="62" fill="#1d1d1d"/>
+        <rect x="217" y="98" width="8" height="58" fill="#f4f2ee"/>
+        <path d="M217 104h8M217 110h8M217 116h8M217 122h8M217 128h8M217 134h8M217 140h8M217 146h8M217 152h8" stroke="#aaa" stroke-width=".4"/>
+        <g fill="#2b2b2b" stroke="#111" stroke-width=".6">
+          <circle cx="174" cy="146" r="6.5"/><circle cx="188" cy="140" r="5.5"/><circle cx="194" cy="154" r="6"/>
+          <circle cx="178" cy="162" r="7"/><circle cx="168" cy="134" r="4" fill="#9a9a9a"/><circle cx="198" cy="132" r="4" fill="#9a9a9a"/>
+        </g>
+        <circle cx="186" cy="176" r="5" fill="#555"/>
+        <rect x="46" y="146" width="62" height="48" rx="2" fill="#efe8dc" stroke="#9a8f80" stroke-width="1" stroke-dasharray="1.5 2"/>
+        <path d="M54 172 l12 -10 l12 10 v18 h-24z" fill="#f8f6f2" stroke="#8b847b" stroke-width=".8"/>
+        <path d="M62 190 v-8 a4 4 0 0 1 8 0 v8" fill="#5a524a"/>
+        <circle cx="94" cy="184" r="3.2" fill="#d9d3ca" stroke="#8b847b" stroke-width=".6"/>
+
+        <!-- 침실: 킹 침대 + 장롱 2 -->
+        <rect class="f-soft" x="234" y="83" width="48" height="13"/>
+        <rect class="f-soft" x="286" y="83" width="50" height="13"/>
+        <path class="f-line" d="M258 83v13M311 83v13"/>
+        <rect class="f" x="252" y="108" width="84" height="74" rx="3"/>
+        <rect class="f" x="322" y="112" width="11" height="31" rx="3"/>
+        <rect class="f" x="322" y="147" width="11" height="31" rx="3"/>
+        <rect x="254" y="110" width="64" height="70" rx="2" fill="#d4cec5" stroke="#8b847b" stroke-width=".6"/>
+        <path d="M254 124h64" stroke="#bfb8ae" stroke-width="1.2"/>
+
+        <!-- 드레스룸: 행거 + 화장대 + 서랍장 + 전신거울 -->
+        <rect class="f-soft" x="64" y="3" width="124" height="15"/>
+        <path class="f-line" d="M70 10h112"/>
+        <path d="M78 6v8M88 6v8M98 6v8M108 6v8M118 6v8M128 6v8M138 6v8M148 6v8M158 6v8M168 6v8" stroke="#8b847b" stroke-width=".5"/>
+        <rect class="f" x="196" y="3" width="40" height="16"/>
+        <path class="f-line" d="M196 11h40"/>
+        <rect class="f" x="200" y="30" width="34" height="16"/>
+        <rect x="203" y="31" width="28" height="2.5" fill="#bfc9cb"/>
+        <rect x="150" y="70" width="30" height="4" fill="#bfc9cb" stroke="#8b847b" stroke-width=".6"/>
+
+        <!-- 안쪽 욕실: 욕조 -->
+        <rect class="f" x="290" y="4" width="46" height="30" rx="9"/>
+        <rect x="295" y="9" width="36" height="20" rx="7" fill="#e3ebee"/>
+        <ellipse class="f" cx="258" cy="20" rx="8" ry="11"/>
+        <rect class="f" x="252" y="5" width="12" height="5" rx="1"/>
+        <rect class="f" x="300" y="58" width="26" height="16" rx="2"/>
+        <ellipse cx="313" cy="66" rx="7" ry="4.5" fill="#e9e6e1"/>
+
+        <!-- 베란다 -->
+        <circle cx="20" cy="104" r="6" fill="#7d8a74"/><circle cx="16" cy="100" r="3.5" fill="#93a189"/>
+      </g>
+
+      <!-- walls -->
+      <path class="walls" d="M60 0H340V400H250V500H120V540H0V80H60Z"/>
+      <g class="walls">
+        <path d="M240 0V48M240 74V80"/>
+        <path d="M230 80H340"/>
+        <path d="M230 80V164M230 194V200"/>
+        <path d="M0 200H40"/>
+        <path d="M140 330H298M326 330H340"/>
+        <path d="M140 330V420"/>
+        <path d="M140 420H158M186 420H250"/>
+        <path d="M250 330V400"/>
+        <path d="M0 390H120"/>
+        <path d="M120 390V438M120 470V540"/>
+      </g>
+      <!-- black-film wall with hidden door between living room and small living room -->
+      <path class="walls wall-black" d="M40 200H143"/>
+      <path class="walls wall-black" d="M177 200H340"/>
+      <rect x="143" y="198" width="34" height="4" fill="#0b0b0b"/>
+      <circle cx="171" cy="200" r="1.4" fill="#c9a46c"/>
+      <path d="M177 200 A34 34 0 0 0 143 166" fill="none" stroke="#9a9286" stroke-width=".6" stroke-dasharray="2 2"/>
+      <!-- demolished walls (former master bedroom / dress room) -->
+      <path class="demolished" d="M60 80H230"/>
+      <!-- front door -->
+      <rect x="248" y="442" width="5" height="34" fill="#5a3b2e"/>
+      <path d="M250 442 A34 34 0 0 0 216 476" fill="none" stroke="#9a9286" stroke-width=".6" stroke-dasharray="2 2"/>
+
+      <!-- windows -->
+      <g class="window">
+        <path d="M0 94V190"/><path d="M40 92V190"/>
+        <path d="M0 214V380"/><path d="M0 408V528"/>
+        <path d="M340 236V292"/><path d="M340 104V176"/>
+        <path d="M272 0H312"/>
+      </g>
+
+      <!-- ceiling fans -->
+      <g opacity=".85">
+        <g transform="translate(88 270)"><g class="fan">
+          <circle r="4" fill="#fff" stroke="#9b958d" stroke-width=".7"/>
+          <path d="M0 -4 C 4 -14, 2 -22, -1 -24 C -3 -18, -3 -10, 0 -4Z M3.5 2 C 13 6, 19 12, 21 15 C 15 16, 8 12, 3.5 2Z M-3.5 2 C -13 6, -19 12, -21 15 C -15 16, -8 12, -3.5 2Z" fill="#fff" stroke="#9b958d" stroke-width=".7"/>
+        </g></g>
+        <g transform="translate(136 140)"><g class="fan">
+          <circle r="4" fill="#fff" stroke="#9b958d" stroke-width=".7"/>
+          <path d="M0 -4 C 4 -14, 2 -22, -1 -24 C -3 -18, -3 -10, 0 -4Z M3.5 2 C 13 6, 19 12, 21 15 C 15 16, 8 12, 3.5 2Z M-3.5 2 C -13 6, -19 12, -21 15 C -15 16, -8 12, -3.5 2Z" fill="#fff" stroke="#9b958d" stroke-width=".7"/>
+        </g></g>
+      </g>
+
+      <!-- room labels + hit areas are generated -->
+      <g id="labels"></g>
+      <g id="hits"></g>
+
+      <!-- dogs -->
+      <g class="dog" id="dogTube" transform="translate(112 182)" role="button" aria-label="튜브에게 힌트 듣기">
+        <g class="bob">
+          <ellipse cx="0" cy="0" rx="13" ry="4.6" fill="#7a4a2a"/>
+          <rect x="-10" y="2.5" width="2.2" height="4" rx="1" fill="#5e3820"/><rect x="-6" y="2.5" width="2.2" height="4" rx="1" fill="#5e3820"/>
+          <rect x="5" y="2.5" width="2.2" height="4" rx="1" fill="#5e3820"/><rect x="9" y="2.5" width="2.2" height="4" rx="1" fill="#5e3820"/>
+          <path d="M-12.5 -1 q-5 -3 -6 -6" stroke="#7a4a2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <ellipse cx="15" cy="-3" rx="5.2" ry="4.2" fill="#7a4a2a"/>
+          <ellipse cx="20" cy="-1.6" rx="3.2" ry="2.3" fill="#8b5a36"/>
+          <circle cx="22.6" cy="-2" r="1" fill="#111"/>
+          <ellipse cx="13" cy="0" rx="2" ry="4" fill="#4d2c17"/>
+          <circle cx="16.6" cy="-4.4" r=".8" fill="#111"/>
+        </g>
+      </g>
+      <g class="dog" id="dogDoria" transform="translate(126 300)" role="button" aria-label="도리아에게 힌트 듣기">
+        <g class="bob">
+          <path d="M-9 -2 q-6 -8 2 -11 q2 5 -2 11z" fill="#f0c48a"/>
+          <circle cx="0" cy="0" r="8.5" fill="#f3cf9c"/>
+          <circle cx="0" cy="-1" r="6.4" fill="#f8ddb5"/>
+          <path d="M-5 -6 l-1.5 -5 l4 2.6z M5 -6 l1.5 -5 l-4 2.6z" fill="#e9b676"/>
+          <circle cx="-2.3" cy="-1.5" r="1" fill="#111"/><circle cx="2.3" cy="-1.5" r="1" fill="#111"/>
+          <circle cx="0" cy="1" r=".9" fill="#111"/>
+          <path d="M-3 7 v2.5 M3 7 v2.5" stroke="#e1b27a" stroke-width="2" stroke-linecap="round"/>
+        </g>
+      </g>
+
+      <!-- hidden gift spots are generated -->
+      <g id="spots"></g>
+    </svg>
+  </main>
+
+  <footer class="dock">
+    <button class="avatar" id="avatarBtn" aria-label="강아지에게 힌트 듣기">
+      <svg viewBox="-12 -14 24 26" aria-hidden="true" id="avatarSvg"></svg>
+    </button>
+    <div class="bubble" id="bubble" aria-live="polite"></div>
+  </footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<section class="sheet" id="giftSheet" role="dialog" aria-modal="true" aria-labelledby="giftName"></section>
+<section class="sheet" id="nbSheet" role="dialog" aria-modal="true" aria-label="선물 수첩"></section>
+
+<div class="intro" id="intro">
+  <div class="intro-inner">
+    <div>
+      <div class="kicker" id="introKicker">HOUSEWARMING</div>
+      <h1 id="introTitle">유씨네 집들이</h1>
+      <p id="introSub">튜브와 도리아가 집 구경을 시켜드릴게요.<br>구경하다 반짝이는 걸 찾으면, 그게 저희 집에 필요한 거예요.</p>
+    </div>
+    <div class="door-frame" aria-hidden="true">
+      <div class="door" id="door">
+        <div class="plate" id="doorPlate">유 · 튜브 · 도리아</div>
+        <div class="lock"></div><div class="handle"></div>
+      </div>
+    </div>
+    <form class="enter" id="enterForm" autocomplete="off">
+      <label for="guestName">방문하신 분 이름</label>
+      <input id="guestName" name="guestName" maxlength="20" placeholder="예: 김민지" required>
+      <button class="btn btn-primary" type="submit">문 열고 들어가기</button>
+    </form>
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+/* ================================================================
+   1) 사이트 설정 — 여기만 고치면 문구가 바뀝니다
+   ================================================================ */
+const SITE = {
+  title: '유씨네 집들이',
+  intro: '튜브와 도리아가 집 구경을 시켜드릴게요.<br>구경하다 반짝이는 걸 찾으면, 그게 저희 집에 필요한 거예요.',
+  doorPlate: '유 · 튜브 · 도리아',
+};
+
+/* ================================================================
+   2) Firebase 설정 — 비워두면 '체험 모드'(이 기기에만 저장)로 동작
+   Firebase 콘솔 > 프로젝트 설정 > 내 앱(웹)의 firebaseConfig 를 그대로 붙여넣으세요.
+   ================================================================ */
+const FIREBASE_CONFIG = null;
+/* 예시:
+const FIREBASE_CONFIG = {
+  apiKey: "…", authDomain: "….firebaseapp.com", projectId: "…",
+  storageBucket: "….appspot.com", messagingSenderId: "…", appId: "…"
+};
+*/
+
+/* ================================================================
+   3) 선물 목록 (지금은 예시) — room 은 아래 ROOMS 의 id, x/y 는 평면도 좌표
+   ================================================================ */
+const GIFTS = [
+  { id: 'diffuser',  room: 'entry',   x: 191, y: 491, emoji: '🕯️', name: '현관 디퓨저',        price: '3~5만원',   note: '문 열자마자 호텔 로비 향이 나면 좋겠어요.',            hint: '현관 거울 쪽에서 좋은 냄새가 날 것 같아요… 킁킁' },
+  { id: 'moodlamp',  room: 'bed1',    x: 14,  y: 418, emoji: '💡', name: '침대 옆 무드등',       price: '3~6만원',   note: '창가 침대 머리맡이 아직 깜깜해요.',                    hint: '현관 옆 작은방, 창가 침대 머리맡을 봐주세요!' },
+  { id: 'soundbar',  room: 'living',  x: 100, y: 378, emoji: '🔊', name: '블루투스 사운드바',    price: '10~20만원', note: '빔프로젝터로 영화 보는데 소리가 너무 작아요.',          hint: '거실 빔 스크린 근처가 수상해요. 멍!' },
+  { id: 'rug',       room: 'living',  x: 67,  y: 340, emoji: '🧶', name: '거실 러그',            price: '10~20만원', note: '좌탁 아래 타일이 차가워서 튜브가 발 시려해요.',        hint: '좌탁 밑이 차가워요… 거기 뭔가 있어요' },
+  { id: 'coffee',    room: 'kitchen', x: 263, y: 210, emoji: '☕', name: '캡슐 커피머신',        price: '15~25만원', note: '블랙 키큰장 가운데 빈 칸이 커피머신 자리예요.',        hint: '주방 검은 벽장 가운데 빈 칸! 거기요 거기!' },
+  { id: 'glasses',   room: 'kitchen', x: 226, y: 268, emoji: '🍷', name: '와인잔 세트',          price: '5~10만원',  note: '아일랜드 식탁에서 집들이 건배하고 싶어요.',            hint: '주방 까만 대리석 식탁 위를 잘 보세요' },
+  { id: 'vacuum',    room: 'utility', x: 280, y: 382, emoji: '🧹', name: '무선 청소기',          price: '20~40만원', note: '튜브·도리아 털과의 전쟁 중입니다.',                    hint: '주방 옆 다용도실… 제 털이 거기 다 모여요' },
+  { id: 'fountain',  room: 'small',   x: 94,  y: 172, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '튜브와 도리아가 물을 더 많이 마셨으면 해서요.',        hint: '작은 거실 우리 집(울타리) 안에 뭐가 있게요?' },
+  { id: 'monitorarm',room: 'small',   x: 164, y: 98,  emoji: '🖥️', name: '듀얼 모니터암',        price: '5~10만원',  note: '책상 두 개 위가 선으로 정신없어요.',                   hint: '작은 거실 컴퓨터 책상 위를 봐주세요' },
+  { id: 'bedding',   room: 'bed2',    x: 286, y: 146, emoji: '🛏️', name: '킹사이즈 호텔 침구',   price: '15~30만원', note: '킹 침대에 맞는 하얀 호텔 침구가 꿈이에요.',            hint: '안쪽 침실 큰 침대 위… 폭신한 냄새' },
+  { id: 'towels',    room: 'bath2',   x: 313, y: 48,  emoji: '🛁', name: '호텔 수건 세트',       price: '4~8만원',   note: '욕조 있는 화장실에 두툼한 수건을 두고 싶어요.',        hint: '욕조 있는 안쪽 화장실! 저는 목욕 싫어요…' },
+  { id: 'candle',    room: 'dress',   x: 217, y: 38,  emoji: '🪔', name: '캔들워머',             price: '3~6만원',   note: '화장대 위에 은은한 불빛 하나 있으면 좋겠어요.',        hint: '드레스룸 화장대 쪽에 반짝이는 게 있어요' },
+  { id: 'plant',     room: 'balcony', x: 22,  y: 160, emoji: '🪴', name: '반려식물 화분',        price: '3~8만원',   note: '베란다가 아직 텅 비어 있어요.',                        hint: '작은 거실 베란다 창밖을 봐요!' },
+];
+
+/* 평면도의 공간 (x,y,w,h = 확대할 때 보여줄 영역) */
+const ROOMS = [
+  { id: 'entry',   name: '현관',        box: [110, 384, 150, 126], label: [195, 462], hit: 'M120 390H140V420H250V500H120Z' },
+  { id: 'bed1',    name: '작은방',      box: [-4, 384, 128, 160],  label: [60, 520],  hit: 'M0 390H120V540H0Z' },
+  { id: 'living',  name: '거실',        box: [-4, 196, 190, 198],  label: [120, 236], hit: 'M0 200H180V330H140V390H0Z' },
+  { id: 'kitchen', name: '주방',        box: [176, 196, 168, 138], label: [260, 312], hit: 'M180 200H340V330H180Z' },
+  { id: 'utility', name: '다용도실',    box: [246, 326, 98, 78],   label: [295, 396], hit: 'M250 330H340V400H250Z' },
+  { id: 'bath1',   name: '거실 욕실',   box: [136, 326, 118, 98],  label: [195, 404], hit: 'M140 330H250V420H140Z' },
+  { id: 'small',   name: '작은 거실',   box: [36, 76, 198, 128],   label: [140, 192], hit: 'M40 80H230V200H40Z' },
+  { id: 'bed2',    name: '침실',        box: [226, 76, 118, 128],  label: [285, 196], hit: 'M230 80H340V200H230Z' },
+  { id: 'dress',   name: '드레스룸',    box: [56, -4, 188, 88],    label: [125, 40],  hit: 'M60 0H240V80H60Z' },
+  { id: 'bath2',   name: '안쪽 욕실',   box: [236, -4, 108, 88],   label: [268, 50],  hit: 'M240 0H340V80H240Z' },
+  { id: 'balcony', name: '베란다',      box: [-4, 76, 48, 128],    label: [20, 140],  hit: 'M0 80H40V200H0Z', vertical: true },
+];
+
+/* ================================================================
+   이 아래는 동작 코드
+   ================================================================ */
+const $ = (s) => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const OVERVIEW = [-8, -8, 356, 556];
+const roomById = Object.fromEntries(ROOMS.map(r => [r.id, r]));
+
+function ls(key, val) {
+  try {
+    if (val === undefined) return JSON.parse(localStorage.getItem(key));
+    localStorage.setItem(key, JSON.stringify(val));
+  } catch (e) { return null; }
+}
+
+const state = {
+  guest: ls('hw_guest') || null,
+  guestId: ls('hw_gid') || (Math.random().toString(36).slice(2) + Date.now().toString(36)),
+  found: new Set(ls('hw_found') || []),
+  claims: {},
+  room: null,
+  view: OVERVIEW.slice(),
+};
+ls('hw_gid', state.guestId);
+
+/* ---------- 저장소: 체험 모드(localStorage) / 실서비스(Firebase) ---------- */
+const Store = {
+  mode: 'demo',
+  uid: state.guestId,
+  listeners: [],
+  onChange(fn) { this.listeners.push(fn); },
+  emit() { this.listeners.forEach(fn => fn(state.claims)); },
+
+  async init() {
+    if (FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey) {
+      try { await this.initLive(); return; }
+      catch (e) { console.warn('Firebase 연결 실패, 체험 모드로 전환', e); }
+    }
+    this.initDemo();
+  },
+
+  initDemo() {
+    this.mode = 'demo';
+    let c = ls('hw_claims');
+    if (!c) { c = { glasses: { name: '민지 (예시)', uid: 'example', at: Date.now() } }; ls('hw_claims', c); }
+    state.claims = c;
+    window.addEventListener('storage', (e) => { if (e.key === 'hw_claims') { state.claims = ls('hw_claims') || {}; this.emit(); } });
+    this.emit();
+  },
+
+  async initLive() {
+    const base = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    const [appMod, fs, authMod] = await Promise.all([
+      import(base + 'firebase-app.js'), import(base + 'firebase-firestore.js'), import(base + 'firebase-auth.js'),
+    ]);
+    const app = appMod.initializeApp(FIREBASE_CONFIG);
+    const db = fs.getFirestore(app);
+    const cred = await authMod.signInAnonymously(authMod.getAuth(app));
+    this.uid = cred.user.uid;
+    this.mode = 'live';
+    fs.onSnapshot(fs.collection(db, 'claims'), (snap) => {
+      const c = {}; snap.forEach(d => { c[d.id] = d.data(); });
+      state.claims = c; this.emit();
+    });
+    this.claim = (gid, name) => fs.runTransaction(db, async (tx) => {
+      const ref = fs.doc(db, 'claims', gid);
+      const s = await tx.get(ref);
+      if (s.exists()) throw new Error('taken');
+      tx.set(ref, { name, uid: this.uid, at: fs.serverTimestamp() });
+    });
+    this.unclaim = (gid) => fs.deleteDoc(fs.doc(db, 'claims', gid));
+  },
+
+  async claim(gid, name) {
+    const c = ls('hw_claims') || {};
+    if (c[gid]) throw new Error('taken');
+    c[gid] = { name, uid: this.uid, at: Date.now() };
+    ls('hw_claims', c); state.claims = c; this.emit();
+  },
+  async unclaim(gid) {
+    const c = ls('hw_claims') || {};
+    delete c[gid]; ls('hw_claims', c); state.claims = c; this.emit();
+  },
+};
+const isMine = (c) => c && c.uid === Store.uid;
+
+/* ---------- 평면도 그리기 ---------- */
+function el(tag, attrs, parent) {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function buildPlan() {
+  const hits = $('#hits'), labels = $('#labels'), spots = $('#spots');
+  ROOMS.forEach(r => {
+    const h = el('path', { d: r.hit, class: 'room-hit', 'data-room': r.id, tabindex: 0, role: 'button', 'aria-label': r.name + ' 들어가기' }, hits);
+    h.addEventListener('click', () => enterRoom(r.id));
+    h.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterRoom(r.id); } });
+
+    const g = el('g', {}, labels);
+    const t = el('text', { x: r.label[0], y: r.label[1], class: 'lbl' }, g);
+    if (r.vertical) { t.setAttribute('transform', `rotate(-90 ${r.label[0]} ${r.label[1]})`); }
+    t.textContent = r.name;
+    const b = el('g', { class: 'badge', 'data-badge': r.id }, g);
+    const bx = r.vertical ? r.label[0] + 8 : r.label[0] + r.name.length * 5 + 6;
+    const by = r.vertical ? r.label[1] - r.name.length * 5 - 6 : r.label[1] - 3.5;
+    el('circle', { cx: bx, cy: by, r: 5.2 }, b);
+    const bt = el('text', { x: bx, y: by + .3 }, b);
+    bt.textContent = '?';
+  });
+
+  GIFTS.forEach((g, i) => {
+    const s = el('g', { class: 'spot', 'data-gift': g.id, 'data-room': g.room, transform: `translate(${g.x} ${g.y})`, role: 'button', 'aria-label': '반짝이는 것' }, spots);
+    s.style.setProperty('--d', (i * 0.73 % 3).toFixed(2) + 's');
+    s.style.setProperty('--p', (3.2 + (i * 0.41 % 1.6)).toFixed(2) + 's');
+    el('circle', { r: 13, class: 'hit' }, s);
+    el('use', { href: '#glintShape', class: 'glint' }, s);
+    const tag = el('g', { class: 'tag' }, s);
+    el('circle', { r: 5.5 }, tag);
+    el('path', { d: 'M-2.6 -.6h5.2v3.2h-5.2zM-3 -.6h6M0 -.6v3.2M0 -.6c-1 -2.2 -2.8 -1.6 -1.9 -.4M0 -.6c1 -2.2 2.8 -1.6 1.9 -.4' }, tag);
+    s.addEventListener('click', (e) => { e.stopPropagation(); onSpot(g.id); });
+  });
+}
+
+/* ---------- 확대 / 축소 ---------- */
+let anim = null;
+function animateView(target) {
+  const svg = $('#plan');
+  const from = state.view.slice();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dur = reduce ? 1 : 480;
+  const t0 = performance.now();
+  cancelAnimationFrame(anim);
+  const step = (now) => {
+    const k = Math.min(1, (now - t0) / dur);
+    const e = 1 - Math.pow(1 - k, 3);
+    state.view = from.map((v, i) => v + (target[i] - v) * e);
+    svg.setAttribute('viewBox', state.view.map(n => n.toFixed(2)).join(' '));
+    if (k < 1) anim = requestAnimationFrame(step);
+  };
+  anim = requestAnimationFrame(step);
+}
+
+function enterRoom(id) {
+  if (state.room === id) return;
+  const r = roomById[id];
+  state.room = id;
+  document.querySelectorAll('.room-hit').forEach(h => h.classList.toggle('current', h.dataset.room === id));
+  document.querySelectorAll('.spot').forEach(s => s.classList.toggle('here', s.dataset.room === id));
+  $('#stage').classList.add('zoomed');
+  $('#plan').classList.add('zoomed');
+  $('#backBtn').hidden = false;
+  $('#roomTitle').hidden = false;
+  $('#roomTitle').textContent = r.name;
+  animateView(r.box);
+  const left = GIFTS.filter(g => g.room === id && !state.found.has(g.id)).length;
+  const total = GIFTS.filter(g => g.room === id).length;
+  if (!total) say(pick(['여긴 선물이 없는 것 같아요. 다른 방도 가봐요!', '킁킁… 여긴 아무 냄새도 안 나요.', '여기는 그냥 구경만 하세요 멍!']), dogFor(id));
+  else if (!left) say('이 방에선 다 찾았어요! 최고예요', dogFor(id));
+  else say(`${r.name}에 반짝이는 게 ${left}개 숨어 있어요. 잘 보면 빛나요!`, dogFor(id));
+}
+
+function leaveRoom() {
+  state.room = null;
+  document.querySelectorAll('.room-hit').forEach(h => h.classList.remove('current'));
+  document.querySelectorAll('.spot').forEach(s => s.classList.remove('here'));
+  $('#stage').classList.remove('zoomed');
+  $('#plan').classList.remove('zoomed');
+  $('#backBtn').hidden = true;
+  $('#roomTitle').hidden = true;
+  animateView(OVERVIEW);
+  idleTalk();
+}
+
+/* ---------- 강아지 말풍선 ---------- */
+const DOGS = {
+  tube:  { name: '튜브', svg: '<g transform="translate(-3 2)"><ellipse cx="0" cy="0" rx="9" ry="4" fill="#7a4a2a"/><ellipse cx="9" cy="-3" rx="4.4" ry="3.6" fill="#7a4a2a"/><ellipse cx="13" cy="-1.8" rx="2.6" ry="1.9" fill="#8b5a36"/><circle cx="15" cy="-2" r=".8" fill="#111"/><ellipse cx="7.4" cy="-.4" rx="1.6" ry="3.4" fill="#4d2c17"/><circle cx="10" cy="-4.2" r=".7" fill="#111"/><rect x="-7" y="2.4" width="2" height="3.4" rx="1" fill="#5e3820"/><rect x="4" y="2.4" width="2" height="3.4" rx="1" fill="#5e3820"/><path d="M-8.6 -1 q-3.6 -2.4 -4.4 -4.6" stroke="#7a4a2a" stroke-width="1.4" fill="none" stroke-linecap="round"/></g>' },
+  doria: { name: '도리아', svg: '<g transform="translate(0 -1)"><path d="M-8 -2 q-5 -7 1.6 -9.4 q1.8 4.4 -1.6 9.4z" fill="#f0c48a"/><circle r="8" fill="#f3cf9c"/><circle cy="-1" r="6" fill="#f8ddb5"/><path d="M-4.6 -5.6 l-1.4 -4.6 l3.8 2.4z M4.6 -5.6 l1.4 -4.6 l-3.8 2.4z" fill="#e9b676"/><circle cx="-2.2" cy="-1.4" r=".95" fill="#111"/><circle cx="2.2" cy="-1.4" r=".95" fill="#111"/><circle cy="1" r=".85" fill="#111"/></g>' },
+};
+let speaker = 'doria';
+const dogFor = (room) => (['small', 'utility', 'bed1', 'entry', 'bath2'].includes(room) ? 'tube' : 'doria');
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+
+function say(text, who) {
+  speaker = who || speaker;
+  const d = DOGS[speaker];
+  $('#avatarSvg').innerHTML = d.svg;
+  $('#bubble').innerHTML = `<div><small>${d.name}</small>${text}</div>`;
+}
+
+function idleTalk() {
+  const left = GIFTS.length - state.found.size;
+  if (state.found.size === 0) say('방을 눌러서 들어가 보세요! 반짝이는 걸 누르면 선물이 나와요', 'doria');
+  else if (left === 0) say('우와, 전부 다 찾았어요! 선물 수첩에서 골라주세요', 'tube');
+  else say(`아직 ${left}개 더 숨어 있어요. 힌트가 필요하면 저를 눌러요!`, pick(['tube', 'doria']));
+}
+
+function giveHint(who) {
+  const pool = GIFTS.filter(g => !state.found.has(g.id) && (!state.room || g.room === state.room));
+  const any = GIFTS.filter(g => !state.found.has(g.id));
+  const g = pick(pool.length ? pool : any.length ? any : [null]);
+  if (!g) { say('다 찾았잖아요! 이제 간식 주세요', who); return; }
+  say(g.hint, who);
+}
+
+/* ---------- 선물 카드 ---------- */
+function onSpot(gid) {
+  if (!state.found.has(gid)) {
+    state.found.add(gid);
+    ls('hw_found', [...state.found]);
+    burst(16);
+    refresh();
+    const g = GIFTS.find(x => x.id === gid);
+    say(state.found.size === GIFTS.length ? '마지막 하나까지 찾았어요! 대단해요' : pick(['찾았다! 멍멍!', '역시 눈썰미 최고예요', '오, 이거 진짜 필요해요!']), dogFor(g.room));
+  }
+  openGift(gid);
+}
+
+let openGiftId = null, confirming = false, busy = false, lastErr = '';
+function openGift(gid) {
+  openGiftId = gid; confirming = false; lastErr = '';
+  renderGift();
+  showSheet('#giftSheet');
+}
+
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+function renderGift() {
+  if (!openGiftId) return;
+  const g = GIFTS.find(x => x.id === openGiftId);
+  const c = state.claims[g.id];
+  const room = roomById[g.room].name;
+  let action;
+  if (c && isMine(c)) {
+    action = `<div class="status mine"><span class="dot"></span><span><b>${esc(c.name)}</b>님이 준비하기로 했어요. 고마워요!</span></div>
+      <button class="btn btn-ghost" id="unclaimBtn" ${busy ? 'disabled' : ''}>찜 취소하기</button>`;
+  } else if (c) {
+    action = `<div class="status"><span class="dot"></span><span><b>${esc(c.name)}</b>님이 이미 준비 중이에요</span></div>
+      <button class="btn btn-ghost" data-close>다른 선물 찾으러 가기</button>`;
+  } else if (confirming) {
+    action = `<p class="confirm-q"><b>${esc(state.guest)}</b> 이름으로 이 선물을 찜할까요? 모두에게 이름이 보여요.</p>
+      <button class="btn btn-primary" id="claimYes" ${busy ? 'disabled' : ''}>네, 제가 선물할게요</button>
+      <button class="btn btn-ghost" id="claimNo">다시 생각해볼게요</button>`;
+  } else {
+    action = `<button class="btn btn-primary" id="claimBtn">이 선물 찜하기</button>
+      <button class="btn btn-ghost" data-close>계속 구경하기</button>`;
+  }
+  $('#giftSheet').innerHTML = `
+    <div class="grip"></div>
+    <div class="eyebrow">${esc(room)}에서 찾은 선물</div>
+    <div class="gift-hero">
+      <div class="gift-emoji" aria-hidden="true">${g.emoji}</div>
+      <div><h2 id="giftName">${esc(g.name)}</h2><div class="price">${esc(g.price)}</div></div>
+    </div>
+    <div class="note">“${esc(g.note)}”<small>집주인 한마디</small></div>
+    ${g.url ? `<a class="link" href="${esc(g.url)}" target="_blank" rel="noopener">이런 제품이면 좋아요 ↗</a>` : ''}
+    <div class="actions">${action}${lastErr ? `<div class="err">${esc(lastErr)}</div>` : ''}</div>`;
+
+  const on = (id, fn) => { const b = document.getElementById(id); if (b) b.onclick = fn; };
+  on('claimBtn', () => { confirming = true; renderGift(); });
+  on('claimNo', () => { confirming = false; renderGift(); });
+  on('claimYes', async () => {
+    busy = true; lastErr = ''; renderGift();
+    try {
+      await Store.claim(g.id, state.guest);
+      confirming = false; burst(60);
+      say(`${state.guest}님 고마워요! 꼬리 흔드는 중`, dogFor(g.room));
+    } catch (e) {
+      lastErr = e.message === 'taken' ? '방금 다른 분이 먼저 찜했어요. 다른 선물을 골라주세요.' : '저장하지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.';
+      confirming = false;
+    }
+    busy = false; renderGift();
+  });
+  on('unclaimBtn', async () => {
+    busy = true; renderGift();
+    try { await Store.unclaim(g.id); } catch (e) { lastErr = '취소하지 못했어요. 다시 눌러주세요.'; }
+    busy = false; renderGift();
+  });
+  $('#giftSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+}
+
+/* ---------- 선물 수첩 ---------- */
+function renderNotebook() {
+  const claimedN = GIFTS.filter(g => state.claims[g.id]).length;
+  const rows = GIFTS.map(g => {
+    const found = state.found.has(g.id);
+    const c = state.claims[g.id];
+    const room = roomById[g.room].name;
+    if (!found) {
+      return `<li><div class="nb-item locked"><span class="em">${g.emoji}</span><span class="t"><b>???</b><span>${esc(room)} 어딘가</span></span><span class="st">못 찾음</span></div></li>`;
+    }
+    const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
+    return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(room)} · ${esc(g.price)}</span></span>${st}</button></li>`;
+  }).join('');
+  $('#nbSheet').innerHTML = `
+    <div class="grip"></div>
+    <div class="nb-head"><h2>선물 수첩</h2><span>찾음 ${state.found.size}/${GIFTS.length} · 찜 ${claimedN}</span></div>
+    <ul class="nb-list">${rows}</ul>
+    ${Store.mode === 'demo' ? '<p class="demo-note">체험 모드예요. 찜한 내용은 이 기기에만 저장돼요. ‘민지 (예시)’는 화면 예시입니다.</p>' : ''}`;
+  $('#nbSheet').querySelectorAll('[data-gift]').forEach(b => b.onclick = () => { closeSheets(); setTimeout(() => openGift(b.dataset.gift), 180); });
+}
+
+/* ---------- 시트 열고 닫기 ---------- */
+function showSheet(sel) {
+  document.querySelectorAll('.sheet').forEach(s => s.classList.toggle('on', s.matches(sel)));
+  $('#scrim').classList.add('on');
+}
+function closeSheets() {
+  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('on'));
+  $('#scrim').classList.remove('on');
+  openGiftId = null;
+}
+
+/* ---------- 화면 갱신 ---------- */
+function refresh() {
+  $('#foundN').textContent = state.found.size;
+  $('#totalN').textContent = GIFTS.length;
+  ROOMS.forEach(r => {
+    const left = GIFTS.filter(g => g.room === r.id && !state.found.has(g.id)).length;
+    const b = document.querySelector(`[data-badge="${r.id}"]`);
+    if (b) b.style.display = left ? '' : 'none';
+  });
+  document.querySelectorAll('.spot').forEach(s => {
+    const id = s.dataset.gift;
+    s.classList.toggle('found', state.found.has(id));
+    s.classList.toggle('claimed', !!state.claims[id]);
+    s.setAttribute('aria-label', state.found.has(id) ? GIFTS.find(g => g.id === id).name : '반짝이는 것');
+  });
+  if (openGiftId) renderGift();
+  if ($('#nbSheet').classList.contains('on')) renderNotebook();
+}
+
+/* ---------- 축하 효과 ---------- */
+function burst(n) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box = $('#confetti');
+  const colors = ['#c9a46c', '#f1ede6', '#8d8780', '#e6e1da', '#5a3b2e'];
+  for (let i = 0; i < n; i++) {
+    const p = document.createElement('i');
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.background = colors[i % colors.length];
+    p.style.setProperty('--x', (Math.random() * 120 - 60) + 'px');
+    p.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+    p.style.setProperty('--t', (1.1 + Math.random() * 0.9) + 's');
+    p.style.animationDelay = (Math.random() * 0.25) + 's';
+    box.appendChild(p);
+    setTimeout(() => p.remove(), 2600);
+  }
+}
+
+/* ---------- 입장 ---------- */
+function enterHouse(name) {
+  state.guest = name;
+  ls('hw_guest', name);
+  $('#door').classList.add('open');
+  $('#intro').classList.add('gone');
+  say(`${name}님 어서 오세요! 방을 눌러서 구경해 보세요. 반짝이는 걸 찾으면 선물이 나와요`, 'doria');
+}
+
+function start() {
+  document.title = SITE.title;
+  $('#siteTitle').textContent = SITE.title;
+  $('#introTitle').textContent = SITE.title;
+  $('#introSub').innerHTML = SITE.intro;
+  $('#doorPlate').textContent = SITE.doorPlate;
+
+  buildPlan();
+  Store.onChange(refresh);
+  Store.init();
+  refresh();
+
+  $('#backBtn').onclick = leaveRoom;
+  $('#scrim').onclick = closeSheets;
+  $('#countBtn').onclick = () => { renderNotebook(); showSheet('#nbSheet'); };
+  $('#avatarBtn').onclick = () => giveHint(speaker === 'tube' ? 'doria' : 'tube');
+  const dogTap = (who) => (e) => { e.stopPropagation(); giveHint(who); };
+  $('#dogTube').addEventListener('click', dogTap('tube'));
+  $('#dogDoria').addEventListener('click', dogTap('doria'));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if ($('#scrim').classList.contains('on')) closeSheets(); else if (state.room) leaveRoom(); } });
+
+  $('#enterForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = $('#guestName').value.trim();
+    if (v) enterHouse(v);
+  });
+
+  if (state.guest) {
+    $('#intro').classList.add('gone');
+    say(`${state.guest}님 또 오셨네요! 아직 ${GIFTS.length - state.found.size}개 숨어 있어요`, 'tube');
+  } else {
+    say('방을 눌러서 들어가 보세요! 반짝이는 걸 누르면 선물이 나와요', 'doria');
+  }
+}
+start();
+</script>
 </body>
-
 </html>
