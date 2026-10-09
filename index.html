@@ -241,10 +241,15 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
         <path class="floor" fill="url(#tiles)" d="M60 0H340V400H250V500H120V540H0V80H60Z" style="fill:url(#tiles)"/>
         <rect x="0" y="80" width="40" height="120" style="fill:url(#balconyTiles)"/>
         <!-- 현관: 호텔 느낌 네이비 카펫 + 블랙 마블 단차 -->
-        <rect x="148" y="420" width="102" height="80" fill="#2a2f3d"/>
-        <path d="M148 432H250M148 446H250M148 460H250M148 474H250M148 488H250" stroke="#323849" stroke-width=".6"/>
-        <rect x="140" y="420" width="8" height="80" fill="#151515"/>
-        <path d="M141 428c3 6 -1 12 4 20M146 462c-3 8 1 14 -2 24" stroke="#e9e6e1" stroke-width=".6" fill="none" opacity=".8"/>
+        <rect x="120" y="440" width="130" height="60" fill="#2a2f3d"/>
+        <path d="M120 452H250M120 464H250M120 476H250M120 488H250" stroke="#323849" stroke-width=".6"/>
+        <rect x="120" y="434" width="30" height="6" fill="#151515"/>
+        <path d="M122 436c5 2 9 -1 14 2M138 438c4 -2 7 0 10 -1" stroke="#e9e6e1" stroke-width=".6" fill="none" opacity=".8"/>
+        <!-- 복도: 시계, 강아지 얼굴 매트, 청소기 스테이션 -->
+        <rect x="145" y="342" width="5" height="9" fill="#fff" stroke="#111" stroke-width=".6"/>
+        <circle cx="147.5" cy="346.5" r="2" fill="none" stroke="#111" stroke-width=".4"/>
+        <ellipse cx="143" cy="414" rx="5" ry="4" fill="#b8865a"/><ellipse cx="143" cy="415.5" rx="3.6" ry="2.4" fill="#f0e6d8"/>
+        <rect x="122" y="420" width="6" height="7" rx="1" fill="#fff" stroke="#8b847b" stroke-width=".5"/><rect x="123.5" y="417" width="3" height="4" fill="#222"/>
       </g>
 
       <!-- ceiling cove light in living room -->
@@ -269,16 +274,20 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
           <rect x="114" y="466" width="22" height="34" fill="transparent"/>
         </g>
 
-        <!-- 작은방(현관 옆): 붙박이장, 창가 침대, 6단 수납장 + TV -->
-        <rect class="f-soft" x="8" y="393" width="92" height="12"/>
-        <path class="f-line" d="M31 393v12M54 393v12M77 393v12"/>
-        <rect class="f" x="5" y="428" width="56" height="72" rx="3"/>
-        <rect class="f" x="8" y="433" width="12" height="28" rx="3"/>
-        <rect class="f" x="8" y="466" width="12" height="28" rx="3"/>
-        <rect x="24" y="430" width="35" height="68" rx="2" fill="#d9d3ca" stroke="#8b847b" stroke-width=".6"/>
-        <rect class="f-soft" x="101" y="478" width="16" height="44"/>
-        <path class="f-line" d="M101 485h16M101 492h16M101 499h16M101 506h16M101 514h16"/>
-        <rect x="97" y="482" width="3" height="36" fill="#1b1b1b"/>
+        <!-- 손님방(현관 옆): 창가 수납 데이베드, 책상 + 스탠드, TV + 선반 -->
+        <rect x="2" y="432" width="5" height="40" fill="#d6d2cc" opacity=".9"/>
+        <rect class="f" x="6" y="440" width="34" height="72" rx="2"/>
+        <rect x="9" y="444" width="30" height="66" rx="2" fill="#2f3b38"/>
+        <path d="M9 452h30M9 460h30M9 468h30M9 476h30M9 484h30M9 492h30M9 500h30M17 444v66M25 444v66M33 444v66" stroke="#55635f" stroke-width=".4"/>
+        <rect x="10" y="446" width="10" height="16" rx="3" fill="#a9c3c4"/>
+        <rect class="f" x="6" y="396" width="38" height="14"/>
+        <circle cx="12" cy="403" r="3.4" fill="#fff" stroke="#8b847b" stroke-width=".6"/>
+        <rect class="f" x="100" y="440" width="17" height="62"/>
+        <path class="f-line" d="M100 455h17M100 470h17M100 486h17"/>
+        <rect x="96" y="448" width="3" height="26" fill="#1b1b1b"/>
+        <rect x="104" y="476" width="9" height="8" fill="#c44a3a" opacity=".8"/>
+        <rect class="f-soft" x="40" y="526" width="68" height="12"/>
+        <path class="f-line" d="M57 526v12M74 526v12M91 526v12"/>
 
         <!-- 거실: 빔 스크린, 빈백 2, 좌탁, 프로젝터 -->
         <polygon points="66,252 18,383 112,383" fill="#c9a46c" opacity=".10"/>
@@ -308,12 +317,23 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
         <circle cx="316" cy="367" r="6" fill="#c8d0d3"/>
         <rect class="f-soft" x="256" y="336" width="34" height="9"/>
 
-        <!-- 거실 욕실 -->
-        <rect class="f" x="148" y="338" width="26" height="16" rx="2"/>
-        <ellipse cx="161" cy="346" rx="7" ry="4.5" fill="#e9e6e1"/>
-        <ellipse class="f" cx="232" cy="352" rx="8" ry="11"/>
-        <rect class="f" x="226" y="337" width="12" height="6" rx="1"/>
-        <path d="M200 380v38" stroke="#c9d3d8" stroke-width="1.4"/>
+        <!-- 거실 욕실: 블랙 마블 세면대 + 와이드 거울, 체크 샤워커튼, 오리 수건걸이 -->
+        <rect x="153" y="333" width="56" height="14" fill="#151515" stroke="#000" stroke-width=".6"/>
+        <path d="M156 336c6 3 10 -2 16 2M190 344c4 -3 10 0 16 -4" stroke="#e9e6e1" stroke-width=".6" fill="none" opacity=".8"/>
+        <rect x="172" y="335" width="18" height="10" rx="2" fill="#fbfaf7" stroke="#8b847b" stroke-width=".5"/>
+        <rect x="153" y="331" width="56" height="2" fill="#c3ccd0"/>
+        <rect x="214" y="333" width="34" height="40" fill="#ebe7e1"/>
+        <rect x="229" y="352" width="6" height="4" fill="#9a9590"/>
+        <path d="M214 333v40" stroke="#fff" stroke-width="2.2"/>
+        <path d="M214 336v34" stroke="#3a3a3a" stroke-width=".5" stroke-dasharray="1.5 1.5"/>
+        <ellipse class="f" cx="236" cy="398" rx="8" ry="10"/>
+        <rect class="f" x="230" y="384" width="12" height="5" rx="1"/>
+        <rect x="158" y="430" width="16" height="7" rx="1" fill="#e7d9c3" stroke="#b9a98f" stroke-width=".5"/>
+        <g id="duck" style="cursor:pointer">
+          <circle cx="157" cy="414" r="3.2" fill="#f6cf3c"/><circle cx="159.2" cy="411.6" r="2.1" fill="#f6cf3c"/>
+          <path d="M161 411.6l1.8 .5-1.8 .6z" fill="#f08a2c"/><circle cx="159.6" cy="411.1" r=".4" fill="#111"/>
+          <circle cx="158" cy="413" r="9" fill="transparent"/>
+        </g>
 
         <!-- 작은 거실: 책상 2 + 컴퓨터 2, 전자드럼, 전자피아노, 강아지 집 + 울타리 -->
         <rect x="50" y="86" width="72" height="20" rx="1.5" fill="#efeae2" stroke="#8b847b" stroke-width=".8"/>
@@ -376,12 +396,12 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
         <path d="M230 80H340"/>
         <path d="M230 80V164M230 194V200"/>
         <path d="M0 200H40"/>
-        <path d="M140 330H298M326 330H340"/>
-        <path d="M140 330V420"/>
-        <path d="M140 420H158M186 420H250"/>
+        <path d="M150 330H298M326 330H340"/>
+        <path d="M150 330V398M150 430V440"/>
+        <path d="M150 440H250"/>
         <path d="M250 330V400"/>
         <path d="M0 390H120"/>
-        <path d="M120 390V438M120 470V540"/>
+        <path d="M120 390V398M120 430V540"/>
       </g>
       <!-- black-film wall with hidden door between living room and small living room -->
       <path class="walls wall-black" d="M40 200H143"/>
@@ -392,8 +412,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
       <!-- demolished walls (former master bedroom / dress room) -->
       <path class="demolished" d="M60 80H230"/>
       <!-- front door -->
-      <rect x="248" y="442" width="5" height="34" fill="#5a3b2e"/>
-      <path d="M250 442 A34 34 0 0 0 216 476" fill="none" stroke="#9a9286" stroke-width=".6" stroke-dasharray="2 2"/>
+      <rect x="248" y="452" width="5" height="34" fill="#5a3b2e"/>
+      <path d="M250 452 A34 34 0 0 0 216 486" fill="none" stroke="#9a9286" stroke-width=".6" stroke-dasharray="2 2"/>
 
       <!-- windows -->
       <g class="window">
@@ -513,15 +533,16 @@ const FIREBASE_CONFIG = {
    ================================================================ */
 const GIFTS = [
   { id: 'shoerack',  room: 'entry',   x: 232, y: 438, emoji: '👟', name: '현관 슈즈 벤치',      price: '5~10만원',  note: '카펫 위에 신발이 굴러다녀요. 앉아서 신발 신을 자리도 필요해요.', hint: '현관 카펫 위, 신발 벗는 쪽을 봐주세요. 제가 신발 물어가는 데요' },
-  { id: 'moodlamp',  room: 'bed1',    x: 14,  y: 418, emoji: '💡', name: '침대 옆 무드등',       price: '3~6만원',   note: '창가 침대 머리맡이 아직 깜깜해요.',                    hint: '현관 옆 작은방, 창가 침대 머리맡을 봐주세요!' },
+  { id: 'guestbed',  room: 'bed1',    x: 24,  y: 486, emoji: '🛌', name: '손님용 침구 세트',     price: '8~15만원',  note: '놀러 와서 자고 가실 분들을 위한 포근한 이불이 필요해요.', hint: '현관 옆 손님방, 창가 데이베드를 봐주세요! 자고 가도 돼요' },
   { id: 'soundbar',  room: 'living',  x: 100, y: 378, emoji: '🔊', name: '블루투스 사운드바',    price: '10~20만원', note: '빔프로젝터로 영화 보는데 소리가 너무 작아요.',          hint: '거실 빔 스크린 근처가 수상해요. 멍!' },
   { id: 'rug',       room: 'living',  x: 67,  y: 340, emoji: '🧶', name: '거실 러그',            price: '10~20만원', note: '좌탁 아래 타일이 차가워서 튜브가 발 시려해요.',        hint: '좌탁 밑이 차가워요… 거기 뭔가 있어요' },
   { id: 'coffee',    room: 'kitchen', x: 263, y: 210, emoji: '☕', name: '캡슐 커피머신',        price: '15~25만원', note: '블랙 키큰장 가운데 빈 칸이 커피머신 자리예요.',        hint: '주방 검은 벽장 가운데 빈 칸! 거기요 거기!' },
   { id: 'glasses',   room: 'kitchen', x: 226, y: 268, emoji: '🍷', name: '와인잔 세트',          price: '5~10만원',  note: '아일랜드 식탁에서 집들이 건배하고 싶어요.',            hint: '주방 까만 대리석 식탁 위를 잘 보세요' },
-  { id: 'vacuum',    room: 'utility', x: 280, y: 382, emoji: '🧹', name: '무선 청소기',          price: '20~40만원', note: '튜브·도리아 털과의 전쟁 중입니다.',                    hint: '주방 옆 다용도실… 제 털이 거기 다 모여요' },
+  { id: 'dryrack',   room: 'utility', x: 280, y: 382, emoji: '🧺', name: '빨래 바구니 & 건조대', price: '3~6만원',   note: '튜브·도리아 담요 빨래가 매일 한가득이에요.',            hint: '주방 옆 다용도실… 제 담요가 거기서 빨래돼요' },
   { id: 'fountain',  room: 'small',   x: 94,  y: 172, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '튜브와 도리아가 물을 더 많이 마셨으면 해서요.',        hint: '작은 거실 우리 집(울타리) 안에 뭐가 있게요?' },
   { id: 'monitorarm',room: 'small',   x: 164, y: 98,  emoji: '🖥️', name: '듀얼 모니터암',        price: '5~10만원',  note: '책상 두 개 위가 선으로 정신없어요.',                   hint: '작은 거실 컴퓨터 책상 위를 봐주세요' },
   { id: 'bedding',   room: 'bed2',    x: 286, y: 146, emoji: '🛏️', name: '킹사이즈 호텔 침구',   price: '15~30만원', note: '킹 침대에 맞는 하얀 호텔 침구가 꿈이에요.',            hint: '안쪽 침실 큰 침대 위… 폭신한 냄새' },
+  { id: 'bathmat',   room: 'bath1',   x: 200, y: 362, emoji: '🧼', name: '욕실 매트 & 디스펜서', price: '3~6만원',   note: '블랙 마블 세면대에 어울리는 디스펜서 세트가 갖고 싶어요.', hint: '거실 욕실 까만 세면대 앞이 수상해요' },
   { id: 'towels',    room: 'bath2',   x: 313, y: 48,  emoji: '🛁', name: '호텔 수건 세트',       price: '4~8만원',   note: '욕조 있는 화장실에 두툼한 수건을 두고 싶어요.',        hint: '욕조 있는 안쪽 화장실! 저는 목욕 싫어요…' },
   { id: 'candle',    room: 'dress',   x: 217, y: 38,  emoji: '🪔', name: '캔들워머',             price: '3~6만원',   note: '화장대 위에 은은한 불빛 하나 있으면 좋겠어요.',        hint: '드레스룸 화장대 쪽에 반짝이는 게 있어요' },
   { id: 'plant',     room: 'balcony', x: 22,  y: 160, emoji: '🪴', name: '반려식물 화분',        price: '3~8만원',   note: '베란다가 아직 텅 비어 있어요.',                        hint: '작은 거실 베란다 창밖을 봐요!' },
@@ -529,12 +550,12 @@ const GIFTS = [
 
 /* 평면도의 공간 (x,y,w,h = 확대할 때 보여줄 영역) */
 const ROOMS = [
-  { id: 'entry',   name: '현관',        box: [110, 384, 150, 126], label: [199, 462], dark: true, hit: 'M120 390H140V420H250V500H120Z' },
-  { id: 'bed1',    name: '작은방',      box: [-4, 384, 128, 160],  label: [60, 520],  hit: 'M0 390H120V540H0Z' },
-  { id: 'living',  name: '거실',        box: [-4, 196, 190, 198],  label: [120, 236], hit: 'M0 200H180V330H140V390H0Z' },
+  { id: 'entry',   name: '현관',        box: [110, 384, 150, 126], label: [200, 472], dark: true, hit: 'M120 390H150V440H250V500H120Z' },
+  { id: 'bed1',    name: '손님방',      box: [-4, 384, 128, 160],  label: [60, 520],  hit: 'M0 390H120V540H0Z' },
+  { id: 'living',  name: '거실',        box: [-4, 196, 190, 198],  label: [120, 236], hit: 'M0 200H180V330H150V390H0Z' },
   { id: 'kitchen', name: '주방',        box: [176, 196, 168, 138], label: [260, 312], hit: 'M180 200H340V330H180Z' },
   { id: 'utility', name: '다용도실',    box: [246, 326, 98, 78],   label: [295, 396], hit: 'M250 330H340V400H250Z' },
-  { id: 'bath1',   name: '거실 욕실',   box: [136, 326, 118, 98],  label: [195, 404], hit: 'M140 330H250V420H140Z' },
+  { id: 'bath1',   name: '거실 욕실',   box: [146, 326, 108, 118], label: [190, 420], hit: 'M150 330H250V440H150Z' },
   { id: 'small',   name: '작은 거실',   box: [36, 76, 198, 128],   label: [140, 192], hit: 'M40 80H230V200H40Z' },
   { id: 'bed2',    name: '침실',        box: [226, 76, 118, 128],  label: [285, 196], hit: 'M230 80H340V200H230Z' },
   { id: 'dress',   name: '드레스룸',    box: [56, -4, 188, 88],    label: [125, 40],  hit: 'M60 0H240V80H60Z' },
@@ -923,6 +944,11 @@ function start() {
     e.stopPropagation();
     if (state.room !== 'entry') { enterRoom('entry'); return; }
     say(pick(['현관 정면의 그림이에요! 들어오자마자 숲길이 보이게 걸었대요', '이 그림 앞에서 사진 찍으면 예쁘게 나와요 멍!', '카펫이랑 그림 덕분에 현관이 호텔 같죠?']), 'tube');
+  });
+  $('#duck').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (state.room !== 'bath1') { enterRoom('bath1'); return; }
+    say(pick(['수건걸이의 노란 오리예요! 제 장난감 아니래요…', '꽉! 오리는 선물이 아니에요. 다른 데 찾아봐요']), 'doria');
   });
   const dogTap = (who) => (e) => { e.stopPropagation(); giveHint(who); };
   $('#dogTube').addEventListener('click', dogTap('tube'));
