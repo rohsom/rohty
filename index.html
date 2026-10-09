@@ -290,26 +290,39 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
         <path class="f-line" d="M57 526v12M74 526v12M91 526v12"/>
 
         <!-- 거실: 빔 스크린, 빈백 2, 좌탁, 프로젝터 -->
-        <polygon points="66,252 18,383 112,383" fill="#c9a46c" opacity=".10"/>
+        <polygon points="34,209 16,383 114,383" fill="#c9a46c" opacity=".10"/>
         <rect x="16" y="383" width="98" height="3.5" fill="#fff" stroke="#8b847b" stroke-width=".6"/>
-        <rect x="60" y="246" width="12" height="7" rx="1.5" fill="#2b2b2b"/>
-        <circle cx="66" cy="253" r="1.6" fill="#c9a46c"/>
-        <ellipse cx="38" cy="308" rx="15" ry="13" fill="#8d8780" stroke="#5f5a54" stroke-width=".8"/>
-        <ellipse cx="38" cy="304" rx="9" ry="6" fill="#a29c94"/>
-        <ellipse cx="96" cy="310" rx="15" ry="13" fill="#bdb6ac" stroke="#7d776f" stroke-width=".8"/>
-        <ellipse cx="96" cy="306" rx="9" ry="6" fill="#ccc6bd"/>
-        <rect x="50" y="330" width="34" height="20" rx="4" fill="#efeae2" stroke="#8b847b" stroke-width=".8"/>
+        <rect x="24" y="202" width="20" height="5" fill="#f4f2ee" stroke="#8b847b" stroke-width=".5"/>
+        <circle cx="34" cy="206" r="3" fill="#fbfaf7" stroke="#555" stroke-width=".6"/><circle cx="34" cy="207.5" r="1" fill="#c9a46c"/>
+        <rect x="52" y="203" width="14" height="8" fill="#d6d9da" stroke="#8b847b" stroke-width=".5"/>
+        <ellipse cx="14" cy="238" rx="10" ry="8" fill="#7a6553"/><ellipse cx="14" cy="238" rx="6" ry="4.5" fill="#a08a75"/>
+        <circle cx="9" cy="372" r="5.5" fill="#fbfaf7" stroke="#8b847b" stroke-width=".6"/><circle cx="9" cy="372" r="2" fill="#c9ced0"/>
+        <circle cx="22" cy="375" r="4" fill="#b9bcbd" stroke="#8b847b" stroke-width=".6"/>
+        <ellipse cx="38" cy="308" rx="15" ry="17" fill="#2f5a46" stroke="#1f3d30" stroke-width=".8"/>
+        <ellipse cx="38" cy="303" rx="9" ry="8" fill="#3a6b54"/>
+        <ellipse cx="96" cy="312" rx="16" ry="18" fill="#b79d84" stroke="#8a735d" stroke-width=".8"/>
+        <ellipse cx="96" cy="307" rx="10" ry="9" fill="#c7ae95"/>
+        <ellipse cx="67" cy="310" rx="9" ry="19" fill="#f0e2a0" stroke="#a8995a" stroke-width=".8"/>
 
         <!-- 주방: 블랙 키큰장 벽 + 블랙 세라믹 아일랜드 -->
         <rect class="f-dark" x="178" y="202" width="160" height="16"/>
         <path d="M198 202v16M218 202v16M238 202v16M282 202v16M302 202v16M322 202v16" stroke="#3c3f41" stroke-width=".6"/>
-        <rect x="248" y="203" width="30" height="14" fill="#cdc6ba"/>
-        <rect x="251" y="207" width="9" height="9" fill="#1c1c1c"/>
+        <rect x="244" y="203" width="40" height="14" fill="#b7babb"/>
+        <path d="M264 203v14" stroke="#8d9091" stroke-width=".6"/>
         <rect x="204" y="252" width="112" height="32" rx="1" fill="#141414" stroke="#000" stroke-width=".8"/>
         <path d="M206 262c14 -4 22 6 38 2s22 -8 36 -2M224 284c4-8 12-12 22-12M268 252c-4 8 2 14 12 18s20 2 34 10" fill="none" stroke="#e9e6e1" stroke-width=".8" opacity=".75"/>
         <rect x="282" y="258" width="22" height="12" rx="1.5" fill="#333" stroke="#555" stroke-width=".6"/>
         <circle cx="309" cy="264" r="1.6" fill="#0b0b0b" stroke="#777" stroke-width=".6"/>
-        <rect x="238" y="257" width="26" height="22" fill="none" stroke="#cfcac2" stroke-width=".8" stroke-dasharray="2 1.5"/>
+        <rect x="212" y="258" width="26" height="20" rx="1" fill="#0a0a0a" stroke="#444" stroke-width=".5"/>
+        <circle cx="219" cy="264" r="3.5" fill="none" stroke="#777" stroke-width=".5"/><circle cx="230" cy="272" r="4" fill="none" stroke="#777" stroke-width=".5"/>
+        <rect x="209" y="255" width="32" height="26" fill="none" stroke="#cfcac2" stroke-width=".8" stroke-dasharray="2 1.5"/>
+        <rect x="326" y="294" width="12" height="22" fill="#fbfaf7" stroke="#8b847b" stroke-width=".6"/>
+        <rect x="312" y="252" width="6" height="5" rx="1" fill="#efe39a"/>
+        <g id="gate" style="cursor:pointer">
+          <rect x="197" y="218" width="4" height="34" fill="#fff" stroke="#9a9590" stroke-width=".5"/>
+          <path d="M197 223h4M197 228h4M197 233h4M197 238h4M197 243h4M197 248h4" stroke="#9a9590" stroke-width=".4"/>
+          <rect x="190" y="216" width="18" height="38" fill="transparent"/>
+        </g>
 
         <!-- 다용도실 -->
         <rect class="f" x="300" y="350" width="32" height="34" rx="3"/>
@@ -404,7 +417,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
         <path d="M120 390V398M120 430V540"/>
       </g>
       <!-- black-film wall with hidden door between living room and small living room -->
-      <path class="walls wall-black" d="M40 200H143"/>
+      <path class="walls" d="M40 200H143"/>
       <path class="walls wall-black" d="M177 200H340"/>
       <rect x="143" y="198" width="34" height="4" fill="#0b0b0b"/>
       <circle cx="171" cy="200" r="1.4" fill="#c9a46c"/>
@@ -453,7 +466,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
           <circle cx="16.6" cy="-4.4" r=".8" fill="#111"/>
         </g>
       </g>
-      <g class="dog" id="dogDoria" transform="translate(126 300)" role="button" aria-label="도리아에게 힌트 듣기">
+      <g class="dog" id="dogDoria" transform="translate(134 262)" role="button" aria-label="도리아에게 힌트 듣기">
         <g class="bob">
           <path d="M-9 -2 q-6 -8 2 -11 q2 5 -2 11z" fill="#f0c48a"/>
           <circle cx="0" cy="0" r="8.5" fill="#f3cf9c"/>
@@ -535,9 +548,9 @@ const GIFTS = [
   { id: 'shoerack',  room: 'entry',   x: 232, y: 438, emoji: '👟', name: '현관 슈즈 벤치',      price: '5~10만원',  note: '카펫 위에 신발이 굴러다녀요. 앉아서 신발 신을 자리도 필요해요.', hint: '현관 카펫 위, 신발 벗는 쪽을 봐주세요. 제가 신발 물어가는 데요' },
   { id: 'guestbed',  room: 'bed1',    x: 24,  y: 486, emoji: '🛌', name: '손님용 침구 세트',     price: '8~15만원',  note: '놀러 와서 자고 가실 분들을 위한 포근한 이불이 필요해요.', hint: '현관 옆 손님방, 창가 데이베드를 봐주세요! 자고 가도 돼요' },
   { id: 'soundbar',  room: 'living',  x: 100, y: 378, emoji: '🔊', name: '블루투스 사운드바',    price: '10~20만원', note: '빔프로젝터로 영화 보는데 소리가 너무 작아요.',          hint: '거실 빔 스크린 근처가 수상해요. 멍!' },
-  { id: 'rug',       room: 'living',  x: 67,  y: 340, emoji: '🧶', name: '거실 러그',            price: '10~20만원', note: '좌탁 아래 타일이 차가워서 튜브가 발 시려해요.',        hint: '좌탁 밑이 차가워요… 거기 뭔가 있어요' },
-  { id: 'coffee',    room: 'kitchen', x: 263, y: 210, emoji: '☕', name: '캡슐 커피머신',        price: '15~25만원', note: '블랙 키큰장 가운데 빈 칸이 커피머신 자리예요.',        hint: '주방 검은 벽장 가운데 빈 칸! 거기요 거기!' },
-  { id: 'glasses',   room: 'kitchen', x: 226, y: 268, emoji: '🍷', name: '와인잔 세트',          price: '5~10만원',  note: '아일랜드 식탁에서 집들이 건배하고 싶어요.',            hint: '주방 까만 대리석 식탁 위를 잘 보세요' },
+  { id: 'sofa',      room: 'living',  x: 67,  y: 344, emoji: '🛋️', name: '거실 소파 (함께 보태기)', price: '여럿이 조금씩', note: '소파가 생기면 빈백 존을 싹 정리할 거예요. 몇 분이 같이 보태주셔도 좋아요!', hint: '거실 빈백 사이… 여기에 소파가 오면 좋겠대요' },
+  { id: 'coffee',    room: 'kitchen', x: 320, y: 306, emoji: '☕', name: '캡슐 커피머신',        price: '15~25만원', note: '주방 창가 쪽 가전 코너에 커피머신 자리를 비워뒀어요.',  hint: '주방 창문 끝, 작은 가전들 옆에 빈자리가 있어요!' },
+  { id: 'glasses',   room: 'kitchen', x: 262, y: 276, emoji: '🍷', name: '와인잔 세트',          price: '5~10만원',  note: '아일랜드 식탁에서 집들이 건배하고 싶어요.',            hint: '주방 까만 대리석 식탁 위를 잘 보세요' },
   { id: 'dryrack',   room: 'utility', x: 280, y: 382, emoji: '🧺', name: '빨래 바구니 & 건조대', price: '3~6만원',   note: '튜브·도리아 담요 빨래가 매일 한가득이에요.',            hint: '주방 옆 다용도실… 제 담요가 거기서 빨래돼요' },
   { id: 'fountain',  room: 'small',   x: 94,  y: 172, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '튜브와 도리아가 물을 더 많이 마셨으면 해서요.',        hint: '작은 거실 우리 집(울타리) 안에 뭐가 있게요?' },
   { id: 'monitorarm',room: 'small',   x: 164, y: 98,  emoji: '🖥️', name: '듀얼 모니터암',        price: '5~10만원',  note: '책상 두 개 위가 선으로 정신없어요.',                   hint: '작은 거실 컴퓨터 책상 위를 봐주세요' },
@@ -949,6 +962,11 @@ function start() {
     e.stopPropagation();
     if (state.room !== 'bath1') { enterRoom('bath1'); return; }
     say(pick(['수건걸이의 노란 오리예요! 제 장난감 아니래요…', '꽉! 오리는 선물이 아니에요. 다른 데 찾아봐요']), 'doria');
+  });
+  $('#gate').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (state.room !== 'kitchen') { enterRoom('kitchen'); return; }
+    say(pick(['이 문 너머 주방은 저희 출입금지 구역이에요…', '킁킁, 맛있는 냄새는 나는데 못 들어가요 ㅠㅠ']), 'tube');
   });
   const dogTap = (who) => (e) => { e.stopPropagation(); giveHint(who); };
   $('#dogTube').addEventListener('click', dogTap('tube'));
