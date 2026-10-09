@@ -380,15 +380,24 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
         <g id="gate2"><rect x="228.5" y="164" width="3.5" height="31" fill="#fff" stroke="#9a9590" stroke-width=".5"/>
         <path d="M228.5 169h3.5M228.5 174h3.5M228.5 179h3.5M228.5 184h3.5M228.5 189h3.5" stroke="#9a9590" stroke-width=".4"/></g>
 
-        <!-- 침실: 킹 침대 + 장롱 2 -->
-        <rect class="f-soft" x="234" y="83" width="48" height="13"/>
-        <rect class="f-soft" x="286" y="83" width="50" height="13"/>
-        <path class="f-line" d="M258 83v13M311 83v13"/>
-        <rect class="f" x="252" y="108" width="84" height="74" rx="3"/>
-        <rect class="f" x="322" y="112" width="11" height="31" rx="3"/>
-        <rect class="f" x="322" y="147" width="11" height="31" rx="3"/>
-        <rect x="254" y="110" width="64" height="70" rx="2" fill="#d4cec5" stroke="#8b847b" stroke-width=".6"/>
-        <path d="M254 124h64" stroke="#bfb8ae" stroke-width="1.2"/>
+        <!-- 침실: 브라운 가죽 킹 침대(프레임 내일 도착!), 노란 원형 협탁 + 가습기, 행거, 장롱 2, 물고기 그림 -->
+        <rect x="234" y="84" width="84" height="70" rx="4" fill="#6b4a35" stroke="#3f2a1d" stroke-width=".8"/>
+        <rect x="312" y="84" width="6" height="70" rx="2" fill="#5a3d2b"/>
+        <rect x="237" y="87" width="74" height="64" rx="2" fill="#f1ead8" stroke="#b9ae94" stroke-width=".6"/>
+        <path d="M241 87v64M247 87v64M253 87v64M259 87v64M265 87v64M271 87v64M277 87v64" stroke="#e2d9c2" stroke-width=".6"/>
+        <rect x="296" y="90" width="12" height="25" rx="3" fill="#fbf8f0" stroke="#b9ae94" stroke-width=".6"/>
+        <rect x="296" y="120" width="12" height="25" rx="3" fill="#fbf8f0" stroke="#b9ae94" stroke-width=".6"/>
+        <circle cx="327" cy="94" r="6" fill="#f2e08e" stroke="#b8a656" stroke-width=".6"/>
+        <circle cx="327" cy="94" r="3" fill="#fbfaf7" stroke="#9aa" stroke-width=".4"/>
+        <circle cx="334" cy="160" r="3.5" fill="none" stroke="#9b958d" stroke-width=".8"/>
+        <path d="M331 158l3 -2 3 2" stroke="#222" stroke-width="1.2" fill="none"/>
+        <rect x="270" y="184" width="32" height="13" fill="#f8f6f2" stroke="#a88d68" stroke-width=".9"/>
+        <rect x="304" y="184" width="32" height="13" fill="#f8f6f2" stroke="#a88d68" stroke-width=".9"/>
+        <path d="M286 184v13M320 184v13" stroke="#c9b48f" stroke-width=".6"/>
+        <path d="M322 185v10" stroke="#8d7766" stroke-width="2.2"/>
+        <circle cx="336" cy="176" r="3.6" fill="#f3efe0" stroke="#fff" stroke-width="1"/>
+        <path d="M334 176q2 -2 4 0q-2 2 -4 0z" fill="#5b8a4e"/>
+
 
         <!-- 드레스룸: 커튼, 회전 거울장, 원목 7단 서랍장, 화이트 화장대 -->
         <rect x="160" y="3" width="36" height="16" fill="#6b4a35" stroke="#3f2a1d" stroke-width=".6"/>
@@ -443,7 +452,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
       <g class="window">
         <path d="M0 94V190"/><path d="M40 92V190"/>
         <path d="M0 214V380"/><path d="M0 408V528"/>
-        <path d="M340 236V292"/><path d="M340 104V176"/>
+        <path d="M340 236V292"/><path d="M340 102V166"/>
         <path d="M272 0H312"/>
       </g>
 
@@ -566,7 +575,7 @@ const GIFTS = [
   { id: 'fountain',  room: 'small',   x: 62,  y: 100, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '튜브와 도리아가 물을 더 많이 마셨으면 해서요.',        hint: '작업실 창가, 하얀 동그란 울타리 안에 뭐가 있게요?' },
   { id: 'monitorarm',room: 'small',   x: 70,  y: 188,  emoji: '🖥️', name: '듀얼 모니터암',        price: '5~10만원',  note: '작업실 책상 두 개 위가 선으로 정신없어요.',             hint: '작업실 창가 쪽 컴퓨터 책상 위를 봐주세요' },
   { id: 'cabinet',   room: 'small',   x: 216, y: 128, emoji: '🗄️', name: '작업실 수납장',        price: '10~20만원', note: '짐이 아직 박스에 들어 있어요. 수납장이 생기면 작업실 정리 끝!', hint: '작업실 구석 박스 더미… 저기 정리가 필요해요' },
-  { id: 'bedding',   room: 'bed2',    x: 286, y: 146, emoji: '🛏️', name: '킹사이즈 호텔 침구',   price: '15~30만원', note: '킹 침대에 맞는 하얀 호텔 침구가 꿈이에요.',            hint: '안쪽 침실 큰 침대 위… 폭신한 냄새' },
+  { id: 'bedding',   room: 'bed2',    x: 268, y: 118, emoji: '🛏️', name: '킹사이즈 호텔 침구',   price: '15~30만원', note: '브라운 가죽 침대 프레임이 왔어요! 이제 어울리는 호텔 침구만 있으면 돼요.', hint: '안쪽 침실 큰 침대 위… 폭신한 냄새' },
   { id: 'bathmat',   room: 'bath1',   x: 200, y: 362, emoji: '🧼', name: '욕실 매트 & 디스펜서', price: '3~6만원',   note: '블랙 마블 세면대에 어울리는 디스펜서 세트가 갖고 싶어요.', hint: '거실 욕실 까만 세면대 앞이 수상해요' },
   { id: 'towels',    room: 'bath2',   x: 313, y: 48,  emoji: '🛁', name: '호텔 수건 세트',       price: '4~8만원',   note: '욕조 있는 화장실에 두툼한 수건을 두고 싶어요.',        hint: '욕조 있는 안쪽 화장실! 저는 목욕 싫어요…' },
   { id: 'candle',    room: 'dress',   x: 217, y: 22,  emoji: '🪔', name: '캔들워머',             price: '3~6만원',   note: '화장대 위에 은은한 불빛 하나 있으면 좋겠어요.',        hint: '드레스룸 화장대 쪽에 반짝이는 게 있어요' },
@@ -582,7 +591,7 @@ const ROOMS = [
   { id: 'utility', name: '다용도실',    box: [246, 326, 98, 78],   label: [295, 396], hit: 'M250 330H340V400H250Z' },
   { id: 'bath1',   name: '거실 욕실',   box: [146, 326, 108, 118], label: [190, 420], hit: 'M150 330H250V440H150Z' },
   { id: 'small',   name: '작업실',   box: [36, 76, 198, 128],   label: [190, 166], hit: 'M40 80H230V200H40Z' },
-  { id: 'bed2',    name: '침실',        box: [226, 76, 118, 128],  label: [285, 196], hit: 'M230 80H340V200H230Z' },
+  { id: 'bed2',    name: '침실',        box: [226, 76, 118, 128],  label: [262, 172], hit: 'M230 80H340V200H230Z' },
   { id: 'dress',   name: '드레스룸',    box: [146, -4, 98, 88],    label: [204, 40],  hit: 'M150 0H240V80H150Z' },
   { id: 'bath2',   name: '안쪽 욕실',   box: [236, -4, 108, 88],   label: [268, 50],  hit: 'M240 0H340V80H240Z' },
   { id: 'balcony', name: '베란다',      box: [-4, 76, 48, 128],    label: [20, 140],  hit: 'M0 80H40V200H0Z', vertical: true },
