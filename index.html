@@ -77,7 +77,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .f-dark { fill: var(--film); stroke: #0b0b0b; stroke-width: .8; }
 .f-line { stroke: #8b847b; stroke-width: .6; fill: none; }
 .lbl { font: 600 9.5px var(--font-body); fill: #6f685f; text-anchor: middle; pointer-events: none; letter-spacing: .02em; }
-.lbl-dark { fill: #b9b2a7; }
+.lbl-dark { fill: #c9c2b6; }
 .zoomed .lbl { opacity: .35; }
 .badge circle { fill: var(--brass); }
 .badge text { font: 700 7.5px var(--font-body); fill: #1b1a19; text-anchor: middle; dominant-baseline: central; }
@@ -180,6 +180,9 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .door .lock::after { content: ""; position: absolute; left: 4px; top: 6px; width: 5px; height: 5px; border-radius: 50%; background: #6fc3ff; opacity: .8; }
 .door .handle { position: absolute; right: 6px; top: 58%; width: 22px; height: 4px; border-radius: 2px; background: #b9b4ad; }
 .door .plate { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); font: 700 11px var(--font-display); color: #d8c3a5; letter-spacing: .06em; }
+.door .banner { position: absolute; left: 50%; top: 52px; transform: translateX(-50%); width: 30px; }
+.door .banner i { display: block; width: 18px; height: 12px; margin: 0 auto; border: 1px solid #c8b493; border-bottom: 0; transform: rotate(45deg) translate(5px, 5px); border-right: 0; }
+.door .banner span { display: grid; place-items: center; width: 30px; height: 40px; background: #f2eee6; border-top: 2px solid #b48d5c; color: #c98a8a; font-size: 13px; }
 .door.open { transform: rotateY(-78deg); }
 .enter { width: 100%; display: grid; gap: 10px; }
 .enter label { font-size: 13px; color: var(--muted); text-align: left; }
@@ -237,8 +240,11 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
       <g>
         <path class="floor" fill="url(#tiles)" d="M60 0H340V400H250V500H120V540H0V80H60Z" style="fill:url(#tiles)"/>
         <rect x="0" y="80" width="40" height="120" style="fill:url(#balconyTiles)"/>
-        <rect x="120" y="420" width="130" height="80" fill="#f1eeea"/>
-        <rect x="120" y="390" width="20" height="30" fill="#f1eeea"/>
+        <!-- 현관: 호텔 느낌 네이비 카펫 + 블랙 마블 단차 -->
+        <rect x="148" y="420" width="102" height="80" fill="#2a2f3d"/>
+        <path d="M148 432H250M148 446H250M148 460H250M148 474H250M148 488H250" stroke="#323849" stroke-width=".6"/>
+        <rect x="140" y="420" width="8" height="80" fill="#151515"/>
+        <path d="M141 428c3 6 -1 12 4 20M146 462c-3 8 1 14 -2 24" stroke="#e9e6e1" stroke-width=".6" fill="none" opacity=".8"/>
       </g>
 
       <!-- ceiling cove light in living room -->
@@ -247,10 +253,21 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
       <!-- furniture -->
       <g id="furniture">
         <!-- 현관: full-height cabinets + mirror niche -->
-        <rect class="f-soft" x="142" y="487" width="104" height="11"/>
-        <rect x="176" y="488" width="30" height="9" fill="#bfc9cb" stroke="#8b847b" stroke-width=".6"/>
-        <rect x="178" y="489" width="26" height="3" fill="#efe6d6"/>
-        <path class="f-line" d="M159 487v11M226 487v11"/>
+        <rect class="f-soft" x="150" y="487" width="96" height="11"/>
+        <rect x="178" y="488" width="32" height="9" fill="#efe6d6" stroke="#8b847b" stroke-width=".6"/>
+        <path d="M179 489.5q2.6 -1.6 5.2 0t5.2 0t5.2 0t5.2 0t5.2 0" fill="none" stroke="#2b2b2b" stroke-width=".6"/>
+        <rect x="179" y="489" width="18" height="4.5" fill="#fbfaf7" opacity=".9"/>
+        <path d="M195 492.6l-2 -1.6v3.2zM195 492.6l2 -1.6v3.2z" fill="#111"/>
+        <circle cx="204" cy="493" r="1.6" fill="#a58fd6"/>
+        <rect x="199" y="491.5" width="2.4" height="3" fill="#8a5a3a"/>
+        <path class="f-line" d="M166 487v11M228 487v11"/>
+        <!-- 정면의 포인트 그림 (탭하면 강아지가 소개) -->
+        <g id="artwork" style="cursor:pointer">
+          <rect x="120.5" y="471" width="5" height="24" fill="#fff"/>
+          <rect x="121.3" y="472" width="3.4" height="22" fill="#3d7a4b"/>
+          <rect x="122.3" y="476" width="1.4" height="13" fill="#8fc0dd"/>
+          <rect x="114" y="466" width="22" height="34" fill="transparent"/>
+        </g>
 
         <!-- 작은방(현관 옆): 붙박이장, 창가 침대, 6단 수납장 + TV -->
         <rect class="f-soft" x="8" y="393" width="92" height="12"/>
@@ -455,6 +472,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
     <div class="door-frame" aria-hidden="true">
       <div class="door" id="door">
         <div class="plate" id="doorPlate">유 · 튜브 · 도리아</div>
+        <div class="banner"><i></i><span>♡</span></div>
         <div class="lock"></div><div class="handle"></div>
       </div>
     </div>
@@ -494,7 +512,7 @@ const FIREBASE_CONFIG = {
    3) 선물 목록 (지금은 예시) — room 은 아래 ROOMS 의 id, x/y 는 평면도 좌표
    ================================================================ */
 const GIFTS = [
-  { id: 'diffuser',  room: 'entry',   x: 191, y: 491, emoji: '🕯️', name: '현관 디퓨저',        price: '3~5만원',   note: '문 열자마자 호텔 로비 향이 나면 좋겠어요.',            hint: '현관 거울 쪽에서 좋은 냄새가 날 것 같아요… 킁킁' },
+  { id: 'shoerack',  room: 'entry',   x: 232, y: 438, emoji: '👟', name: '현관 슈즈 벤치',      price: '5~10만원',  note: '카펫 위에 신발이 굴러다녀요. 앉아서 신발 신을 자리도 필요해요.', hint: '현관 카펫 위, 신발 벗는 쪽을 봐주세요. 제가 신발 물어가는 데요' },
   { id: 'moodlamp',  room: 'bed1',    x: 14,  y: 418, emoji: '💡', name: '침대 옆 무드등',       price: '3~6만원',   note: '창가 침대 머리맡이 아직 깜깜해요.',                    hint: '현관 옆 작은방, 창가 침대 머리맡을 봐주세요!' },
   { id: 'soundbar',  room: 'living',  x: 100, y: 378, emoji: '🔊', name: '블루투스 사운드바',    price: '10~20만원', note: '빔프로젝터로 영화 보는데 소리가 너무 작아요.',          hint: '거실 빔 스크린 근처가 수상해요. 멍!' },
   { id: 'rug',       room: 'living',  x: 67,  y: 340, emoji: '🧶', name: '거실 러그',            price: '10~20만원', note: '좌탁 아래 타일이 차가워서 튜브가 발 시려해요.',        hint: '좌탁 밑이 차가워요… 거기 뭔가 있어요' },
@@ -511,7 +529,7 @@ const GIFTS = [
 
 /* 평면도의 공간 (x,y,w,h = 확대할 때 보여줄 영역) */
 const ROOMS = [
-  { id: 'entry',   name: '현관',        box: [110, 384, 150, 126], label: [195, 462], hit: 'M120 390H140V420H250V500H120Z' },
+  { id: 'entry',   name: '현관',        box: [110, 384, 150, 126], label: [199, 462], dark: true, hit: 'M120 390H140V420H250V500H120Z' },
   { id: 'bed1',    name: '작은방',      box: [-4, 384, 128, 160],  label: [60, 520],  hit: 'M0 390H120V540H0Z' },
   { id: 'living',  name: '거실',        box: [-4, 196, 190, 198],  label: [120, 236], hit: 'M0 200H180V330H140V390H0Z' },
   { id: 'kitchen', name: '주방',        box: [176, 196, 168, 138], label: [260, 312], hit: 'M180 200H340V330H180Z' },
@@ -626,7 +644,7 @@ function buildPlan() {
     h.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterRoom(r.id); } });
 
     const g = el('g', {}, labels);
-    const t = el('text', { x: r.label[0], y: r.label[1], class: 'lbl' }, g);
+    const t = el('text', { x: r.label[0], y: r.label[1], class: r.dark ? 'lbl lbl-dark' : 'lbl' }, g);
     if (r.vertical) { t.setAttribute('transform', `rotate(-90 ${r.label[0]} ${r.label[1]})`); }
     t.textContent = r.name;
     const b = el('g', { class: 'badge', 'data-badge': r.id }, g);
@@ -901,6 +919,11 @@ function start() {
   $('#scrim').onclick = closeSheets;
   $('#countBtn').onclick = () => { renderNotebook(); showSheet('#nbSheet'); };
   $('#avatarBtn').onclick = () => giveHint(speaker === 'tube' ? 'doria' : 'tube');
+  $('#artwork').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (state.room !== 'entry') { enterRoom('entry'); return; }
+    say(pick(['현관 정면의 그림이에요! 들어오자마자 숲길이 보이게 걸었대요', '이 그림 앞에서 사진 찍으면 예쁘게 나와요 멍!', '카펫이랑 그림 덕분에 현관이 호텔 같죠?']), 'tube');
+  });
   const dogTap = (who) => (e) => { e.stopPropagation(); giveHint(who); };
   $('#dogTube').addEventListener('click', dogTap('tube'));
   $('#dogDoria').addEventListener('click', dogTap('doria'));
