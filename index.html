@@ -122,6 +122,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   animation: rise .4s ease both;
 }
 .cta em { font-style: normal; font-size: 21px; line-height: 1; }
+.cta.ghost { background: var(--surface); color: var(--ink-2); border: 1.5px solid var(--line); box-shadow: 0 3px 0 var(--line-soft); font-size: 14.5px; }
+.cta.ghost em { font-size: 17px; }
 .cta.game { background: var(--graphite); color: #fdf7e9; box-shadow: 0 6px 0 #1f1d19, 0 12px 22px -12px rgba(40,34,26,.7); }
 .cta.game:active { transform: translateY(3px); box-shadow: 0 3px 0 #1f1d19, 0 8px 16px -12px rgba(40,34,26,.7); }
 .cta.gold {
@@ -215,23 +217,30 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .room-btn.done span { color: var(--ok); font-weight: 600; }
 
 /* ---------- mini games ---------- */
-.game-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.score { font-variant-numeric: tabular-nums; color: var(--brass); font-weight: 700; font-size: 15px; white-space: nowrap; }
+.game-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.hearts { font-size: 19px; color: #d4584a; letter-spacing: 2px; white-space: nowrap; flex: none; }
+.hearts i { color: #e0d6c2; font-style: normal; }
+.score { margin-top: 11px; display: inline-block; padding: 6px 13px; border-radius: 999px; background: #f6f0e2; border: 1px solid var(--line-soft); color: var(--ink-2); font-size: 13px; font-variant-numeric: tabular-nums; }
+.score b { color: var(--brass); font-weight: 700; }
 .board { margin-top: 14px; }
-.pic { position: relative; border-radius: 12px; overflow: hidden; background: var(--paper); border: 1px solid var(--line); }
-.pic img { display: block; width: 100%; height: auto; }
-.pic.shake { animation: shake .34s; }
-@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
-.spot { position: absolute; transform: translate(-50%, -50%); width: 12%; cursor: pointer; background: none; border: 0; padding: 0; }
-.spot svg, .spot img { width: 100%; height: auto; display: block; }
-.spot.got::after { content: ""; position: absolute; inset: -22%; border-radius: 50%; border: 3px solid var(--bad); animation: ring .4s ease both; }
-@keyframes ring { from { transform: scale(.4); opacity: 0 } to { transform: scale(1); opacity: 1 } }
-.miss { position: absolute; transform: translate(-50%, -50%); width: 26px; height: 26px; border-radius: 50%; border: 2px dashed #9a9388; pointer-events: none; animation: fadeout .7s ease forwards; }
+
+.panels { display: grid; gap: 8px; }
+.pic { position: relative; border-radius: 12px; overflow: hidden; background: var(--paper); border: 1px solid var(--line); cursor: crosshair; }
+.pic img, .picimg { display: block; width: 100%; height: auto; }
+.pic .lab { position: absolute; left: 8px; top: 8px; z-index: 3; font: 700 11px var(--font-body); color: #5c5446; background: rgba(255,253,247,.92); border: 1px solid var(--line); border-radius: 99px; padding: 2px 9px; }
+.marks { position: absolute; inset: 0; pointer-events: none; }
+.found { position: absolute; transform: translate(-50%, -50%); aspect-ratio: 1; border: 3px solid #c0544a; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255,255,255,.75); animation: ring .4s ease both; }
+@keyframes ring { from { transform: translate(-50%, -50%) scale(.4); opacity: 0 } to { transform: translate(-50%, -50%) scale(1); opacity: 1 } }
+.missx { position: absolute; transform: translate(-50%, -50%); width: 28px; height: 28px; border-radius: 50%; border: 2px dashed #9a9388; animation: fadeout .7s ease forwards; }
 @keyframes fadeout { to { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } }
 
+.hintwrap { display: flex; align-items: center; gap: 14px; margin-bottom: 11px; }
+.hintwrap canvas { width: 108px; height: 108px; flex: none; border-radius: 12px; border: 2.5px solid var(--brass); background: var(--paper); box-shadow: 0 5px 14px rgba(120,90,40,.28); }
+.hintwrap span { font: 700 17px/1.35 var(--font-dog); color: var(--ink-2); }
+
 .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.card { position: relative; aspect-ratio: 3/4; border-radius: 10px; border: 1.5px solid #c9b995; background: linear-gradient(140deg, #efe3c9, #e2d3b2); font-size: 26px; display: grid; place-items: center; cursor: pointer; transition: background .2s; }
-.card::after { content: "🐾"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 19px; opacity: .55; transition: opacity .12s; }
+.card { position: relative; aspect-ratio: 3/4; border-radius: 10px; border: 1.5px solid #c9b995; background: linear-gradient(140deg, #efe3c9, #e2d3b2); font-size: 25px; display: grid; place-items: center; cursor: pointer; transition: background .2s; }
+.card::after { content: "🐾"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 18px; opacity: .55; transition: opacity .12s; }
 .card.up::after, .card.done::after { opacity: 0; }
 .card .f { opacity: 0; transition: opacity .12s; }
 .card.up, .card.done { background: var(--surface); border-color: var(--line); }
@@ -243,6 +252,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .opt { padding: 15px 16px; border-radius: 12px; border: 1.5px solid var(--line); background: #faf6ec; text-align: left; cursor: pointer; font-size: 15px; font-weight: 500; }
 .opt.wrong { border-color: var(--bad); color: var(--bad); animation: shake .34s; }
 .opt.right { border-color: var(--ok); color: var(--ok); background: #eef6f0; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
 
 .puz { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 4px; aspect-ratio: var(--ar, 1); }
 .tile { border-radius: 6px; border: 1.5px solid var(--line); background-size: 300% 300%; background-color: var(--paper); cursor: pointer; }
@@ -252,8 +262,9 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .puz-ref img { width: 54px; border-radius: 6px; border: 1px solid var(--line); }
 
 .won { text-align: center; padding: 6px 0 0; }
-.won .big { font-size: 44px; }
-.won h2 { margin: 8px 0 0; }
+.won .big { font-size: 46px; }
+.won .stars { font-size: 27px; color: #d9a550; letter-spacing: 5px; margin-top: 4px; }
+.won h2 { margin: 6px 0 0; }
 .won p { color: var(--ink-2); font-size: 14.5px; margin: 8px 0 0; }
 
 /* ---------- invitation ---------- */
@@ -585,33 +596,32 @@ const ROOM_ENTRY = {
    ================================================================ */
 const GAMES = {
   entry: {
-    type: 'quiz', title: '초대 확인 퀴즈', lede: '초대받은 분이 맞는지 살짝만 확인할게요!',
+    type: 'quiz', title: '초대 확인 퀴즈', lede: '초대받은 분이 맞는지 확인할게요. 세 문제!',
     qs: [
       { q: '이 집 강아지 두 마리의 이름은?', a: ['유튜브와 유도리', '튜브와 도리', '뽀삐와 초코'], c: 0 },
-      { q: '집주인이 인테리어에 제일 공들인 공간은?', a: ['베란다', '주방', '다용도실'], c: 1 },
+      { q: '닥스훈트 유튜브의 털 색은?', a: ['새까만 블랙', '크림빛 골드', '회색 그레이'], c: 1 },
+      { q: '집주인이 인테리어에 제일 공들인 공간은?', a: ['베란다', '다용도실', '주방'], c: 2 },
     ],
   },
-  living: { type: 'find', title: '몰래 들어온 것 찾기', lede: '거실 그림에 원래 없던 3가지가 숨었어요. 찾아서 눌러주세요!', scene: 'living-window', count: 3 },
+  living: { type: 'spot', title: '거실 틀린 그림 찾기', lede: '아래 그림에서 위와 다른 곳 4군데를 찾아 눌러주세요', scene: 'living-kitchen', count: 4 },
   kitchen: {
-    type: 'memory', title: '주방 짝 맞추기', lede: '같은 그림 두 장을 찾아 짝지어 주세요',
-    pairs: ['🍷', '☕', '🍳', '🥄', '🧂', '🫖'],
+    type: 'memory', title: '주방 짝 맞추기', lede: '여덟 쌍을 다 맞춰야 통과예요. 적게 뒤집을수록 좋아요',
+    pairs: ['🍷', '☕', '🍳', '🥄', '🧂', '🫖', '🔪', '🍶'],
   },
-  small: { type: 'find', title: '작업실 숨은 그림 찾기', lede: '작업실에 4가지가 몰래 들어왔어요. 제일 어려운 방이에요!', scene: 'studio-desk', count: 4 },
-  bed2: { type: 'puzzle', title: '침실 그림 맞추기', lede: '조각 두 개를 눌러 자리를 바꿔요. 그림이 완성되면 끝!', scene: 'bedroom-bed' },
+  small: { type: 'spot', title: '작업실 틀린 그림 찾기', lede: '제일 어려운 방이에요. 다른 곳 5군데!', scene: 'studio-desk', count: 5 },
+  bed2: { type: 'spot', title: '침실 틀린 그림 찾기', lede: '다른 곳 3군데를 찾아주세요', scene: 'bedroom-bed', count: 3 },
   dress: {
-    type: 'quiz', title: '드레스룸 퀴즈', lede: '이 집을 잘 아는 분이라면 쉬워요',
+    type: 'quiz', title: '드레스룸 퀴즈', lede: '집을 둘러본 분이라면 풀 수 있어요',
     qs: [
       { q: '이 집 인테리어의 메인 컬러는?', a: ['파스텔 핑크', '그레이·블랙·화이트', '우드 브라운'], c: 1 },
       { q: '안방 벽을 철거해서 만든 공간의 별명은?', a: ['작업실(히든룸)', '서재', '홈바'], c: 0 },
+      { q: '주방과 작업실 사이에 숨어 있는 것은?', a: ['비밀 금고', '벽과 똑같은 히든도어', '계단'], c: 1 },
     ],
   },
-  bath2: { type: 'find', title: '안쪽 욕실 숨은 그림', lede: '2가지가 숨었어요. 금방 찾으실 거예요', scene: 'bath2-tub', count: 2 },
-  bed1: {
-    type: 'memory', title: '손님방 짝 맞추기', lede: '자고 가실 분들을 위한 방이에요',
-    pairs: ['🛏️', '🧸', '📺', '🪟', '🧦', '📚'],
-  },
-  bath1: { type: 'puzzle', title: '거실 욕실 그림 맞추기', lede: '조각 두 개를 눌러 자리를 바꿔요', scene: 'bath1-sink' },
-  utility: { type: 'find', title: '다용도실 숨은 그림', lede: '2가지가 숨었어요', scene: 'utility', count: 2 },
+  bath2: { type: 'detail', title: '안쪽 욕실 돋보기', lede: '확대된 조각이 그림의 어디인지 짚어주세요', scene: 'bath2-tub', rounds: 3 },
+  bed1: { type: 'detail', title: '손님방 돋보기', lede: '확대된 조각이 그림의 어디인지 짚어주세요', scene: 'guest', rounds: 3 },
+  bath1: { type: 'puzzle', title: '거실 욕실 그림 맞추기', lede: '조각 두 개를 눌러 자리를 바꿔요. 적게 움직일수록 별이 많아요', scene: 'bath1-sink' },
+  utility: { type: 'detail', title: '다용도실 돋보기', lede: '몸풀기 두 판이에요', scene: 'utility', rounds: 2 },
 };
 
 /* ================================================================
@@ -654,6 +664,7 @@ const state = {
   guest: ls('hw2_guest') || null,
   guestId: ls('hw2_gid') || (Math.random().toString(36).slice(2) + Date.now().toString(36)),
   cleared: new Set(ls('hw2_cleared') || []),
+  stars: ls('hw2_stars') || {},
   thanked: !!ls('hw2_thanked'),
   cueReady: false,
   claims: {},
@@ -899,6 +910,11 @@ function updateCta() {
     b.hidden = false; b.className = 'cta game';
     b.innerHTML = `<em>🎮</em> ${esc(ROOM_NAMES[room])} 미니게임`;
     b.onclick = () => openGame(room);
+  } else if (g) {
+    const st = state.stars[room] || 0;
+    b.hidden = false; b.className = 'cta ghost';
+    b.innerHTML = `<em>${st >= 3 ? '🏆' : '⭐'}</em> ${esc(ROOM_NAMES[room])} ${starStr(st)} ${st >= 3 ? '· 한 판 더' : '· 기록 깨기'}`;
+    b.onclick = () => openGame(room);
   } else {
     b.hidden = true;
   }
@@ -960,151 +976,380 @@ function setupDrag() {
 }
 
 /* ================================================================
-   미니게임
+   미니게임 — 하트 3개, 별 3개가 걸린 한 판
    ================================================================ */
-const DOODLES = {
-  bone: '<svg viewBox="0 0 40 24"><path d="M7 5a4.6 4.6 0 1 0-1.4 7.3A4.6 4.6 0 1 0 9.8 19l20.4-.6a4.6 4.6 0 1 0 4.3-6.5A4.6 4.6 0 1 0 30.4 5L9.9 5.6z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/></svg>',
-  ball: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11.5" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7"/><path d="M3 11c7 3 15 3 22 0M3 17c7-3 15-3 22 0M14 2.6v22.8" fill="none" stroke="#3b3630" stroke-width="1.3"/></svg>',
-  paw: '<svg viewBox="0 0 30 30"><ellipse cx="15" cy="20" rx="8" ry="6.5" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7"/><ellipse cx="6" cy="12" rx="3.3" ry="4.2" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.6"/><ellipse cx="12" cy="8" rx="3.3" ry="4.4" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.6"/><ellipse cx="19" cy="8" rx="3.3" ry="4.4" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.6"/><ellipse cx="25" cy="12" rx="3.3" ry="4.2" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.6"/></svg>',
-  star: '<svg viewBox="0 0 30 30"><path d="M15 2.5l3.9 8.3 9 1.2-6.6 6.2 1.7 8.9L15 22.8 7 27.1l1.7-8.9L2.1 12l9-1.2z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/></svg>',
-  mug: '<svg viewBox="0 0 30 28"><path d="M4 7h17v12a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/><path d="M21 10h3a3.5 3.5 0 1 1 0 7h-3" fill="none" stroke="#3b3630" stroke-width="1.7"/><path d="M9 4c0-1.6 2-1.6 2-3M14 4c0-1.6 2-1.6 2-3" fill="none" stroke="#3b3630" stroke-width="1.4" stroke-linecap="round"/></svg>',
-  sock: '<svg viewBox="0 0 26 30"><path d="M8 2h9v12.5c0 2 .8 3 2.4 4.2l2.4 1.9a5.4 5.4 0 1 1-6.6 8.5l-6-4.6C6.5 22.6 8 20 8 16.6z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 6.5h9" fill="none" stroke="#3b3630" stroke-width="1.4"/></svg>',
-  heart: '<svg viewBox="0 0 30 28"><path d="M15 25C7 19.5 2.5 15.4 2.5 10.6A6.6 6.6 0 0 1 15 7.2 6.6 6.6 0 0 1 27.5 10.6C27.5 15.4 23 19.5 15 25z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/></svg>',
-  bell: '<svg viewBox="0 0 28 30"><path d="M14 3a7.5 7.5 0 0 1 7.5 7.5c0 6 2 7.5 2 9.5H4.5c0-2 2-3.5 2-9.5A7.5 7.5 0 0 1 14 3z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/><path d="M11 23.5a3 3 0 0 0 6 0M14 3V.8" fill="none" stroke="#3b3630" stroke-width="1.6" stroke-linecap="round"/></svg>',
-};
-const DOODLE_KEYS = Object.keys(DOODLES);
-
 let game = null;
+const imgCache = {};
+function loadImg(src) {
+  return new Promise((res, rej) => {
+    if (imgCache[src]) return res(imgCache[src]);
+    const i = new Image();
+    i.onload = () => { imgCache[src] = i; res(i); };
+    i.onerror = rej;
+    i.src = src;
+  });
+}
+/* 그림에서 '디테일이 많은 곳'을 골라줍니다 — 빈 벽이 아니라 물건 위에 문제가 나도록 */
+function gridCells(gx, gy) {
+  const out = [];
+  for (let j = 0; j < gy; j++) for (let i = 0; i < gx; i++)
+    out.push({ cx: (i + 0.5) / gx, cy: (j + 0.5) / gy, score: Math.random() });
+  return out.sort((a, b) => b.score - a.score);
+}
+function detailCells(img, gx, gy) {
+  try { return detailCellsPx(img, gx, gy); } catch (e) { return gridCells(gx, gy); }
+}
+function detailCellsPx(img, gx, gy) {
+  const W = 180, H = Math.max(2, Math.round(180 * img.naturalHeight / img.naturalWidth));
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0, W, H);
+  const d = g.getImageData(0, 0, W, H).data;
+  const cw = W / gx, ch = H / gy, out = [];
+  for (let j = 0; j < gy; j++) for (let i = 0; i < gx; i++) {
+    let sum = 0, sum2 = 0, n = 0;
+    for (let y = Math.floor(j * ch); y < Math.floor((j + 1) * ch); y++)
+      for (let x = Math.floor(i * cw); x < Math.floor((i + 1) * cw); x++) {
+        const k = (y * W + x) * 4, v = 0.299 * d[k] + 0.587 * d[k + 1] + 0.114 * d[k + 2];
+        sum += v; sum2 += v * v; n++;
+      }
+    const mean = sum / n;
+    out.push({ cx: (i + 0.5) / gx, cy: (j + 0.5) / gy, score: Math.max(0, sum2 / n - mean * mean) });
+  }
+  return out.sort((a, b) => b.score - a.score);
+}
+function spreadPicks(cells, n, minDist, margin) {
+  const picks = [];
+  for (const c of cells) {
+    if (picks.length >= n) break;
+    if (c.cx < margin || c.cx > 1 - margin || c.cy < margin || c.cy > 1 - margin) continue;
+    if (picks.some(p => Math.hypot(p.cx - c.cx, p.cy - c.cy) < minDist)) continue;
+    picks.push(c);
+  }
+  return picks;
+}
 
 function openGame(room) {
-  const g = GAMES[room];
-  if (!g) return;
-  game = { room, def: g };
-  renderGame();
+  const def = GAMES[room];
+  if (!def) return;
+  game = { room, def, hearts: 3, moves: 0, t0: Date.now() };
   showSheet('#gameSheet');
+  renderGame();
 }
-function gameHead(extra) {
+const heartsHtml = () => `<span class="hearts">${'♥'.repeat(game.hearts)}<i>${'♥'.repeat(3 - game.hearts)}</i></span>`;
+function gameHead(score) {
   const g = game.def;
   return `<div class="grip"></div>
     <div class="eyebrow">${esc(ROOM_NAMES[game.room])} 미니게임</div>
-    <div class="game-top"><h2>${esc(g.title)}</h2><div class="score" id="score">${extra || ''}</div></div>
-    <p class="lede">${esc(g.lede)}</p>`;
+    <div class="game-top"><h2>${esc(g.title)}</h2>${heartsHtml()}</div>
+    <p class="lede">${esc(g.lede)}</p>
+    ${score ? `<div class="score" id="score">${score}</div>` : ''}`;
+}
+const gameFoot = () => `<div class="actions"><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
+function wireFoot() { $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets); }
+function loading() {
+  $('#gameSheet').innerHTML = gameHead() + `<p class="lede" style="margin-top:22px">그림 준비 중…</p>`;
 }
 function renderGame() {
-  const g = game.def;
-  if (g.type === 'find') renderFind();
-  else if (g.type === 'memory') renderMemory();
-  else if (g.type === 'quiz') renderQuiz();
-  else if (g.type === 'puzzle') renderPuzzle();
+  const t = game.def.type;
+  if (t === 'spot') renderSpot();
+  else if (t === 'detail') renderDetail();
+  else if (t === 'memory') renderMemory();
+  else if (t === 'quiz') renderQuiz();
+  else if (t === 'puzzle') renderPuzzle();
+}
+function loseHeart(msg) {
+  game.hearts--;
+  const h = $('#gameSheet').querySelector('.hearts');
+  if (h) { h.outerHTML = heartsHtml(); }
+  if (game.hearts <= 0) { setTimeout(failGame, 420); return true; }
+  if (msg) say(msg, dogFor(game.room));
+  return false;
+}
+function failGame() {
+  $('#gameSheet').innerHTML = `
+    <div class="grip"></div>
+    <div class="won">
+      <div class="big">🐾</div>
+      <h2>아깝다! 기회를 다 썼어요</h2>
+      <p>${esc(DOGS[dogFor(game.room)].name)}가 다시 섞어줄게요. 한 판 더 가시죠!</p>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" id="retry">다시 도전</button>
+      <button class="btn btn-ghost" data-close>나중에 할게요</button>
+    </div>`;
+  $('#retry').onclick = () => openGame(game.room);
+  wireFoot();
+  say(pick(['괜찮아요, 저도 열 번은 틀렸어요', '한 판만 더요! 이번엔 느낌이 와요']), dogFor(game.room));
 }
 
-/* --- 숨은 그림 찾기 --- */
-function renderFind() {
-  const g = game.def, n = g.count || 3;
-  const keys = [...DOODLE_KEYS].sort(() => Math.random() - 0.5).slice(0, n);
-  const spots = [];
-  for (const k of keys) {
-    let p, tries = 0;
-    do {
-      p = { x: 12 + Math.random() * 76, y: 18 + Math.random() * 64 };
-      tries++;
-    } while (tries < 80 && spots.some(s => Math.hypot(s.x - p.x, (s.y - p.y) * 0.8) < 24));
-    spots.push({ ...p, k, got: false, rot: (Math.random() * 50 - 25).toFixed(1) });
+/* ---------- 틀린 그림 찾기 ---------- */
+/* 종이(흰 부분)는 그대로 두고 연필선만 얹습니다 */
+function inkPatch(g, src, sx, sy, sw, sh, dx, dy, dw, dh, flip, alpha) {
+  const t = document.createElement('canvas'); t.width = dw; t.height = dh;
+  const tg = t.getContext('2d');
+  if (flip) { tg.translate(dw, 0); tg.scale(-1, 1); }
+  tg.drawImage(src, sx, sy, sw, sh, 0, 0, dw, dh);
+  tg.setTransform(1, 0, 0, 1, 0, 0);
+  tg.globalCompositeOperation = 'destination-in';
+  const grd = tg.createRadialGradient(dw / 2, dh / 2, dw * 0.08, dw / 2, dh / 2, dw / 2);
+  grd.addColorStop(0, 'rgba(0,0,0,1)'); grd.addColorStop(.7, 'rgba(0,0,0,1)'); grd.addColorStop(1, 'rgba(0,0,0,0)');
+  tg.fillStyle = grd; tg.fillRect(0, 0, dw, dh);
+  g.save(); g.globalCompositeOperation = 'multiply'; if (alpha != null) g.globalAlpha = alpha; g.drawImage(t, dx, dy); g.restore();
+}
+/* 그 자리의 선을 종이색으로 지웁니다 */
+function wipe(g, cx, cy, r) {
+  const grd = g.createRadialGradient(cx, cy, r * 0.1, cx, cy, r);
+  grd.addColorStop(0, 'rgba(252,251,247,1)');
+  grd.addColorStop(.68, 'rgba(252,251,247,1)');
+  grd.addColorStop(1, 'rgba(252,251,247,0)');
+  g.save(); g.fillStyle = grd; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.fill(); g.restore();
+}
+function regionDiff(ga, gb, x, y, w, h) {
+  try {
+    const a = ga.getImageData(x, y, w, h).data, b = gb.getImageData(x, y, w, h).data;
+    let sum = 0;
+    for (let i = 0; i < a.length; i += 16) sum += Math.abs(a[i] - b[i]);
+    return sum / (a.length / 16);
+  } catch (e) { return 999; }   /* 픽셀을 읽을 수 없는 환경이면 그대로 진행 */
+}
+async function renderSpot() {
+  loading();
+  const def = game.def;
+  let img;
+  try { img = await loadImg(SCENES[def.scene].img); } catch (e) { return failLoad(); }
+  const W = 780, H = Math.round(W * img.naturalHeight / img.naturalWidth);
+  const src = document.createElement('canvas'); src.width = W; src.height = H;
+  const sg = src.getContext('2d', { willReadFrequently: true }); sg.drawImage(img, 0, 0, W, H);
+  const out = document.createElement('canvas'); out.width = W; out.height = H;
+  out.className = 'picimg';
+  const og = out.getContext('2d', { willReadFrequently: true }); og.drawImage(img, 0, 0, W, H);
+
+  const all = detailCells(img, 11, 9);
+  const busy = spreadPicks(all, 22, 0.17, 0.12);               /* 물건이 많은 자리 */
+  const empty = spreadPicks([...all].reverse(), 22, 0.19, 0.15); /* 휑한 자리 */
+  busy.sort(() => Math.random() - 0.5); empty.sort(() => Math.random() - 0.5);
+
+  const vAt = (g, x, y, d) => {
+    try {
+      const px = g.getImageData(x, y, d, d).data;
+      let sum = 0, sum2 = 0, n = 0;
+      for (let i = 0; i < px.length; i += 16) { const v = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2]; sum += v; sum2 += v * v; n++; }
+      const m = sum / n; return { v: Math.max(0, sum2 / n - m * m), m };
+    } catch (e) { return { v: 120, m: 240 }; }
+  };
+  const inside = (x, y, d) => x >= 0 && y >= 0 && x + d <= W && y + d <= H;
+  const diffs = [];
+  const far = (cx, cy) => diffs.every(p2 => Math.hypot(p2.x * W - cx, p2.y * H - cy) > W * 0.17);
+
+  const makeOne = (cell, wantBusy) => {
+    const r = Math.round(W * (wantBusy ? 0.055 + Math.random() * 0.018 : 0.058 + Math.random() * 0.016));
+    const cx = Math.round(Math.min(W - r - 3, Math.max(r + 3, cell.cx * W)));
+    const cy = Math.round(Math.min(H - r - 3, Math.max(r + 3, cell.cy * H)));
+    if (!far(cx, cy)) return false;
+    const x = cx - r, y = cy - r, d = r * 2;
+    const tv = vAt(sg, x, y, d).v;
+    const restore = () => { og.save(); og.clearRect(x, y, d, d); og.drawImage(src, x, y, d, d, x, y, d, d); og.restore(); };
+
+    /* 이웃 칸 중에서 가장 디테일이 많은 / 가장 휑한 곳 찾기 */
+    const offs = [[1.25, 0], [-1.25, 0], [0, 1.25], [0, -1.25], [1.15, 1.15], [-1.15, -1.15], [1.15, -1.15], [-1.15, 1.15]];
+    let rich = null, plain = null;
+    for (const [ox, oy] of offs) {
+      const nx = Math.round(x + ox * d), ny = Math.round(y + oy * d);
+      if (!inside(nx, ny, d)) continue;
+      const { v, m } = vAt(sg, nx, ny, d);
+      if (!rich || v > rich.v) rich = { nx, ny, v, m };
+      if (!plain || v < plain.v) plain = { nx, ny, v, m };
+    }
+
+    const plan = wantBusy
+      ? [['flip'], ['grow'], ['erase'], ['dup']]
+      : [['dup'], ['flip'], ['grow']];
+    for (const [kind] of plan.sort(() => Math.random() - 0.35)) {
+      restore();
+      if (kind === 'dup') {
+        if (!rich || rich.v < tv * 1.5 || rich.v < 72) continue;
+        const fl = Math.random() < .5;
+        inkPatch(og, src, rich.nx, rich.ny, d, d, x, y, d, d, fl);
+        inkPatch(og, src, rich.nx, rich.ny, d, d, x, y, d, d, fl, 0.5);  /* 살짝 한 번 더 — 또렷하게 */
+      } else if (kind === 'erase') {
+        if (tv < 80 || !plain || plain.m < 231) continue;
+        wipe(og, cx, cy, r * 0.82);
+      } else if (kind === 'flip') {
+        if (tv < 60) continue;
+        wipe(og, cx, cy, r * 0.96);
+        inkPatch(og, src, x, y, d, d, x, y, d, d, true);
+      } else {
+        if (tv < 60) continue;
+        wipe(og, cx, cy, r * 0.96);
+        const z = 0.58;
+        inkPatch(og, src, cx - r * z, cy - r * z, d * z, d * z, x, y, d, d, false);
+      }
+      if (regionDiff(sg, og, x, y, d, d) > 13) {
+        diffs.push({ x: cx / W, y: cy / H, r: r / W });
+        return true;
+      }
+    }
+    restore();
+    return false;
+  };
+
+  let bi = 0, ei = 0, guard = 0;
+  while (diffs.length < def.count && guard++ < 120) {
+    const wantBusy = diffs.length % 2 === 0 ? bi < busy.length : !(ei < empty.length);
+    if (wantBusy) { if (bi >= busy.length) break; makeOne(busy[bi++], true); }
+    else { if (ei >= empty.length) { if (bi >= busy.length) break; makeOne(busy[bi++], true); } else makeOne(empty[ei++], false); }
   }
-  game.spots = spots; game.left = n;
-  $('#gameSheet').innerHTML = gameHead(`0 / ${n}`) + `
-    <div class="board"><div class="pic" id="pic">
-      <img src="${SCENES[g.scene].img}" alt="${esc(ROOM_NAMES[game.room])} 그림" draggable="false">
-      ${spots.map((s, i) => `<button class="spot" type="button" data-i="${i}" style="left:${s.x}%;top:${s.y}%;transform:translate(-50%,-50%) rotate(${s.rot}deg)" aria-label="숨은 그림">${DOODLES[s.k]}</button>`).join('')}
-    </div></div>
-    <div class="actions"><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
-  const picEl = $('#pic');
-  picEl.querySelectorAll('.spot').forEach(b => b.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const s = game.spots[+b.dataset.i];
-    if (s.got) return;
-    s.got = true; b.classList.add('got'); game.left--;
-    $('#score').textContent = `${game.spots.length - game.left} / ${game.spots.length}`;
-    if (!game.left) setTimeout(() => winGame(), 450);
-  }));
-  picEl.addEventListener('click', (e) => {
-    if (e.target.closest('.spot')) return;
-    const r = picEl.getBoundingClientRect();
-    const m = document.createElement('div');
-    m.className = 'miss';
-    m.style.cssText = `left:${((e.clientX - r.left) / r.width * 100)}%;top:${((e.clientY - r.top) / r.height * 100)}%`;
-    picEl.appendChild(m);
-    setTimeout(() => m.remove(), 700);
-  });
-  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+  game.diffs = diffs; game.left = diffs.length;
+
+  $('#gameSheet').innerHTML = gameHead(`찾은 곳 <b>0</b> / ${diffs.length}`) + `
+    <div class="board">
+      <div class="panels">
+        <div class="pic" id="picA"><span class="lab">원본</span><img src="${SCENES[def.scene].img}" alt="원본 그림" draggable="false"><div class="marks" id="markA"></div></div>
+        <div class="pic" id="picB"><span class="lab">바뀐 그림</span><div class="marks" id="markB"></div></div>
+      </div>
+    </div>` + gameFoot();
+  $('#picB').insertBefore(out, $('#markB'));
+  const tap = (e, host) => {
+    const r = host.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    const ar = H / W;
+    const hit = game.diffs.find(d => !d.got && Math.hypot(d.x - px, (d.y - py) * ar) < d.r * 1.7);
+    if (hit) {
+      hit.got = true; game.left--;
+      for (const m of ['#markA', '#markB']) {
+        const el = document.createElement('i');
+        el.className = 'found';
+        el.style.cssText = `left:${hit.x * 100}%;top:${hit.y * 100}%;width:${hit.r * 260}%`;
+        $(m).appendChild(el);
+      }
+      const sc = $('#score'); if (sc) sc.innerHTML = `찾은 곳 <b>${game.diffs.length - game.left}</b> / ${game.diffs.length}`;
+      if (!game.left) setTimeout(winGame, 500);
+    } else {
+      const el = document.createElement('i');
+      el.className = 'missx'; el.style.cssText = `left:${px * 100}%;top:${py * 100}%`;
+      host.querySelector('.marks').appendChild(el);
+      setTimeout(() => el.remove(), 700);
+      loseHeart(pick(['음… 거긴 아니에요!', '앗, 다시 한 번 보세요', '거긴 똑같은데요?']));
+    }
+  };
+  $('#picA').addEventListener('click', (e) => tap(e, $('#picA')));
+  $('#picB').addEventListener('click', (e) => tap(e, $('#picB')));
+  wireFoot();
+}
+function failLoad() {
+  $('#gameSheet').innerHTML = gameHead() + `<p class="lede" style="margin-top:20px">그림을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.</p>` + gameFoot();
+  wireFoot();
 }
 
-/* --- 짝 맞추기 --- */
+/* ---------- 돋보기: 확대된 조각이 어디인지 찾기 ---------- */
+async function renderDetail() {
+  loading();
+  const def = game.def;
+  let img;
+  try { img = await loadImg(SCENES[def.scene].img); } catch (e) { return failLoad(); }
+  if (!game.spots) {
+    const cells = spreadPicks(detailCells(img, 8, 7), 14, 0.2, 0.14);
+    cells.sort(() => Math.random() - 0.5);
+    game.spots = cells.slice(0, def.rounds);
+    game.ri = 0;
+  }
+  const spot = game.spots[game.ri];
+  const ar = img.naturalHeight / img.naturalWidth;
+  $('#gameSheet').innerHTML = gameHead(`${game.ri + 1} / ${game.spots.length} 번째 조각`) + `
+    <div class="board">
+      <div class="hintwrap"><canvas id="hint" width="320" height="320"></canvas><span>이 조각이 어디일까요?</span></div>
+      <div class="pic" id="picD"><img src="${SCENES[def.scene].img}" alt="${esc(ROOM_NAMES[game.room])} 그림" draggable="false"><div class="marks" id="markD"></div></div>
+    </div>` + gameFoot();
+  const hg = $('#hint').getContext('2d');
+  const sW = img.naturalWidth * 0.17;
+  hg.imageSmoothingQuality = 'high';
+  hg.drawImage(img, spot.cx * img.naturalWidth - sW / 2, spot.cy * img.naturalHeight - sW / 2, sW, sW, 0, 0, 320, 320);
+  $('#picD').addEventListener('click', (e) => {
+    const r = $('#picD').getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    const near = Math.hypot(spot.cx - px, (spot.cy - py) * ar) < 0.1;
+    const el = document.createElement('i');
+    el.style.cssText = `left:${px * 100}%;top:${py * 100}%`;
+    if (near) {
+      el.className = 'found'; el.style.width = '23%';
+      el.style.left = spot.cx * 100 + '%'; el.style.top = spot.cy * 100 + '%';
+      $('#markD').appendChild(el);
+      game.ri++;
+      setTimeout(() => { if (game.ri >= game.spots.length) winGame(); else renderDetail(); }, 650);
+    } else {
+      el.className = 'missx'; $('#markD').appendChild(el);
+      setTimeout(() => el.remove(), 700);
+      loseHeart(pick(['조금 더 왼쪽? 오른쪽?', '음… 그 근처는 아니에요', '다시 한 번 눈 크게!']));
+    }
+  }, { once: false });
+  wireFoot();
+}
+
+/* ---------- 짝 맞추기 ---------- */
 function renderMemory() {
   const g = game.def;
   const deck = [...g.pairs, ...g.pairs].sort(() => Math.random() - 0.5);
-  game.deck = deck; game.up = []; game.done = 0; game.lock = false;
-  $('#gameSheet').innerHTML = gameHead(`0 / ${g.pairs.length}`) + `
+  game.deck = deck; game.up = []; game.done = 0; game.lock = false; game.moves = 0;
+  $('#gameSheet').innerHTML = gameHead(`맞춘 쌍 <b>0</b> / ${g.pairs.length} · 뒤집기 <b id="mv">0</b>번`) + `
     <div class="board"><div class="cards" id="cards">
       ${deck.map((f, i) => `<button class="card" type="button" data-i="${i}" aria-label="카드"><span class="f">${f}</span></button>`).join('')}
-    </div></div>
-    <div class="actions"><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
+    </div></div>` + gameFoot();
   $('#cards').querySelectorAll('.card').forEach(b => b.addEventListener('click', () => {
     if (game.lock || b.classList.contains('up') || b.classList.contains('done')) return;
     b.classList.add('up'); game.up.push(b);
     if (game.up.length < 2) return;
+    game.moves++;
     const [a, c] = game.up;
+    const score = () => { const s = $('#score'); if (s) s.innerHTML = `맞춘 쌍 <b>${game.done}</b> / ${g.pairs.length} · 뒤집기 <b>${game.moves}</b>번`; };
     if (game.deck[+a.dataset.i] === game.deck[+c.dataset.i]) {
       a.classList.add('done'); c.classList.add('done');
-      game.up = []; game.done++;
-      $('#score').textContent = `${game.done} / ${g.pairs.length}`;
-      if (game.done === g.pairs.length) setTimeout(() => winGame(), 400);
+      game.up = []; game.done++; score();
+      if (game.done === g.pairs.length) setTimeout(winGame, 420);
     } else {
-      game.lock = true;
-      setTimeout(() => { a.classList.remove('up'); c.classList.remove('up'); game.up = []; game.lock = false; }, 700);
+      game.lock = true; score();
+      setTimeout(() => { a.classList.remove('up'); c.classList.remove('up'); game.up = []; game.lock = false; }, 680);
     }
   }));
-  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+  wireFoot();
 }
 
-/* --- 집주인 퀴즈 --- */
+/* ---------- 집주인 퀴즈 ---------- */
 function renderQuiz() {
   game.qi = game.qi || 0;
   const g = game.def, q = g.qs[game.qi];
-  $('#gameSheet').innerHTML = gameHead(`${game.qi + 1} / ${g.qs.length}`) + `
+  $('#gameSheet').innerHTML = gameHead(`${game.qi + 1}번 문제 / 전체 ${g.qs.length}문제`) + `
     <div class="board">
       <p class="quiz-q">${esc(q.q)}</p>
       <div class="opts" id="opts">
         ${q.a.map((t, i) => `<button class="opt" type="button" data-i="${i}">${esc(t)}</button>`).join('')}
       </div>
-    </div>
-    <div class="actions"><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
+    </div>` + gameFoot();
   $('#opts').querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+    if (b.classList.contains('wrong') || b.classList.contains('right')) return;
     const ok = +b.dataset.i === q.c;
     b.classList.add(ok ? 'right' : 'wrong');
-    if (!ok) { setTimeout(() => b.classList.remove('wrong'), 400); return; }
+    if (!ok) { loseHeart(pick(['어어, 그건 아니에요!', '집을 더 둘러보고 오실래요?'])); return; }
     setTimeout(() => {
       game.qi++;
       if (game.qi >= g.qs.length) winGame(); else renderQuiz();
-    }, 450);
+    }, 480);
   }));
-  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+  wireFoot();
 }
 
-/* --- 그림 조각 맞추기 --- */
+/* ---------- 그림 조각 맞추기 ---------- */
 function renderPuzzle() {
   const g = game.def;
   let order = [...Array(9).keys()];
-  do { order.sort(() => Math.random() - 0.5); } while (order.every((v, i) => v === i));
-  game.order = order; game.sel = null;
+  do { order.sort(() => Math.random() - 0.5); } while (order.filter((v, i) => v === i).length > 1);
+  game.order = order; game.sel = null; game.moves = 0;
   const img = SCENES[g.scene].img;
-  const tile = (v) => `background-image:url(${img});background-position:${(v % 3) * 50}% ${Math.floor(v / 3) * 50}%`;
-  $('#gameSheet').innerHTML = gameHead(`${order.filter((v, i) => v === i).length} / 9`) + `
+  $('#gameSheet').innerHTML = gameHead(`맞은 조각 <b>0</b> / 9 · 바꾼 횟수 <b>0</b>`) + `
     <div class="board"><div class="puz" id="puz" style="--ar:1">
-      ${order.map((v, i) => `<button class="tile" type="button" data-i="${i}" style="${tile(v)}" aria-label="조각"></button>`).join('')}
+      ${order.map((v, i) => `<button class="tile" type="button" data-i="${i}" aria-label="조각"></button>`).join('')}
     </div>
-    <div class="puz-ref"><img src="${img}" alt="완성 그림"><span>이 그림이 되도록 맞춰주세요</span></div></div>
-    <div class="actions"><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
+    <div class="puz-ref"><img src="${img}" alt="완성 그림"><span>이 그림이 되도록 맞춰주세요</span></div></div>` + gameFoot();
   const puz = $('#puz');
   const paint = () => {
     puz.querySelectorAll('.tile').forEach((t, i) => {
@@ -1114,8 +1359,8 @@ function renderPuzzle() {
       t.classList.toggle('sel', game.sel === i);
     });
     const done = game.order.filter((v, i) => v === i).length;
-    $('#score').textContent = `${done} / 9`;
-    if (done === 9) setTimeout(() => winGame(), 400);
+    const s = $('#score'); if (s) s.innerHTML = `맞은 조각 <b>${done}</b> / 9 · 바꾼 횟수 <b>${game.moves}</b>`;
+    if (done === 9) setTimeout(winGame, 420);
   };
   puz.querySelectorAll('.tile').forEach(t => t.addEventListener('click', () => {
     const i = +t.dataset.i;
@@ -1123,41 +1368,58 @@ function renderPuzzle() {
     if (game.sel === i) { game.sel = null; paint(); return; }
     const a = game.sel;
     [game.order[a], game.order[i]] = [game.order[i], game.order[a]];
-    game.sel = null; paint();
+    game.sel = null; game.moves++; paint();
   }));
   paint();
   const probe = new Image();
   probe.onload = () => { puz.style.setProperty('--ar', (probe.naturalWidth / probe.naturalHeight).toFixed(3)); };
   probe.src = img;
-  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+  wireFoot();
 }
 
-/* --- 통과! --- */
+/* ---------- 통과! ---------- */
+function gradeOf() {
+  const t = game.def.type;
+  if (t === 'puzzle') return game.moves <= 12 ? 3 : game.moves <= 20 ? 2 : 1;
+  if (t === 'memory') return game.moves <= 14 ? 3 : game.moves <= 22 ? 2 : 1;
+  return Math.max(1, game.hearts);
+}
+const starStr = (n) => '★'.repeat(n) + '☆'.repeat(3 - n);
 function winGame() {
   const room = game.room;
   const isNew = !state.cleared.has(room);
-  state.cleared.add(room);
-  ls('hw2_cleared', [...state.cleared]);
-  burst(70);
+  const grade = gradeOf();
+  const best = state.stars[room] || 0;
+  const record = grade > best;
+  state.cleared.add(room); ls('hw2_cleared', [...state.cleared]);
+  if (record) { state.stars[room] = grade; ls('hw2_stars', state.stars); }
+  burst(grade === 3 ? 100 : 70);
   const items = GIFTS.filter(g => giftRoom(g) === room);
   $('#gameSheet').innerHTML = `
     <div class="grip"></div>
     <div class="won">
-      <div class="big">🎉</div>
-      <h2>통과!</h2>
-      <p>${items.length ? `${esc(ROOM_NAMES[room])} 위시리스트 ${items.length}개가 열렸어요` : `${esc(ROOM_NAMES[room])}을 다 둘러보셨어요`}</p>
+      <div class="big">${grade === 3 ? '🏆' : '🎉'}</div>
+      <div class="stars">${starStr(grade)}</div>
+      <h2>${grade === 3 ? '퍼펙트!' : '통과!'}</h2>
+      <p>${isNew && items.length ? `${esc(ROOM_NAMES[room])} 위시리스트 ${items.length}개가 열렸어요` :
+          record ? '최고 기록을 새로 세웠어요!' : `최고 기록은 ${starStr(best)} 예요. 한 번 더?`}</p>
     </div>
     ${items.length ? `<ul class="nb-list">${items.map(g => {
       const c = state.claims[g.id];
       const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
       return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(g.price)}</span></span>${st}</button></li>`;
     }).join('')}</ul>` : ''}
-    <div class="actions"><button class="btn btn-primary" data-close>계속 구경하기</button></div>`;
+    <div class="actions">
+      <button class="btn btn-primary" data-close>계속 구경하기</button>
+      ${grade < 3 ? `<button class="btn btn-ghost" id="retry">★★★ 노리고 다시 하기</button>` : ''}
+    </div>`;
   $('#gameSheet').querySelectorAll('[data-gift]').forEach(b => b.onclick = () => {
     closeSheets(); setTimeout(() => openGift(b.dataset.gift), 240);
   });
-  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
-  if (isNew) say(pick(['우와, 통과! 위시리스트가 열렸어요', '잘하시는데요? 멍멍!', '역시 눈썰미가 다르시네요']), dogFor(room));
+  const rt = $('#retry'); if (rt) rt.onclick = () => openGame(room);
+  wireFoot();
+  say(grade === 3 ? pick(['퍼펙트! 한 번도 안 틀리셨어요!', '우와, 하트를 하나도 안 쓰다니!'])
+    : pick(['통과! 위시리스트가 열렸어요', '잘하시는데요? 멍멍!', '역시 눈썰미가 다르시네요']), dogFor(room));
   showScene(state.scene, 'fwd');
   updateCta(); refresh();
 }
@@ -1291,11 +1553,11 @@ function renderNotebook() {
   const ai = $('#againInvite'); if (ai) ai.onclick = () => { closeSheets(); setTimeout(openInvite, 240); };
 }
 function renderRooms() {
-  $('#roomSheet').innerHTML = `<div class="grip"></div><div class="nb-head"><h2>방 이동</h2><span>열린 방 ${[...state.cleared].length}/${ROOM_ORDER.length}</span></div>
+  $('#roomSheet').innerHTML = `<div class="grip"></div><div class="nb-head"><h2>방 이동</h2><span>별 ${ROOM_ORDER.reduce((a, r) => a + (state.stars[r] || 0), 0)} / ${ROOM_ORDER.length * 3}</span></div>
     <ul class="room-grid">${ROOM_ORDER.map(r => {
       const done = state.cleared.has(r);
-      const n = GIFTS.filter(g => giftRoom(g) === r).length;
-      return `<li><button class="room-btn ${curRoom() === r ? 'here' : ''} ${done ? 'done' : ''}" data-room="${r}"><b>${ROOM_NAMES[r]}</b><span>${done ? `✓ 위시리스트 ${n}개` : '🎮 미니게임 남음'}</span></button></li>`;
+      const st = state.stars[r] || 0;
+      return `<li><button class="room-btn ${curRoom() === r ? 'here' : ''} ${done ? 'done' : ''}" data-room="${r}"><b>${ROOM_NAMES[r]}</b><span>${done ? starStr(st) : '🎮 미니게임 남음'}</span></button></li>`;
     }).join('')}</ul>`;
   $('#roomSheet').querySelectorAll('[data-room]').forEach(b => b.onclick = () => { closeSheets(); goScene(ROOM_ENTRY[b.dataset.room]); });
 }
@@ -1393,7 +1655,7 @@ function start() {
   }
   updateCta();
   setTimeout(() => $('#howto').classList.add('fade'), 8000);
-  window.__hw = { goScene, openGame, openInvite, state };
+  window.__hw = { goScene, openGame, openInvite, state, peekDiffs: () => (game && game.diffs) || null };
 }
 start();
 </script>
