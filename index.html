@@ -354,9 +354,14 @@ const SCENES = {
   'bath1-toilet': {
     room: 'bath1', sub: '샤워 쪽', img: 'rooms/bath1-toilet.webp',
     exits: [
-      ['bath1-sink', '세면대 쪽', 24, 88],
+      ['bath1-shower', '샤워기 보기', 30, 68],
+      ['bath1-sink', '세면대 쪽', 30, 90],
       ['living-kitchen', '거실로', 72, 93, 'back'],
     ],
+  },
+  'bath1-shower': {
+    room: 'bath1', sub: '샤워기', img: 'rooms/bath1-shower.webp',
+    exits: [['bath1-toilet', '뒤돌아보기', 50, 93, 'back']],
   },
   'bath1-sink': {
     room: 'bath1', sub: '세면대', img: 'rooms/bath1-sink.webp',
@@ -408,15 +413,8 @@ const SCENES = {
     ],
   },
   'bath2-tub': {
-    room: 'bath2', sub: '욕조 쪽', img: 'rooms/bath2-tub.webp',
-    exits: [
-      ['bath2-shower', '샤워기 보기', 70, 86],
-      ['dress', '드레스룸으로', 30, 93, 'back'],
-    ],
-  },
-  'bath2-shower': {
-    room: 'bath2', sub: '샤워기', img: 'rooms/bath2-shower.webp',
-    exits: [['bath2-tub', '뒤돌아보기', 50, 93, 'back']],
+    room: 'bath2', sub: '', img: 'rooms/bath2-tub.webp',
+    exits: [['dress', '드레스룸으로', 42, 93, 'back']],
   },
 };
 const FIRST_SCENE = 'entry-art';
