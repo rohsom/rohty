@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>유씨네 집들이</title>
-<meta name="description" content="튜브와 도리아가 안내하는 우리 집 구경 · 숨은 선물 찾기">
+<meta name="description" content="유튜브와 유도리가 안내하는 우리 집 구경 · 숨은 선물 찾기">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Gaegu:wght@700&display=swap">
@@ -245,7 +245,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 
   <footer class="dock">
     <button class="avatar" id="avatarBtn" aria-label="강아지에게 힌트 듣기">
-      <img id="avatarImg" src="rooms/face-doria.webp" alt="도리아">
+      <img id="avatarImg" src="rooms/face-doria.webp" alt="유도리">
     </button>
     <div class="bubble" id="bubble" aria-live="polite"></div>
   </footer>
@@ -265,7 +265,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
     </div>
     <div class="door-frame" aria-hidden="true">
       <div class="door" id="door">
-        <div class="plate" id="doorPlate">유 · 튜브 · 도리아</div>
+        <div class="plate" id="doorPlate">유튜브 · 유도리</div>
         <div class="banner"><i></i><span>♡</span></div>
         <div class="lock"></div><div class="handle"></div>
       </div>
@@ -286,8 +286,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
    ================================================================ */
 const SITE = {
   title: '유씨네 집들이',
-  intro: '튜브와 도리아가 집 구경을 시켜드릴게요.<br>구경하다 반짝이는 걸 찾으면, 그게 저희 집에 필요한 거예요.',
-  doorPlate: '유 · 튜브 · 도리아',
+  intro: '유튜브와 유도리가 집 구경을 시켜드릴게요.<br>구경하다 반짝이는 걸 찾으면, 그게 저희 집에 필요한 거예요.',
+  doorPlate: '유튜브 · 유도리',
 };
 
 /* ================================================================
@@ -440,13 +440,13 @@ const GIFTS = [
   { id: 'soundbar',   scene: 'living-beanbag', x: 72, y: 62, emoji: '🔊', name: '블루투스 사운드바',    price: '10~20만원', note: '빔프로젝터로 영화 보는데 소리가 너무 작아요.', hint: '거실 빈백에서 액자 걸린 벽 쪽을 보세요. 멍!' },
   { id: 'glasses',    scene: 'kitchen',        x: 44, y: 66, emoji: '🍷', name: '와인잔 세트',          price: '5~10만원',  note: '아일랜드 식탁에서 집들이 건배하고 싶어요.', hint: '주방 긴 아일랜드 위를 잘 보세요' },
   { id: 'coffee',     scene: 'kitchen',        x: 58, y: 50, emoji: '☕', name: '캡슐 커피머신',        price: '15~25만원', note: '주방 창가 쪽에 커피머신 자리를 비워뒀어요.', hint: '주방 창문 아래 싱크 옆이 비어 있어요!' },
-  { id: 'dryrack',    scene: 'utility',        x: 38, y: 47, emoji: '🧺', name: '빨래 바구니 & 건조대', price: '3~6만원',   note: '튜브·도리아 담요 빨래가 매일 한가득이에요.', hint: '다용도실 세탁기 위… 제 담요가 거기서 빨래돼요' },
+  { id: 'dryrack',    scene: 'utility',        x: 38, y: 47, emoji: '🧺', name: '빨래 바구니 & 건조대', price: '3~6만원',   note: '유튜브·유도리 담요 빨래가 매일 한가득이에요.', hint: '다용도실 세탁기 위… 제 담요가 거기서 빨래돼요' },
   { id: 'bathmat',    scene: 'bath1-sink',     x: 54, y: 60, emoji: '🧼', name: '욕실 매트 & 디스펜서', price: '3~6만원',   note: '세면대에 어울리는 디스펜서 세트가 갖고 싶어요.', hint: '거실 욕실 세면대 위가 수상해요' },
   { id: 'guestbed',   scene: 'guest',          x: 34, y: 60, emoji: '🛌', name: '손님용 침구 세트',     price: '8~15만원',  note: '놀러 와서 자고 가실 분들을 위한 포근한 이불이 필요해요.', hint: '손님방 창가 데이베드를 봐주세요! 자고 가도 돼요' },
   { id: 'monitorarm', scene: 'studio-desk',    x: 25, y: 41, emoji: '🖥️', name: '듀얼 모니터암',        price: '5~10만원',  note: '작업실 책상 두 개 위가 선으로 정신없어요.', hint: '작업실 컴퓨터 책상 위를 봐주세요' },
   { id: 'plant',      scene: 'studio-desk',    x: 57, y: 44, emoji: '🪴', name: '반려식물 화분',        price: '3~8만원',   note: '베란다가 아직 텅 비어 있어요.', hint: '작업실 유리문 너머 베란다를 봐요!' },
   { id: 'cabinet',    scene: 'studio-drum',    x: 74, y: 72, emoji: '🗄️', name: '작업실 수납장',        price: '10~20만원', note: '짐이 아직 박스에 들어 있어요. 수납장이 생기면 작업실 정리 끝!', hint: '작업실 피아노 옆 구석… 저기 정리가 필요해요' },
-  { id: 'fountain',   scene: 'studio-drum',    x: 26, y: 60, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '튜브와 도리아가 물을 더 많이 마셨으면 해서요.', hint: '작업실 하얀 울타리 안에 뭐가 있게요?' },
+  { id: 'fountain',   scene: 'studio-drum',    x: 26, y: 60, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '유튜브와 유도리가 물을 더 많이 마셨으면 해서요.', hint: '작업실 하얀 울타리 안에 뭐가 있게요?' },
   { id: 'bedding',    scene: 'bedroom-bed',    x: 32, y: 70, emoji: '🛏️', name: '킹사이즈 호텔 침구',   price: '15~30만원', note: '브라운 가죽 침대 프레임이 왔어요! 이제 어울리는 호텔 침구만 있으면 돼요.', hint: '침실 큰 침대 위… 폭신한 냄새' },
   { id: 'towels',     scene: 'bath2-tub',      x: 82, y: 37, emoji: '🛁', name: '호텔 수건 세트',       price: '4~8만원',   note: '욕조 있는 화장실에 두툼한 수건을 두고 싶어요.', hint: '욕조 옆 선반! 저는 목욕 싫어요…' },
   { id: 'candle',     scene: 'dress',          x: 48, y: 57, emoji: '🪔', name: '캔들워머',             price: '3~6만원',   note: '화장대 위에 은은한 불빛 하나 있으면 좋겠어요.', hint: '드레스룸 창가 선반 쪽에 반짝이는 게 있어요' },
@@ -519,8 +519,8 @@ const isMine = (c) => c && c.uid === Store.uid;
 
 /* ---------- 강아지 ---------- */
 const DOGS = {
-  tube:  { name: '튜브',   img: 'rooms/dog-tube.webp',  face: 'rooms/face-tube.webp' },
-  doria: { name: '도리아', img: 'rooms/dog-doria.webp', face: 'rooms/face-doria.webp' },
+  tube:  { name: '유튜브',   img: 'rooms/dog-tube.webp',  face: 'rooms/face-tube.webp' },
+  doria: { name: '유도리', img: 'rooms/dog-doria.webp', face: 'rooms/face-doria.webp' },
 };
 let speaker = 'doria';
 const dogFor = (room) => (['small', 'utility', 'bed1', 'bath2'].includes(room) ? 'tube' : 'doria');
