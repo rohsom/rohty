@@ -4,17 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>유씨네 집들이</title>
-<meta name="description" content="유튜브와 유도리가 안내하는 우리 집 구경 · 숨은 선물 찾기">
+<meta name="description" content="유튜브와 유도리가 안내하는 우리 집 구경 · 미니게임으로 여는 위시리스트">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Gaegu:wght@700&display=swap">
 <style>
-/* Layout: one-screen app — header / hand-drawn room view / dog dock; gift cards rise as bottom sheets.
+/* Layout: one-screen app — header / hand-drawn room view / dog dock; cards and games rise as bottom sheets.
    Look: the architect's pen-and-wash sketchbook — warm paper, graphite lines, one brass accent. */
 :root {
   color-scheme: dark;
   --ink: #171614;
   --panel: #211f1d;
+  --panel-2: #181715;
   --rule: #3a3633;
   --paper: #f4f1ea;
   --paper-edge: #ded8cc;
@@ -23,6 +24,7 @@
   --text: #f1ede6;
   --muted: #a69f95;
   --ok: #8fb59a;
+  --bad: #e4a08f;
   --font-display: "Hahmlet", "Nanum Myeongjo", serif;
   --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --font-dog: "Gaegu", "IBM Plex Sans KR", cursive;
@@ -38,14 +40,14 @@ body {
 button { font: inherit; color: inherit; }
 button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
-.app { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding-inline: 16px; padding-top: env(safe-area-inset-top, 0px); }
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr auto auto; padding-inline: 16px; padding-top: env(safe-area-inset-top, 0px); }
 
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 13px 9px; }
 .brand { min-width: 0; }
 .brand h1 { margin: 0; font: 700 20px/1.2 var(--font-display); letter-spacing: -0.01em; }
 .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
 .count { flex: none; display: flex; align-items: center; gap: 7px; padding: 7px 12px; border: 1px solid var(--rule); border-radius: 999px; font-variant-numeric: tabular-nums; font-size: 13px; background: none; cursor: pointer; }
-.count svg { width: 16px; height: 16px; }
+.count svg { width: 16px; height: 16px; flex: none; }
 .count b { color: var(--brass); font-weight: 600; }
 
 /* ---------- the sketchbook stage ---------- */
@@ -60,17 +62,12 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .layer img { display: block; width: 100%; height: 100%; }
 .vignette { position: absolute; inset: 0; z-index: 2; pointer-events: none; box-shadow: inset 0 0 70px 10px rgba(94,86,72,.2); }
 
-/* hotspots live inside the layer so they track the drawing */
 .hot { position: absolute; transform: translate(-50%, -50%); }
-.go {
-  display: grid; justify-items: center; gap: 4px; background: none; border: 0; padding: 4px; cursor: pointer;
-  filter: drop-shadow(0 2px 5px rgba(80,72,58,.4));
-}
+.go { display: grid; justify-items: center; gap: 4px; background: none; border: 0; padding: 4px; cursor: pointer; filter: drop-shadow(0 2px 5px rgba(80,72,58,.4)); }
 .go .disc {
   width: calc(40px * var(--k)); height: calc(40px * var(--k)); border-radius: 50%; display: grid; place-items: center;
   background: rgba(255,253,247,.9); border: 1.5px solid #6d6659; color: #2c2823;
-  transition: background .18s ease;
-  animation: bob 2.6s ease-in-out infinite;
+  transition: background .18s ease; animation: bob 2.6s ease-in-out infinite;
 }
 .go .disc svg { width: 46%; height: 46%; }
 .go:hover .disc, .go:focus-visible .disc { background: #fff; }
@@ -78,24 +75,19 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .go.back .disc { width: calc(34px * var(--k)); height: calc(34px * var(--k)); }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
-.gift { background: none; border: 0; padding: 0; cursor: pointer; width: calc(54px * var(--k)); height: calc(54px * var(--k)); position: relative; }
-.gift .spark { position: absolute; inset: 0; display: grid; place-items: center; }
-.gift .spark svg { width: 100%; height: 100%; transform-origin: center; animation: twinkle var(--p, 3s) ease-in-out var(--d, 0s) infinite; }
-@keyframes twinkle {
-  0%, 100% { opacity: .62; transform: scale(.8) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.1) rotate(20deg); }
+.wish { background: none; border: 0; padding: 0; cursor: pointer; width: calc(46px * var(--k)); height: calc(46px * var(--k)); display: grid; place-items: center; }
+.wish span {
+  width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center;
+  background: var(--brass); border: 2px solid #fffdf7; color: #221f1a;
+  box-shadow: 0 3px 8px rgba(80,72,58,.45); animation: bob 3.4s ease-in-out infinite;
 }
-.gift.found .spark { display: none; }
-.gift .tag { display: none; width: 66%; height: 66%; border-radius: 50%; margin: 17% auto; place-items: center; background: var(--brass); border: 2px solid #fffdf7; color: #221f1a; box-shadow: 0 3px 8px rgba(80,72,58,.45); }
-.gift .tag svg { width: 52%; height: 52%; }
-.gift.found .tag { display: grid; }
-.gift.claimed .tag { background: #7fa389; color: #fff; }
+.wish span svg { width: 52%; height: 52%; }
+.wish.claimed span { background: #7fa389; color: #fff; }
 
 .dog { position: absolute; transform: translate(-50%, -100%); cursor: pointer; filter: drop-shadow(0 4px 6px rgba(90,82,66,.3)); --s: 1; }
 .dog img { display: block; width: calc(104px * var(--k) * var(--s)); height: auto; animation: sniff 3.2s ease-in-out infinite; }
 @keyframes sniff { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-2px) rotate(-1.5deg); } }
 
-/* stage chrome */
 .chip {
   position: absolute; z-index: 3; top: 10px; display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 12px; border-radius: 999px; font-size: 13px; color: #2c2823;
@@ -107,12 +99,22 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .chip.zoom { right: 10px; top: auto; bottom: 12px; cursor: pointer; }
 .chip svg { width: 14px; height: 14px; }
 .howto {
-  position: absolute; z-index: 3; left: 50%; bottom: 12px; transform: translateX(-50%);
+  position: absolute; z-index: 3; left: 50%; top: 52px; transform: translateX(-50%);
   max-width: calc(100% - 24px); padding: 7px 13px; border-radius: 12px; font-size: 12.5px; text-align: center; color: #2c2823;
   background: rgba(255,253,247,.86); border: 1px solid rgba(90,82,66,.22); backdrop-filter: blur(6px);
   transition: opacity .6s;
 }
 .howto.fade { opacity: 0; pointer-events: none; }
+.cta {
+  margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  height: 48px; border-radius: 14px; border: 1px solid var(--rule); cursor: pointer;
+  background: var(--panel); color: var(--text); font-weight: 600; font-size: 15px;
+  animation: rise .4s ease both;
+}
+.cta.gold { background: var(--brass); color: #211c13; border-color: transparent; animation: rise .4s ease both, pulse 2.4s ease-in-out .6s infinite; }
+.cta em { font-style: normal; font-size: 18px; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(201,164,108,.45); } 60% { box-shadow: 0 0 0 12px rgba(201,164,108,0); } }
 
 /* dock */
 .dock { display: flex; align-items: flex-end; gap: 10px; padding-block: 10px calc(14px + env(safe-area-inset-bottom, 0px)); }
@@ -125,7 +127,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .scrim { position: fixed; inset: 0; background: rgba(8,8,7,.55); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 10; }
 .scrim.on { opacity: 1; pointer-events: auto; }
 .sheet {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 11; max-height: 86%; overflow-y: auto;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 11; max-height: 88%; overflow-y: auto;
   background: var(--panel); border-top: 1px solid var(--rule); border-radius: 22px 22px 0 0;
   padding: 10px 20px calc(22px + env(safe-area-inset-bottom, 0px));
   transform: translateY(105%); transition: transform .32s cubic-bezier(.2,.8,.2,1);
@@ -134,11 +136,13 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .sheet.on { transform: none; }
 .grip { width: 38px; height: 4px; border-radius: 4px; background: var(--rule); margin: 0 auto 14px; }
 .eyebrow { font-size: 11.5px; letter-spacing: .08em; color: var(--brass); font-weight: 600; }
-.gift-hero { display: flex; gap: 14px; align-items: center; margin-top: 6px; }
-.gift-emoji { flex: none; width: 64px; height: 64px; border-radius: 18px; background: #181715; border: 1px solid var(--rule); display: grid; place-items: center; font-size: 34px; }
-.gift-hero h2 { margin: 0; font: 700 21px/1.25 var(--font-display); text-wrap: balance; }
+.sheet h2 { margin: 4px 0 0; font: 700 21px/1.25 var(--font-display); text-wrap: balance; }
+.lede { color: var(--muted); font-size: 13.5px; margin: 6px 0 0; }
+
+.gift-hero { display: flex; gap: 14px; align-items: center; margin-top: 8px; }
+.gift-emoji { flex: none; width: 64px; height: 64px; border-radius: 18px; background: var(--panel-2); border: 1px solid var(--rule); display: grid; place-items: center; font-size: 34px; }
 .price { color: var(--muted); font-size: 13.5px; margin-top: 3px; font-variant-numeric: tabular-nums; }
-.note { margin: 16px 0 0; padding: 12px 14px; background: #181715; border-radius: 12px; font: 700 17px/1.35 var(--font-dog); color: var(--paper); }
+.note { margin: 16px 0 0; padding: 12px 14px; background: var(--panel-2); border-radius: 12px; font: 700 17px/1.35 var(--font-dog); color: var(--paper); }
 .note small { display: block; font: 500 11.5px var(--font-body); color: var(--muted); margin-top: 4px; }
 .link { display: inline-block; margin-top: 12px; color: var(--brass); font-size: 13.5px; }
 .actions { display: grid; gap: 8px; margin-top: 18px; }
@@ -151,10 +155,10 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .status.mine { border-color: var(--brass-dim); }
 .status.mine .dot { background: var(--brass); }
 .confirm-q { font-size: 14.5px; margin: 0 0 2px; }
-.err { color: #e4a08f; font-size: 13px; margin-top: 8px; }
+.err { color: var(--bad); font-size: 13px; margin-top: 8px; }
 
 .nb-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.nb-head h2 { margin: 0; font: 700 20px var(--font-display); }
+.nb-head h2 { margin: 0; }
 .nb-head span { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 .nb-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 1px; background: var(--rule); border-radius: 14px; overflow: hidden; }
 .nb-list li { background: var(--panel); }
@@ -166,39 +170,121 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .nb-item .st { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
 .nb-item .st.claimed { color: var(--ok); }
 .nb-item .st.mine { color: var(--brass); }
-.nb-item.locked { cursor: default; }
+.nb-item.locked { cursor: pointer; }
 .nb-item.locked .em { opacity: .4; filter: grayscale(1); }
 .nb-item.locked b { color: var(--muted); letter-spacing: .1em; }
 .demo-note { margin-top: 14px; font-size: 12px; color: var(--muted); }
 .room-grid { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.room-btn { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--rule); background: #181715; text-align: left; cursor: pointer; }
+.room-btn { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--rule); background: var(--panel-2); text-align: left; cursor: pointer; }
 .room-btn b { display: block; font-weight: 600; }
 .room-btn span { font-size: 12px; color: var(--muted); }
 .room-btn.here { border-color: var(--brass-dim); }
+.room-btn.done span { color: var(--ok); }
 
-/* intro */
+/* ---------- mini games ---------- */
+.game-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.score { font-variant-numeric: tabular-nums; color: var(--brass); font-weight: 600; font-size: 14px; white-space: nowrap; }
+.board { margin-top: 14px; }
+.pic { position: relative; border-radius: 12px; overflow: hidden; background: var(--paper); border: 1px solid var(--paper-edge); }
+.pic img { display: block; width: 100%; height: auto; }
+.pic.shake { animation: shake .34s; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+.spot { position: absolute; transform: translate(-50%, -50%); width: 12%; cursor: pointer; background: none; border: 0; padding: 0; }
+.spot svg, .spot img { width: 100%; height: auto; display: block; }
+.spot.got::after {
+  content: ""; position: absolute; inset: -22%; border-radius: 50%;
+  border: 3px solid #c0544a; animation: ring .4s ease both;
+}
+@keyframes ring { from { transform: scale(.4); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+.miss { position: absolute; transform: translate(-50%, -50%); width: 26px; height: 26px; border-radius: 50%; border: 2px dashed #9a9388; pointer-events: none; animation: fadeout .7s ease forwards; }
+@keyframes fadeout { to { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } }
+
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.card { position: relative; aspect-ratio: 3/4; border-radius: 10px; border: 1px solid #4b443c; background: linear-gradient(140deg, #2f2a25, #241f1b); font-size: 26px; display: grid; place-items: center; cursor: pointer; transition: background .2s; }
+.card::after { content: "🐾"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 19px; opacity: .4; transition: opacity .12s; }
+.card.up::after, .card.done::after { opacity: 0; }
+.card .f { opacity: 0; transition: opacity .12s; }
+.card.up, .card.done { background: var(--paper); border-color: var(--paper-edge); }
+.card.up .f, .card.done .f { opacity: 1; }
+.card.done { opacity: .55; cursor: default; }
+
+.quiz-q { margin: 0 0 12px; font: 700 18px/1.4 var(--font-display); text-wrap: balance; }
+.opts { display: grid; gap: 8px; }
+.opt { padding: 14px 16px; border-radius: 12px; border: 1px solid var(--rule); background: var(--panel-2); text-align: left; cursor: pointer; font-size: 15px; }
+.opt.wrong { border-color: var(--bad); color: var(--bad); animation: shake .34s; }
+.opt.right { border-color: var(--ok); color: var(--ok); }
+
+.puz { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 4px; aspect-ratio: var(--ar, 1); }
+.tile { border-radius: 6px; border: 1px solid var(--rule); background-size: 300% 300%; cursor: pointer; }
+.tile.sel { outline: 3px solid var(--brass); outline-offset: -3px; }
+.tile.ok { border-color: transparent; }
+.puz-ref { display: flex; align-items: center; gap: 10px; margin-top: 12px; color: var(--muted); font-size: 12.5px; }
+.puz-ref img { width: 54px; border-radius: 6px; border: 1px solid var(--rule); }
+
+.won { text-align: center; padding: 6px 0 0; }
+.won .big { font-size: 42px; }
+.won h2 { margin: 8px 0 0; }
+.won p { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+
+/* ---------- invitation ---------- */
+.env { perspective: 900px; margin: 16px auto 0; width: 100%; max-width: 320px; }
+.env-body { position: relative; aspect-ratio: 3/2; border-radius: 10px; background: #efe7d6; box-shadow: 0 14px 30px -18px rgba(0,0,0,.9); overflow: hidden; }
+.env-body::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,255,255,.35), rgba(0,0,0,.06)); }
+.flap { position: absolute; left: 0; right: 0; top: 0; height: 56%; background: #e4d9c2; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top center; transition: transform .7s cubic-bezier(.4,0,.2,1); z-index: 2; }
+.env.open .flap { transform: rotateX(-172deg); }
+.seal { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); width: 46px; height: 46px; border-radius: 50%; background: #a8503f; color: #ffe9d9; display: grid; place-items: center; font: 700 17px var(--font-display); z-index: 3; box-shadow: 0 3px 8px rgba(0,0,0,.35); transition: opacity .3s; }
+.env.open .seal { opacity: 0; }
+.card-invite {
+  background: #fbf7ec; color: #2b2721; border-radius: 12px; padding: 20px 18px; margin-top: 16px;
+  box-shadow: 0 16px 36px -20px rgba(0,0,0,.9); border: 1px solid #e3dbc8;
+  animation: cardIn .6s cubic-bezier(.2,.8,.3,1) both;
+}
+@keyframes cardIn { from { opacity: 0; transform: translateY(26px) rotate(-1.5deg); } to { opacity: 1; transform: none; } }
+.card-invite .to { font: 700 24px/1.2 var(--font-dog); }
+.card-invite .msg { font: 700 17px/1.5 var(--font-dog); margin-top: 10px; color: #4a443b; }
+.card-invite .rule { height: 1px; background: #ded5c0; margin: 16px 0; }
+.coupon { display: flex; gap: 12px; align-items: center; padding: 12px; border: 1.5px dashed #b9966a; border-radius: 10px; background: #fffdf5; }
+.coupon .e { font-size: 30px; flex: none; }
+.coupon b { display: block; font-size: 14.5px; }
+.coupon span { font-size: 12.5px; color: #6f6859; }
+.card-invite .sign { margin-top: 14px; text-align: right; font: 700 16px var(--font-dog); color: #4a443b; }
+
+/* ---------- intro / knock ---------- */
 .intro {
   position: fixed; inset: 0; z-index: 20; background: var(--ink);
-  display: grid; place-items: center; padding: calc(24px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
-  overflow-y: auto; transition: opacity .5s .5s, visibility 0s 1s;
+  display: flex; align-items: center; justify-content: center;
+  padding: calc(20px + env(safe-area-inset-top, 0px)) 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  overflow: auto; transition: opacity .5s .4s, visibility 0s .9s;
 }
 .intro.gone { opacity: 0; visibility: hidden; }
-.intro-inner { width: 100%; max-width: 360px; display: grid; gap: 22px; justify-items: center; text-align: center; }
+.intro-inner { margin: auto; width: 100%; max-width: 360px; display: grid; gap: 18px; text-align: center; }
+.intro-inner > * { max-width: 100%; min-width: 0; }
+.door-wrap { justify-self: center; }
 .intro .kicker { font-size: 12px; letter-spacing: .14em; color: var(--brass); font-weight: 600; }
-.intro h1 { margin: 6px 0 0; font: 700 34px/1.15 var(--font-display); text-wrap: balance; }
-.intro p { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
-.door-frame { width: 150px; height: 232px; border-radius: 4px; background: #e9e5df; padding: 9px 9px 0; perspective: 600px; box-shadow: 0 0 0 1px var(--rule), 0 30px 60px -30px rgba(201,164,108,.45); position: relative; }
+.intro h1 { margin: 6px 0 0; font: 700 32px/1.15 var(--font-display); text-wrap: balance; }
+.intro p { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.door-wrap { position: relative; display: grid; justify-items: center; }
+.door-frame { width: 146px; height: 226px; border-radius: 4px; background: #e9e5df; padding: 9px 9px 0; perspective: 600px; box-shadow: 0 0 0 1px var(--rule), 0 30px 60px -30px rgba(201,164,108,.45); position: relative; }
 .door-frame::before { content: ""; position: absolute; inset: 9px 9px 0; background: radial-gradient(ellipse at 50% 20%, #fff7e6 0%, #e9dfcf 45%, #c9bfb0 100%); }
-.door { position: relative; height: 100%; background: #5a3b2e; transform-origin: left center; transition: transform 1s cubic-bezier(.5,0,.2,1); box-shadow: inset -2px 0 0 rgba(0,0,0,.25); }
+.door { position: relative; height: 100%; width: 100%; padding: 0; border: 0; display: block; background: #5a3b2e; transform-origin: left center; transition: transform 1s cubic-bezier(.5,0,.2,1); box-shadow: inset -2px 0 0 rgba(0,0,0,.25); cursor: pointer; }
+.door.knock { animation: knock .3s; }
+@keyframes knock { 0%,100%{transform:translateX(0)} 30%{transform:translateX(-3px)} 70%{transform:translateX(3px)} }
 .door .lock { position: absolute; right: 12px; top: 46%; width: 13px; height: 34px; border-radius: 3px; background: #1d1d1d; box-shadow: inset 0 0 0 1px #444; }
 .door .lock::after { content: ""; position: absolute; left: 4px; top: 6px; width: 5px; height: 5px; border-radius: 50%; background: #6fc3ff; opacity: .8; }
 .door .handle { position: absolute; right: 6px; top: 58%; width: 22px; height: 4px; border-radius: 2px; background: #b9b4ad; }
-.door .plate { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); font: 700 11px var(--font-display); color: #d8c3a5; letter-spacing: .06em; white-space: nowrap; }
-.door .banner { position: absolute; left: 50%; top: 52px; transform: translateX(-50%); width: 30px; }
+.door .plate { position: absolute; left: 50%; top: 16px; transform: translateX(-50%); font: 700 11px var(--font-display); color: #d8c3a5; letter-spacing: .06em; white-space: nowrap; }
+.door .banner { position: absolute; left: 50%; top: 48px; transform: translateX(-50%); width: 30px; }
 .door .banner i { display: block; width: 18px; height: 12px; margin: 0 auto; border: 1px solid #c8b493; border-bottom: 0; border-right: 0; transform: rotate(45deg) translate(5px, 5px); }
-.door .banner span { display: grid; place-items: center; width: 30px; height: 40px; background: #f2eee6; border-top: 2px solid #b48d5c; color: #c98a8a; font-size: 13px; }
+.door .banner span { display: grid; place-items: center; width: 30px; height: 38px; background: #f2eee6; border-top: 2px solid #b48d5c; color: #c98a8a; font-size: 13px; }
 .door.open { transform: rotateY(-78deg); }
-.enter { width: 100%; display: grid; gap: 10px; }
+.knockmark { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); font: 700 20px var(--font-dog); color: #ffeccb; pointer-events: none; animation: pop .7s ease forwards; }
+@keyframes pop { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.6) } 30% { opacity: 1; transform: translate(-50%, -90%) scale(1) } 100% { opacity: 0; transform: translate(-50%, -160%) scale(1) } }
+.greeters { display: flex; align-items: flex-end; justify-content: center; gap: 2px; margin-top: -26px; }
+.greeters img { width: 104px; height: auto; animation: hop .6s cubic-bezier(.2,.9,.3,1.3) both; }
+.greeters img:last-child { width: 118px; animation-delay: .12s; }
+@keyframes hop { from { opacity: 0; transform: translateY(40px) scale(.8); } to { opacity: 1; transform: none; } }
+.say-bubble { width: 100%; background: var(--paper); color: #26221f; border-radius: 16px; padding: 12px 16px; font: 700 17px/1.4 var(--font-dog); animation: rise .4s ease both; }
+.enter { width: 100%; display: grid; gap: 10px; animation: rise .4s .15s ease both; }
 .enter label { font-size: 13px; color: var(--muted); text-align: left; }
 .enter input { height: 50px; border-radius: 14px; border: 1px solid var(--rule); background: var(--panel); color: var(--text); padding: 0 16px; font-size: 16px; }
 .enter input::placeholder { color: #6f685f; }
@@ -208,10 +294,10 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 @keyframes fall { to { transform: translate(var(--x, 0), 105vh) rotate(var(--r, 540deg)); opacity: .9; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .door, .sheet, .intro { transition-duration: .01s; }
+  .door, .sheet, .intro, .flap { transition-duration: .01s; }
   .confetti { display: none; }
-  .go .disc, .dog img, .gift .spark svg { animation: none; }
-  .gift .spark svg { opacity: .85; }
+  .go .disc, .dog img, .wish span, .cta { animation: none; }
+  .greeters img, .say-bubble, .enter, .card-invite { animation: none; }
 }
 </style>
 </head>
@@ -221,16 +307,16 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   <header class="top">
     <div class="brand">
       <h1 id="siteTitle">유씨네 집들이</h1>
-      <p>반짝이는 곳을 찾아보세요</p>
+      <p id="brandSub">방마다 미니게임이 숨어 있어요</p>
     </div>
-    <button class="count" id="countBtn" aria-label="선물 수첩 열기">
+    <button class="count" id="countBtn" aria-label="내가 찾은 위시리스트 열기">
       <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="6" width="12" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6h13M8 6v8M8 6C6 2 3.5 3 5 5.2 6 6 8 6 8 6zm0 0c2-4 4.5-3 3-0.8C10 6 8 6 8 6z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
-      <span>선물 수첩 <b id="foundN">0</b>/<span id="totalN">0</span></span>
+      <span>위시리스트 <b id="foundN">0</b>/<span id="totalN">0</span></span>
     </button>
   </header>
 
   <main class="stage" id="stage">
-    <div class="chip place" id="placeChip">거실</div>
+    <div class="chip place" id="placeChip">현관</div>
     <button class="chip rooms" id="roomsBtn">
       <svg viewBox="0 0 14 14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 7h5V1.5M6.5 7v5.5M6.5 9.5h6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
       방 이동
@@ -240,11 +326,13 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
       <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1.5 5V1.5H5M9 1.5h3.5V5M12.5 9v3.5H9M5 12.5H1.5V9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
       전체 보기
     </button>
-    <div class="howto" id="howto">그림을 두 번 누르면 가까이 보여요 · 화살표를 누르면 걸어가요</div>
+    <div class="howto" id="howto">화살표를 누르면 걸어가고, 그림을 두 번 누르면 가까이 보여요</div>
   </main>
 
+  <button class="cta" id="ctaBtn" hidden></button>
+
   <footer class="dock">
-    <button class="avatar" id="avatarBtn" aria-label="강아지에게 힌트 듣기">
+    <button class="avatar" id="avatarBtn" aria-label="강아지에게 말 걸기">
       <img id="avatarImg" src="rooms/face-doria.webp" alt="유도리">
     </button>
     <div class="bubble" id="bubble" aria-live="polite"></div>
@@ -253,27 +341,36 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 
 <div class="scrim" id="scrim"></div>
 <section class="sheet" id="giftSheet" role="dialog" aria-modal="true" aria-labelledby="giftName"></section>
-<section class="sheet" id="nbSheet" role="dialog" aria-modal="true" aria-label="선물 수첩"></section>
+<section class="sheet" id="nbSheet" role="dialog" aria-modal="true" aria-label="내가 찾은 위시리스트"></section>
 <section class="sheet" id="roomSheet" role="dialog" aria-modal="true" aria-label="방 이동"></section>
+<section class="sheet" id="gameSheet" role="dialog" aria-modal="true" aria-label="미니게임"></section>
+<section class="sheet" id="inviteSheet" role="dialog" aria-modal="true" aria-label="초대장"></section>
 
 <div class="intro" id="intro">
   <div class="intro-inner">
     <div>
       <div class="kicker">HOUSEWARMING</div>
       <h1 id="introTitle">유씨네 집들이</h1>
-      <p id="introSub"></p>
+      <p id="introSub">현관문을 <b>두 번</b> 두드려 보세요</p>
     </div>
-    <div class="door-frame" aria-hidden="true">
-      <div class="door" id="door">
-        <div class="plate" id="doorPlate">유튜브 · 유도리</div>
-        <div class="banner"><i></i><span>♡</span></div>
-        <div class="lock"></div><div class="handle"></div>
+    <div class="door-wrap">
+      <div class="door-frame">
+        <button class="door" id="door" aria-label="현관문 두드리기">
+          <span class="plate" id="doorPlate">유튜브 · 유도리</span>
+          <span class="banner"><i></i><span>♡</span></span>
+          <span class="lock"></span><span class="handle"></span>
+        </button>
+      </div>
+      <div class="greeters" id="greeters" hidden>
+        <img src="rooms/dog-doria.webp" alt="유도리">
+        <img src="rooms/dog-tube.webp" alt="유튜브">
       </div>
     </div>
-    <form class="enter" id="enterForm" autocomplete="off">
-      <label for="guestName">방문하신 분 이름</label>
+    <div class="say-bubble" id="introSay" hidden></div>
+    <form class="enter" id="enterForm" autocomplete="off" hidden>
+      <label for="guestName">이름을 알려주세요</label>
       <input id="guestName" name="guestName" maxlength="20" placeholder="예: 김민지" required>
-      <button class="btn btn-primary" type="submit">문 열고 들어가기</button>
+      <button class="btn btn-primary" type="submit">이름 알려주기</button>
     </form>
   </div>
 </div>
@@ -286,9 +383,25 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
    ================================================================ */
 const SITE = {
   title: '유씨네 집들이',
-  intro: '유튜브와 유도리가 집 구경을 시켜드릴게요.<br>구경하다 반짝이는 걸 찾으면, 그게 저희 집에 필요한 거예요.',
   doorPlate: '유튜브 · 유도리',
+  knockAsk: '누구세요~? 주인님의 초대로 오셨나요? 이름을 알려주세요 멍!',
+  welcome: (n) => `${n}님, 방문자 목록에 있으시군요! 자 어서 들어오세요. 여기가 현관입니다.`,
+  thanksCue: '주인님이 들러주셔서 감사하다고 하시네요. 아래 버튼을 눌러보세요',
+  inviteMsg: '먼 길 와주셔서 고맙습니다.\n빈손으로 오셔도 괜찮아요.\n그래도 마음이 쓰이신다면,\n집 안에 저희가 필요한 걸 숨겨뒀어요 🐾',
+  inviteSign: '— 유튜브 · 유도리 그리고 집주인 올림',
 };
+
+/* 초대장 안의 랜덤 쿠폰 (이름에 따라 한 장이 정해집니다) */
+const COUPONS = [
+  { e: '🐶', t: '유튜브 쓰다듬기 30초권', s: '귀 뒤를 긁어주면 제일 좋아해요' },
+  { e: '🦴', t: '유도리 간식 주기권', s: '"앉아!" 하고 주셔야 합니다' },
+  { e: '☕', t: '집주인이 내려주는 커피 한 잔', s: '아일랜드 자리에 앉으세요' },
+  { e: '🎬', t: '빔프로젝터 영화 선곡권', s: '그날 저녁 한 편은 손님 마음대로' },
+  { e: '🛋️', t: '초록 빈백 지정석권', s: '제일 푹신한 자리입니다' },
+  { e: '🥂', t: '집들이 첫 건배 제의권', s: '멋진 한마디 준비해 오세요' },
+  { e: '🎹', t: '전자피아노 1곡 신청권', s: '남편이 쳐드립니다' },
+  { e: '🍚', t: '밥 한 공기 추가권', s: '무제한은 아니에요' },
+];
 
 /* ================================================================
    2) Firebase 설정 — 비워두면 '체험 모드'(이 기기에만 저장)
@@ -297,7 +410,7 @@ const FIREBASE_CONFIG = null;
 
 /* ================================================================
    3) 장면 — 그림 한 장이 곧 한 시점입니다
-      exits: [가는 곳, 버튼 글씨, 그림 위 x%, 그림 위 y%]
+      exits: [가는 곳, 버튼 글씨, 그림 위 x%, 그림 위 y%, 'back'이면 뒤로]
       dogs:  [누가, x%, y%, 크기]
    ================================================================ */
 const SCENES = {
@@ -423,31 +536,70 @@ const ROOM_NAMES = {
   entry: '현관', living: '거실', kitchen: '주방', utility: '다용도실', bath1: '거실 욕실',
   bed1: '손님방', small: '작업실', bed2: '침실', dress: '드레스룸', bath2: '안쪽 욕실',
 };
-/* 방 이동 메뉴에서 각 방의 대표 장면 */
+const ROOM_ORDER = ['entry', 'living', 'kitchen', 'small', 'bed2', 'dress', 'bath2', 'bed1', 'bath1', 'utility'];
 const ROOM_ENTRY = {
   entry: 'entry-art', living: 'living-kitchen', kitchen: 'kitchen', utility: 'utility', bath1: 'bath1-toilet',
   bed1: 'guest', small: 'studio-desk', bed2: 'bedroom-bed', dress: 'dress', bath2: 'bath2-tub',
 };
 
 /* ================================================================
-   4) 선물 목록 (지금은 예시) — scene 은 위 SCENES 의 이름, x/y 는 그림 위 %
+   4) 방마다 하나씩 있는 미니게임
+      find   = 그림 속에 몰래 숨긴 것 찾기 (count 개)
+      memory = 카드 짝 맞추기 (pairs 의 그림들)
+      quiz   = 집주인 퀴즈 (q 질문 / a 보기 / c 정답 번호, 0부터)
+      puzzle = 그림 조각 맞추기 (scene 그림으로)
+   ================================================================ */
+const GAMES = {
+  entry: {
+    type: 'quiz', title: '초대 확인 퀴즈', lede: '초대받은 분이 맞는지 살짝만 확인할게요!',
+    qs: [
+      { q: '이 집 강아지 두 마리의 이름은?', a: ['유튜브와 유도리', '튜브와 도리', '뽀삐와 초코'], c: 0 },
+      { q: '집주인이 인테리어에 제일 공들인 공간은?', a: ['베란다', '주방', '다용도실'], c: 1 },
+    ],
+  },
+  living: { type: 'find', title: '몰래 들어온 것 찾기', lede: '거실 그림에 원래 없던 3가지가 숨었어요. 찾아서 눌러주세요!', scene: 'living-window', count: 3 },
+  kitchen: {
+    type: 'memory', title: '주방 짝 맞추기', lede: '같은 그림 두 장을 찾아 짝지어 주세요',
+    pairs: ['🍷', '☕', '🍳', '🥄', '🧂', '🫖'],
+  },
+  small: { type: 'find', title: '작업실 숨은 그림 찾기', lede: '작업실에 4가지가 몰래 들어왔어요. 제일 어려운 방이에요!', scene: 'studio-desk', count: 4 },
+  bed2: { type: 'puzzle', title: '침실 그림 맞추기', lede: '조각 두 개를 눌러 자리를 바꿔요. 그림이 완성되면 끝!', scene: 'bedroom-bed' },
+  dress: {
+    type: 'quiz', title: '드레스룸 퀴즈', lede: '이 집을 잘 아는 분이라면 쉬워요',
+    qs: [
+      { q: '이 집 인테리어의 메인 컬러는?', a: ['파스텔 핑크', '그레이·블랙·화이트', '우드 브라운'], c: 1 },
+      { q: '안방 벽을 철거해서 만든 공간의 별명은?', a: ['작업실(히든룸)', '서재', '홈바'], c: 0 },
+    ],
+  },
+  bath2: { type: 'find', title: '안쪽 욕실 숨은 그림', lede: '2가지가 숨었어요. 금방 찾으실 거예요', scene: 'bath2-tub', count: 2 },
+  bed1: {
+    type: 'memory', title: '손님방 짝 맞추기', lede: '자고 가실 분들을 위한 방이에요',
+    pairs: ['🛏️', '🧸', '📺', '🪟', '🧦', '📚'],
+  },
+  bath1: { type: 'puzzle', title: '거실 욕실 그림 맞추기', lede: '조각 두 개를 눌러 자리를 바꿔요', scene: 'bath1-sink' },
+  utility: { type: 'find', title: '다용도실 숨은 그림', lede: '2가지가 숨었어요', scene: 'utility', count: 2 },
+};
+
+/* ================================================================
+   5) 위시리스트 (지금은 예시) — 방의 미니게임을 깨면 공개됩니다
+      scene/x/y 는 공개된 뒤 그림 위에 놓일 자리입니다
    ================================================================ */
 const GIFTS = [
-  { id: 'shoerack',   scene: 'entry-art',      x: 18, y: 74, emoji: '👟', name: '현관 슈즈 벤치',      price: '5~10만원',  note: '앉아서 신발 신을 자리가 있으면 좋겠어요. 카펫 위에 신발도 덜 굴러다니고요.', hint: '현관 왼쪽, 커튼 아래 수납장 쪽을 봐주세요. 제가 신발 물어가는 데요' },
-  { id: 'sofa',       scene: 'living-window',  x: 50, y: 74, emoji: '🛋️', name: '거실 소파 (함께 보태기)', price: '여럿이 조금씩', note: '소파가 생기면 빈백 존을 싹 정리할 거예요. 몇 분이 같이 보태주셔도 좋아요!', hint: '거실 빈백 사이 바닥… 여기에 소파가 오면 좋겠대요' },
-  { id: 'soundbar',   scene: 'living-beanbag', x: 72, y: 62, emoji: '🔊', name: '블루투스 사운드바',    price: '10~20만원', note: '빔프로젝터로 영화 보는데 소리가 너무 작아요.', hint: '거실 빈백에서 액자 걸린 벽 쪽을 보세요. 멍!' },
-  { id: 'glasses',    scene: 'kitchen',        x: 44, y: 66, emoji: '🍷', name: '와인잔 세트',          price: '5~10만원',  note: '아일랜드 식탁에서 집들이 건배하고 싶어요.', hint: '주방 긴 아일랜드 위를 잘 보세요' },
-  { id: 'coffee',     scene: 'kitchen',        x: 58, y: 50, emoji: '☕', name: '캡슐 커피머신',        price: '15~25만원', note: '주방 창가 쪽에 커피머신 자리를 비워뒀어요.', hint: '주방 창문 아래 싱크 옆이 비어 있어요!' },
-  { id: 'dryrack',    scene: 'utility',        x: 38, y: 47, emoji: '🧺', name: '빨래 바구니 & 건조대', price: '3~6만원',   note: '유튜브·유도리 담요 빨래가 매일 한가득이에요.', hint: '다용도실 세탁기 위… 제 담요가 거기서 빨래돼요' },
-  { id: 'bathmat',    scene: 'bath1-sink',     x: 54, y: 60, emoji: '🧼', name: '욕실 매트 & 디스펜서', price: '3~6만원',   note: '세면대에 어울리는 디스펜서 세트가 갖고 싶어요.', hint: '거실 욕실 세면대 위가 수상해요' },
-  { id: 'guestbed',   scene: 'guest',          x: 34, y: 60, emoji: '🛌', name: '손님용 침구 세트',     price: '8~15만원',  note: '놀러 와서 자고 가실 분들을 위한 포근한 이불이 필요해요.', hint: '손님방 창가 데이베드를 봐주세요! 자고 가도 돼요' },
-  { id: 'monitorarm', scene: 'studio-desk',    x: 25, y: 41, emoji: '🖥️', name: '듀얼 모니터암',        price: '5~10만원',  note: '작업실 책상 두 개 위가 선으로 정신없어요.', hint: '작업실 컴퓨터 책상 위를 봐주세요' },
-  { id: 'plant',      scene: 'studio-desk',    x: 57, y: 44, emoji: '🪴', name: '반려식물 화분',        price: '3~8만원',   note: '베란다가 아직 텅 비어 있어요.', hint: '작업실 유리문 너머 베란다를 봐요!' },
-  { id: 'cabinet',    scene: 'studio-drum',    x: 74, y: 72, emoji: '🗄️', name: '작업실 수납장',        price: '10~20만원', note: '짐이 아직 박스에 들어 있어요. 수납장이 생기면 작업실 정리 끝!', hint: '작업실 피아노 옆 구석… 저기 정리가 필요해요' },
-  { id: 'fountain',   scene: 'studio-drum',    x: 26, y: 60, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '유튜브와 유도리가 물을 더 많이 마셨으면 해서요.', hint: '작업실 하얀 울타리 안에 뭐가 있게요?' },
-  { id: 'bedding',    scene: 'bedroom-bed',    x: 32, y: 70, emoji: '🛏️', name: '킹사이즈 호텔 침구',   price: '15~30만원', note: '브라운 가죽 침대 프레임이 왔어요! 이제 어울리는 호텔 침구만 있으면 돼요.', hint: '침실 큰 침대 위… 폭신한 냄새' },
-  { id: 'towels',     scene: 'bath2-tub',      x: 82, y: 37, emoji: '🛁', name: '호텔 수건 세트',       price: '4~8만원',   note: '욕조 있는 화장실에 두툼한 수건을 두고 싶어요.', hint: '욕조 옆 선반! 저는 목욕 싫어요…' },
-  { id: 'candle',     scene: 'dress',          x: 48, y: 57, emoji: '🪔', name: '캔들워머',             price: '3~6만원',   note: '화장대 위에 은은한 불빛 하나 있으면 좋겠어요.', hint: '드레스룸 창가 선반 쪽에 반짝이는 게 있어요' },
+  { id: 'shoerack',   scene: 'entry-art',      x: 18, y: 74, emoji: '👟', name: '현관 슈즈 벤치',      price: '5~10만원',  note: '앉아서 신발 신을 자리가 있으면 좋겠어요. 카펫 위에 신발도 덜 굴러다니고요.' },
+  { id: 'sofa',       scene: 'living-window',  x: 50, y: 74, emoji: '🛋️', name: '거실 소파 (함께 보태기)', price: '여럿이 조금씩', note: '소파가 생기면 빈백 존을 싹 정리할 거예요. 몇 분이 같이 보태주셔도 좋아요!' },
+  { id: 'soundbar',   scene: 'living-beanbag', x: 72, y: 62, emoji: '🔊', name: '블루투스 사운드바',    price: '10~20만원', note: '빔프로젝터로 영화 보는데 소리가 너무 작아요.' },
+  { id: 'glasses',    scene: 'kitchen',        x: 44, y: 66, emoji: '🍷', name: '와인잔 세트',          price: '5~10만원',  note: '아일랜드 식탁에서 집들이 건배하고 싶어요.' },
+  { id: 'coffee',     scene: 'kitchen',        x: 58, y: 50, emoji: '☕', name: '캡슐 커피머신',        price: '15~25만원', note: '주방 창가 쪽에 커피머신 자리를 비워뒀어요.' },
+  { id: 'dryrack',    scene: 'utility',        x: 38, y: 47, emoji: '🧺', name: '빨래 바구니 & 건조대', price: '3~6만원',   note: '유튜브·유도리 담요 빨래가 매일 한가득이에요.' },
+  { id: 'bathmat',    scene: 'bath1-sink',     x: 54, y: 60, emoji: '🧼', name: '욕실 매트 & 디스펜서', price: '3~6만원',   note: '세면대에 어울리는 디스펜서 세트가 갖고 싶어요.' },
+  { id: 'guestbed',   scene: 'guest',          x: 34, y: 60, emoji: '🛌', name: '손님용 침구 세트',     price: '8~15만원',  note: '놀러 와서 자고 가실 분들을 위한 포근한 이불이 필요해요.' },
+  { id: 'monitorarm', scene: 'studio-desk',    x: 25, y: 41, emoji: '🖥️', name: '듀얼 모니터암',        price: '5~10만원',  note: '작업실 책상 두 개 위가 선으로 정신없어요.' },
+  { id: 'plant',      scene: 'studio-desk',    x: 57, y: 44, emoji: '🪴', name: '반려식물 화분',        price: '3~8만원',   note: '베란다가 아직 텅 비어 있어요.' },
+  { id: 'cabinet',    scene: 'studio-drum',    x: 74, y: 72, emoji: '🗄️', name: '작업실 수납장',        price: '10~20만원', note: '짐이 아직 박스에 들어 있어요. 수납장이 생기면 작업실 정리 끝!' },
+  { id: 'fountain',   scene: 'studio-drum',    x: 26, y: 60, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '유튜브와 유도리가 물을 더 많이 마셨으면 해서요.' },
+  { id: 'bedding',    scene: 'bedroom-bed',    x: 32, y: 70, emoji: '🛏️', name: '킹사이즈 호텔 침구',   price: '15~30만원', note: '브라운 가죽 침대 프레임이 왔어요! 이제 어울리는 호텔 침구만 있으면 돼요.' },
+  { id: 'towels',     scene: 'bath2-tub',      x: 82, y: 37, emoji: '🛁', name: '호텔 수건 세트',       price: '4~8만원',   note: '욕조 있는 화장실에 두툼한 수건을 두고 싶어요.' },
+  { id: 'candle',     scene: 'dress',          x: 48, y: 57, emoji: '🪔', name: '캔들워머',             price: '3~6만원',   note: '화장대 위에 은은한 불빛 하나 있으면 좋겠어요.' },
 ];
 
 /* ================================================================
@@ -462,16 +614,21 @@ function ls(key, val) {
 }
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const hash = (s) => { let h = 0; for (const c of String(s)) h = (h * 31 + c.codePointAt(0)) >>> 0; return h; };
 
 const state = {
-  guest: ls('hw_guest') || null,
-  guestId: ls('hw_gid') || (Math.random().toString(36).slice(2) + Date.now().toString(36)),
-  found: new Set(ls('hw_found') || []),
+  guest: ls('hw2_guest') || null,
+  guestId: ls('hw2_gid') || (Math.random().toString(36).slice(2) + Date.now().toString(36)),
+  cleared: new Set(ls('hw2_cleared') || []),
+  thanked: !!ls('hw2_thanked'),
+  cueReady: false,
   claims: {},
   scene: FIRST_SCENE,
 };
-ls('hw_gid', state.guestId);
+ls('hw2_gid', state.guestId);
 const curRoom = () => SCENES[state.scene].room;
+const giftRoom = (g) => SCENES[g.scene].room;
+const openGifts = () => GIFTS.filter(g => state.cleared.has(giftRoom(g)));
 
 /* ---------- 저장소: 체험 모드(localStorage) / 실서비스(Firebase) ---------- */
 const Store = {
@@ -486,10 +643,10 @@ const Store = {
   },
   initDemo() {
     this.mode = 'demo';
-    let c = ls('hw_claims');
-    if (!c) { c = { glasses: { name: '민지 (예시)', uid: 'example', at: Date.now() } }; ls('hw_claims', c); }
+    let c = ls('hw2_claims');
+    if (!c) { c = { glasses: { name: '민지 (예시)', uid: 'example', at: Date.now() } }; ls('hw2_claims', c); }
     state.claims = c;
-    window.addEventListener('storage', (e) => { if (e.key === 'hw_claims') { state.claims = ls('hw_claims') || {}; this.emit(); } });
+    window.addEventListener('storage', (e) => { if (e.key === 'hw2_claims') { state.claims = ls('hw2_claims') || {}; this.emit(); } });
     this.emit();
   },
   async initLive() {
@@ -508,31 +665,38 @@ const Store = {
     this.unclaim = (gid) => fs.deleteDoc(fs.doc(db, 'claims', gid));
   },
   async claim(gid, name) {
-    const c = ls('hw_claims') || {}; if (c[gid]) throw new Error('taken');
-    c[gid] = { name, uid: this.uid, at: Date.now() }; ls('hw_claims', c); state.claims = c; this.emit();
+    const c = ls('hw2_claims') || {}; if (c[gid]) throw new Error('taken');
+    c[gid] = { name, uid: this.uid, at: Date.now() }; ls('hw2_claims', c); state.claims = c; this.emit();
   },
-  async unclaim(gid) { const c = ls('hw_claims') || {}; delete c[gid]; ls('hw_claims', c); state.claims = c; this.emit(); },
+  async unclaim(gid) { const c = ls('hw2_claims') || {}; delete c[gid]; ls('hw2_claims', c); state.claims = c; this.emit(); },
 };
 const isMine = (c) => c && c.uid === Store.uid;
 
 /* ---------- 강아지 ---------- */
 const DOGS = {
-  tube:  { name: '유튜브',   img: 'rooms/dog-tube.webp',  face: 'rooms/face-tube.webp' },
+  tube:  { name: '유튜브', img: 'rooms/dog-tube.webp',  face: 'rooms/face-tube.webp' },
   doria: { name: '유도리', img: 'rooms/dog-doria.webp', face: 'rooms/face-doria.webp' },
 };
 let speaker = 'doria';
-const dogFor = (room) => (['small', 'utility', 'bed1', 'bath2'].includes(room) ? 'tube' : 'doria');
+const dogFor = (room) => (['small', 'utility', 'bed1', 'bath2', 'kitchen'].includes(room) ? 'tube' : 'doria');
 function say(text, who) {
   speaker = who || speaker; const d = DOGS[speaker];
   $('#avatarImg').src = d.face; $('#avatarImg').alt = d.name;
   $('#bubble').innerHTML = `<div><small>${d.name}</small>${esc(text)}</div>`;
 }
-function giveHint(who) {
-  const here = GIFTS.filter(g => !state.found.has(g.id) && SCENES[g.scene].room === curRoom());
-  const any = GIFTS.filter(g => !state.found.has(g.id));
-  const g = pick(here.length ? here : any.length ? any : [null]);
-  if (!g) { say('다 찾았잖아요! 이제 간식 주세요', who); return; }
-  say(g.hint, who);
+function dogTalk(who) {
+  const room = curRoom();
+  if (!state.cleared.has(room)) {
+    say(pick([
+      `${ROOM_NAMES[room]} 미니게임을 깨면 위시리스트가 열려요. 아래 버튼 눌러보세요!`,
+      '게임 한 판이면 이 방에 뭐가 필요한지 알 수 있어요 멍!',
+      '어렵지 않아요. 저희도 다 깼는걸요?',
+    ]), who);
+    return;
+  }
+  const left = GIFTS.filter(g => giftRoom(g) === room && !state.claims[g.id]);
+  if (left.length) say(`이 방엔 ${left[0].name}이(가) 아직 주인이 없어요`, who);
+  else say(pick(['이 방은 다 정해졌어요! 다른 방도 가볼까요?', '고마워요! 꼬리 흔드는 중이에요']), who);
 }
 
 /* ---------- 장면 그리기 ---------- */
@@ -541,11 +705,6 @@ let layer = null, natural = { w: 4, h: 3 };
 let pan = { x: 0, y: 0 }, maxPan = { x: 0, y: 0 }, zoom = 1;
 const MAX_ZOOM = 2.8;
 
-const svgSpark = () => `<svg viewBox="-14 -14 28 28" aria-hidden="true">
-  <circle r="12" fill="#fff3d6" opacity=".55"/>
-  <circle r="12" fill="none" stroke="#b99150" stroke-width="1" stroke-dasharray="3 3.4" opacity=".9"/>
-  <path d="M0 -10 L2.1 -2.4 L10 0 L2.1 2.4 L0 10 L-2.1 2.4 L-10 0 L-2.1 -2.4Z" fill="#e9c389" stroke="#8a6a30" stroke-width="1" stroke-linejoin="round"/>
-  <circle r="1.7" fill="#fffdf4"/></svg>`;
 const svgArrow = (back) => back
   ? `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10M10 17l-5-6M10 17l5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
   : `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 17V7M10 3l-5 6M10 3l5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -567,12 +726,12 @@ function buildScene(id) {
     el.appendChild(h);
   });
 
-  GIFTS.filter(g => g.scene === id).forEach((g, i) => {
+  GIFTS.filter(g => g.scene === id && state.cleared.has(giftRoom(g))).forEach(g => {
     const h = document.createElement('div');
     h.className = 'hot';
     h.style.cssText = `left:${g.x}%;top:${g.y}%`;
-    h.innerHTML = `<button class="gift" type="button" data-gift="${g.id}" aria-label="반짝이는 것"><span class="spark" style="--d:${(i * 0.9 % 3).toFixed(2)}s;--p:${(3.4 + (i * 0.5) % 1.8).toFixed(2)}s">${svgSpark()}</span><span class="tag">${svgGiftTag()}</span></button>`;
-    h.querySelector('button').addEventListener('click', (e) => { e.stopPropagation(); onGift(g.id); });
+    h.innerHTML = `<button class="wish" type="button" data-gift="${g.id}" aria-label="${esc(g.name)}"><span>${svgGiftTag()}</span></button>`;
+    h.querySelector('button').addEventListener('click', (e) => { e.stopPropagation(); openGift(g.id); });
     el.appendChild(h);
   });
 
@@ -581,20 +740,19 @@ function buildScene(id) {
     const h = document.createElement('div');
     h.className = 'dog';
     h.style.cssText = `left:${x}%;top:${y}%;--s:${s || 1}`;
-    h.innerHTML = `<img src="${d.img}" alt="${d.name}에게 힌트 듣기" draggable="false">`;
-    h.addEventListener('click', (e) => { e.stopPropagation(); giveHint(who); });
+    h.innerHTML = `<img src="${d.img}" alt="${d.name}에게 말 걸기" draggable="false">`;
+    h.addEventListener('click', (e) => { e.stopPropagation(); dogTalk(who); });
     el.appendChild(h);
   });
   return el;
 }
 
-/* 그림 전체가 보이도록 맞추고(=확대 1배), 확대하면 그만큼 끌어서 볼 수 있게 합니다. */
+/* 그림 전체가 보이도록 맞추고(=확대 1배), 확대하면 그만큼 끌어서 볼 수 있게 합니다 */
 function fitLayer(el) {
   const W = stage.clientWidth, H = stage.clientHeight;
   if (!W || !H) return;
   const contain = Math.min(W / natural.w, H / natural.h);
   const cover = Math.max(W / natural.w, H / natural.h);
-  /* 화면을 채우되, 가로로 긴 그림은 1.3배까지만 잘라서 보여줍니다 */
   const base = contain * Math.min(cover / contain, 1.45);
   const w = natural.w * base * zoom, h = natural.h * base * zoom;
   el.style.width = w + 'px'; el.style.height = h + 'px';
@@ -646,7 +804,6 @@ function showScene(id, dir) {
       old.style.transform += ` scale(${dir === 'back' ? 0.94 : 1.07})`;
       setTimeout(() => old.remove(), 440);
     }
-    refresh();
     preload(id);
   };
   if (img.complete && img.naturalWidth) go(); else { img.onload = go; img.onerror = go; }
@@ -668,6 +825,7 @@ function goScene(id, opt = {}) {
   state.scene = id;
   showScene(id, back ? 'back' : 'fwd');
   updateChip();
+  updateCta();
   $('#howto').classList.add('fade');
   if (!opt.silent) announce(prevRoom);
 }
@@ -677,16 +835,36 @@ function updateChip() {
 }
 function announce(prevRoom) {
   const room = curRoom();
-  const left = GIFTS.filter(g => SCENES[g.scene].room === room && !state.found.has(g.id)).length;
-  const total = GIFTS.filter(g => SCENES[g.scene].room === room).length;
+  if (room === prevRoom) return;
   const who = dogFor(room);
-  if (room === prevRoom) {
-    if (left) say(`여기도 잘 보세요. 이 방에 ${left}개 남았어요`, who);
+  if (state.cleared.has(room)) {
+    const n = GIFTS.filter(g => giftRoom(g) === room).length;
+    say(n ? `${ROOM_NAMES[room]}은 이미 열었어요. 위시리스트 ${n}개가 놓여 있어요` : `${ROOM_NAMES[room]}은 다 보셨어요!`, who);
+  } else {
+    const g = GAMES[room];
+    say(g ? `${ROOM_NAMES[room]}에 도착! ‘${g.title}’을 깨면 위시리스트가 열려요` : `${ROOM_NAMES[room]}이에요. 편하게 둘러보세요`, who);
+  }
+}
+
+/* 아래쪽 큰 버튼: 초대장 → 미니게임 → 완료 */
+function updateCta() {
+  const b = $('#ctaBtn');
+  if (!state.guest) { b.hidden = true; return; }
+  if (!state.thanked && state.cueReady) {
+    b.hidden = false; b.className = 'cta gold';
+    b.innerHTML = '<em>💌</em> 초대장 열어보기';
+    b.onclick = openInvite;
     return;
   }
-  if (!total) say(pick(['여긴 선물이 없는 것 같아요. 다른 방도 가봐요!', '킁킁… 여긴 아무 냄새도 안 나요.']), who);
-  else if (!left) say('이 방에선 다 찾았어요! 최고예요', who);
-  else say(`${ROOM_NAMES[room]}에 반짝이는 게 ${left}개 숨어 있어요. 둘러보세요!`, who);
+  const room = curRoom();
+  const g = GAMES[room];
+  if (g && !state.cleared.has(room)) {
+    b.hidden = false; b.className = 'cta';
+    b.innerHTML = `<em>🎮</em> ${esc(ROOM_NAMES[room])} 미니게임`;
+    b.onclick = () => openGame(room);
+  } else {
+    b.hidden = true;
+  }
 }
 
 /* ---------- 확대해서 둘러보기 ---------- */
@@ -694,7 +872,6 @@ function setupDrag() {
   const pts = new Map();
   let drag = null, pinch = null, lastTap = 0;
   const rel = (e) => { const r = stage.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-
   stage.addEventListener('pointerdown', (e) => {
     if (e.target.closest('button')) return;
     pts.set(e.pointerId, e);
@@ -745,16 +922,254 @@ function setupDrag() {
   new ResizeObserver(() => { if (layer) fitLayer(layer); }).observe(stage);
 }
 
-/* ---------- 선물 카드 ---------- */
-function onGift(gid) {
-  if (!state.found.has(gid)) {
-    state.found.add(gid); ls('hw_found', [...state.found]);
-    burst(16); refresh();
-    const g = GIFTS.find(x => x.id === gid);
-    say(state.found.size === GIFTS.length ? '마지막 하나까지 찾았어요! 대단해요' : pick(['찾았다! 멍멍!', '역시 눈썰미 최고예요', '오, 이거 진짜 필요해요!']), dogFor(SCENES[g.scene].room));
-  }
-  openGift(gid);
+/* ================================================================
+   미니게임
+   ================================================================ */
+const DOODLES = {
+  bone: '<svg viewBox="0 0 40 24"><path d="M7 5a4.6 4.6 0 1 0-1.4 7.3A4.6 4.6 0 1 0 9.8 19l20.4-.6a4.6 4.6 0 1 0 4.3-6.5A4.6 4.6 0 1 0 30.4 5L9.9 5.6z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+  ball: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11.5" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7"/><path d="M3 11c7 3 15 3 22 0M3 17c7-3 15-3 22 0M14 2.6v22.8" fill="none" stroke="#3b3630" stroke-width="1.3"/></svg>',
+  paw: '<svg viewBox="0 0 30 30"><ellipse cx="15" cy="20" rx="8" ry="6.5" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7"/><ellipse cx="6" cy="12" rx="3.3" ry="4.2" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.6"/><ellipse cx="12" cy="8" rx="3.3" ry="4.4" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.6"/><ellipse cx="19" cy="8" rx="3.3" ry="4.4" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.6"/><ellipse cx="25" cy="12" rx="3.3" ry="4.2" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.6"/></svg>',
+  star: '<svg viewBox="0 0 30 30"><path d="M15 2.5l3.9 8.3 9 1.2-6.6 6.2 1.7 8.9L15 22.8 7 27.1l1.7-8.9L2.1 12l9-1.2z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+  mug: '<svg viewBox="0 0 30 28"><path d="M4 7h17v12a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/><path d="M21 10h3a3.5 3.5 0 1 1 0 7h-3" fill="none" stroke="#3b3630" stroke-width="1.7"/><path d="M9 4c0-1.6 2-1.6 2-3M14 4c0-1.6 2-1.6 2-3" fill="none" stroke="#3b3630" stroke-width="1.4" stroke-linecap="round"/></svg>',
+  sock: '<svg viewBox="0 0 26 30"><path d="M8 2h9v12.5c0 2 .8 3 2.4 4.2l2.4 1.9a5.4 5.4 0 1 1-6.6 8.5l-6-4.6C6.5 22.6 8 20 8 16.6z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 6.5h9" fill="none" stroke="#3b3630" stroke-width="1.4"/></svg>',
+  heart: '<svg viewBox="0 0 30 28"><path d="M15 25C7 19.5 2.5 15.4 2.5 10.6A6.6 6.6 0 0 1 15 7.2 6.6 6.6 0 0 1 27.5 10.6C27.5 15.4 23 19.5 15 25z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+  bell: '<svg viewBox="0 0 28 30"><path d="M14 3a7.5 7.5 0 0 1 7.5 7.5c0 6 2 7.5 2 9.5H4.5c0-2 2-3.5 2-9.5A7.5 7.5 0 0 1 14 3z" fill="#fdfbf5" stroke="#3b3630" stroke-width="1.7" stroke-linejoin="round"/><path d="M11 23.5a3 3 0 0 0 6 0M14 3V.8" fill="none" stroke="#3b3630" stroke-width="1.6" stroke-linecap="round"/></svg>',
+};
+const DOODLE_KEYS = Object.keys(DOODLES);
+
+let game = null;
+
+function openGame(room) {
+  const g = GAMES[room];
+  if (!g) return;
+  game = { room, def: g };
+  renderGame();
+  showSheet('#gameSheet');
 }
+function gameHead(extra) {
+  const g = game.def;
+  return `<div class="grip"></div>
+    <div class="eyebrow">${esc(ROOM_NAMES[game.room])} 미니게임</div>
+    <div class="game-top"><h2>${esc(g.title)}</h2><div class="score" id="score">${extra || ''}</div></div>
+    <p class="lede">${esc(g.lede)}</p>`;
+}
+function renderGame() {
+  const g = game.def;
+  if (g.type === 'find') renderFind();
+  else if (g.type === 'memory') renderMemory();
+  else if (g.type === 'quiz') renderQuiz();
+  else if (g.type === 'puzzle') renderPuzzle();
+}
+
+/* --- 숨은 그림 찾기 --- */
+function renderFind() {
+  const g = game.def, n = g.count || 3;
+  const keys = [...DOODLE_KEYS].sort(() => Math.random() - 0.5).slice(0, n);
+  const spots = [];
+  for (const k of keys) {
+    let p, tries = 0;
+    do {
+      p = { x: 12 + Math.random() * 76, y: 18 + Math.random() * 64 };
+      tries++;
+    } while (tries < 80 && spots.some(s => Math.hypot(s.x - p.x, (s.y - p.y) * 0.8) < 24));
+    spots.push({ ...p, k, got: false, rot: (Math.random() * 50 - 25).toFixed(1) });
+  }
+  game.spots = spots; game.left = n;
+  $('#gameSheet').innerHTML = gameHead(`0 / ${n}`) + `
+    <div class="board"><div class="pic" id="pic">
+      <img src="${SCENES[g.scene].img}" alt="${esc(ROOM_NAMES[game.room])} 그림" draggable="false">
+      ${spots.map((s, i) => `<button class="spot" type="button" data-i="${i}" style="left:${s.x}%;top:${s.y}%;transform:translate(-50%,-50%) rotate(${s.rot}deg)" aria-label="숨은 그림">${DOODLES[s.k]}</button>`).join('')}
+    </div></div>
+    <div class="actions"><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
+  const picEl = $('#pic');
+  picEl.querySelectorAll('.spot').forEach(b => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const s = game.spots[+b.dataset.i];
+    if (s.got) return;
+    s.got = true; b.classList.add('got'); game.left--;
+    $('#score').textContent = `${game.spots.length - game.left} / ${game.spots.length}`;
+    if (!game.left) setTimeout(() => winGame(), 450);
+  }));
+  picEl.addEventListener('click', (e) => {
+    if (e.target.closest('.spot')) return;
+    const r = picEl.getBoundingClientRect();
+    const m = document.createElement('div');
+    m.className = 'miss';
+    m.style.cssText = `left:${((e.clientX - r.left) / r.width * 100)}%;top:${((e.clientY - r.top) / r.height * 100)}%`;
+    picEl.appendChild(m);
+    setTimeout(() => m.remove(), 700);
+  });
+  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+}
+
+/* --- 짝 맞추기 --- */
+function renderMemory() {
+  const g = game.def;
+  const deck = [...g.pairs, ...g.pairs].sort(() => Math.random() - 0.5);
+  game.deck = deck; game.up = []; game.done = 0; game.lock = false;
+  $('#gameSheet').innerHTML = gameHead(`0 / ${g.pairs.length}`) + `
+    <div class="board"><div class="cards" id="cards">
+      ${deck.map((f, i) => `<button class="card" type="button" data-i="${i}" aria-label="카드"><span class="f">${f}</span></button>`).join('')}
+    </div></div>
+    <div class="actions"><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
+  $('#cards').querySelectorAll('.card').forEach(b => b.addEventListener('click', () => {
+    if (game.lock || b.classList.contains('up') || b.classList.contains('done')) return;
+    b.classList.add('up'); game.up.push(b);
+    if (game.up.length < 2) return;
+    const [a, c] = game.up;
+    if (game.deck[+a.dataset.i] === game.deck[+c.dataset.i]) {
+      a.classList.add('done'); c.classList.add('done');
+      game.up = []; game.done++;
+      $('#score').textContent = `${game.done} / ${g.pairs.length}`;
+      if (game.done === g.pairs.length) setTimeout(() => winGame(), 400);
+    } else {
+      game.lock = true;
+      setTimeout(() => { a.classList.remove('up'); c.classList.remove('up'); game.up = []; game.lock = false; }, 700);
+    }
+  }));
+  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+}
+
+/* --- 집주인 퀴즈 --- */
+function renderQuiz() {
+  game.qi = game.qi || 0;
+  const g = game.def, q = g.qs[game.qi];
+  $('#gameSheet').innerHTML = gameHead(`${game.qi + 1} / ${g.qs.length}`) + `
+    <div class="board">
+      <p class="quiz-q">${esc(q.q)}</p>
+      <div class="opts" id="opts">
+        ${q.a.map((t, i) => `<button class="opt" type="button" data-i="${i}">${esc(t)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="actions"><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
+  $('#opts').querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+    const ok = +b.dataset.i === q.c;
+    b.classList.add(ok ? 'right' : 'wrong');
+    if (!ok) { setTimeout(() => b.classList.remove('wrong'), 400); return; }
+    setTimeout(() => {
+      game.qi++;
+      if (game.qi >= g.qs.length) winGame(); else renderQuiz();
+    }, 450);
+  }));
+  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+}
+
+/* --- 그림 조각 맞추기 --- */
+function renderPuzzle() {
+  const g = game.def;
+  let order = [...Array(9).keys()];
+  do { order.sort(() => Math.random() - 0.5); } while (order.every((v, i) => v === i));
+  game.order = order; game.sel = null;
+  const img = SCENES[g.scene].img;
+  const tile = (v) => `background-image:url(${img});background-position:${(v % 3) * 50}% ${Math.floor(v / 3) * 50}%`;
+  $('#gameSheet').innerHTML = gameHead(`${order.filter((v, i) => v === i).length} / 9`) + `
+    <div class="board"><div class="puz" id="puz" style="--ar:1">
+      ${order.map((v, i) => `<button class="tile" type="button" data-i="${i}" style="${tile(v)}" aria-label="조각"></button>`).join('')}
+    </div>
+    <div class="puz-ref"><img src="${img}" alt="완성 그림"><span>이 그림이 되도록 맞춰주세요</span></div></div>
+    <div class="actions"><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
+  const puz = $('#puz');
+  const paint = () => {
+    puz.querySelectorAll('.tile').forEach((t, i) => {
+      t.style.backgroundImage = `url(${img})`;
+      t.style.backgroundPosition = `${(game.order[i] % 3) * 50}% ${Math.floor(game.order[i] / 3) * 50}%`;
+      t.classList.toggle('ok', game.order[i] === i);
+      t.classList.toggle('sel', game.sel === i);
+    });
+    const done = game.order.filter((v, i) => v === i).length;
+    $('#score').textContent = `${done} / 9`;
+    if (done === 9) setTimeout(() => winGame(), 400);
+  };
+  puz.querySelectorAll('.tile').forEach(t => t.addEventListener('click', () => {
+    const i = +t.dataset.i;
+    if (game.sel === null) { game.sel = i; paint(); return; }
+    if (game.sel === i) { game.sel = null; paint(); return; }
+    const a = game.sel;
+    [game.order[a], game.order[i]] = [game.order[i], game.order[a]];
+    game.sel = null; paint();
+  }));
+  paint();
+  const probe = new Image();
+  probe.onload = () => { puz.style.setProperty('--ar', (probe.naturalWidth / probe.naturalHeight).toFixed(3)); };
+  probe.src = img;
+  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+}
+
+/* --- 통과! --- */
+function winGame() {
+  const room = game.room;
+  const isNew = !state.cleared.has(room);
+  state.cleared.add(room);
+  ls('hw2_cleared', [...state.cleared]);
+  burst(70);
+  const items = GIFTS.filter(g => giftRoom(g) === room);
+  $('#gameSheet').innerHTML = `
+    <div class="grip"></div>
+    <div class="won">
+      <div class="big">🎉</div>
+      <h2>통과!</h2>
+      <p>${items.length ? `${esc(ROOM_NAMES[room])} 위시리스트 ${items.length}개가 열렸어요` : `${esc(ROOM_NAMES[room])}을 다 둘러보셨어요`}</p>
+    </div>
+    ${items.length ? `<ul class="nb-list">${items.map(g => {
+      const c = state.claims[g.id];
+      const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
+      return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(g.price)}</span></span>${st}</button></li>`;
+    }).join('')}</ul>` : ''}
+    <div class="actions"><button class="btn btn-primary" data-close>계속 구경하기</button></div>`;
+  $('#gameSheet').querySelectorAll('[data-gift]').forEach(b => b.onclick = () => {
+    closeSheets(); setTimeout(() => openGift(b.dataset.gift), 240);
+  });
+  $('#gameSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+  if (isNew) say(pick(['우와, 통과! 위시리스트가 열렸어요', '잘하시는데요? 멍멍!', '역시 눈썰미가 다르시네요']), dogFor(room));
+  showScene(state.scene, 'fwd');
+  updateCta(); refresh();
+}
+
+/* ================================================================
+   초대장
+   ================================================================ */
+function couponFor(name) { return COUPONS[hash(name || 'guest') % COUPONS.length]; }
+function openInvite() {
+  const c = couponFor(state.guest);
+  $('#inviteSheet').innerHTML = `
+    <div class="grip"></div>
+    <div class="eyebrow">주인님이 남긴 것</div>
+    <h2>초대장이 도착했어요</h2>
+    <p class="lede">봉투를 눌러 열어보세요</p>
+    <div class="env" id="env"><div class="env-body"><div class="flap"></div><div class="seal">유</div></div></div>
+    <div class="actions"><button class="btn btn-primary" id="openEnv">봉투 열기</button></div>`;
+  showSheet('#inviteSheet');
+  $('#openEnv').onclick = () => {
+    $('#env').classList.add('open');
+    $('#openEnv').disabled = true;
+    burst(50);
+    setTimeout(() => {
+      $('#inviteSheet').innerHTML = `
+        <div class="grip"></div>
+        <div class="eyebrow">주인님이 남긴 것</div>
+        <h2>초대장</h2>
+        <div class="card-invite">
+          <div class="to">${esc(state.guest)}님께</div>
+          <div class="msg">${esc(SITE.inviteMsg).replace(/\n/g, '<br>')}</div>
+          <div class="rule"></div>
+          <div class="coupon"><span class="e">${c.e}</span><span><b>${esc(c.t)}</b><span>${esc(c.s)}</span></span></div>
+          <div class="sign">${esc(SITE.inviteSign)}</div>
+        </div>
+        <div class="actions"><button class="btn btn-primary" data-close>집 구경 시작하기</button></div>`;
+      $('#inviteSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = () => {
+        closeSheets();
+        state.thanked = true; ls('hw2_thanked', 1);
+        updateCta();
+        say(`${ROOM_NAMES[curRoom()]}부터 둘러볼까요? 방마다 미니게임이 하나씩 있어요!`, 'doria');
+      });
+      state.thanked = true; ls('hw2_thanked', 1);
+    }, 780);
+  };
+}
+
+/* ================================================================
+   위시리스트 카드 / 수첩 / 방 이동
+   ================================================================ */
 let openGiftId = null, confirming = false, busy = false, lastErr = '';
 function openGift(gid) { openGiftId = gid; confirming = false; lastErr = ''; renderGift(); showSheet('#giftSheet'); }
 function renderGift() {
@@ -767,7 +1182,7 @@ function renderGift() {
       <button class="btn btn-ghost" id="unclaimBtn" ${busy ? 'disabled' : ''}>찜 취소하기</button>`;
   } else if (c) {
     action = `<div class="status"><span class="dot"></span><span><b>${esc(c.name)}</b>님이 이미 준비 중이에요</span></div>
-      <button class="btn btn-ghost" data-close>다른 선물 찾으러 가기</button>`;
+      <button class="btn btn-ghost" data-close>다른 선물 보러 가기</button>`;
   } else if (confirming) {
     action = `<p class="confirm-q"><b>${esc(state.guest)}</b> 이름으로 이 선물을 찜할까요? 모두에게 이름이 보여요.</p>
       <button class="btn btn-primary" id="claimYes" ${busy ? 'disabled' : ''}>네, 제가 선물할게요</button>
@@ -778,7 +1193,7 @@ function renderGift() {
   }
   $('#giftSheet').innerHTML = `
     <div class="grip"></div>
-    <div class="eyebrow">${esc(ROOM_NAMES[SCENES[g.scene].room])}에서 찾은 선물</div>
+    <div class="eyebrow">${esc(ROOM_NAMES[giftRoom(g)])} 위시리스트</div>
     <div class="gift-hero">
       <div class="gift-emoji" aria-hidden="true">${g.emoji}</div>
       <div><h2 id="giftName">${esc(g.name)}</h2><div class="price">${esc(g.price)}</div></div>
@@ -791,7 +1206,7 @@ function renderGift() {
   on('claimNo', () => { confirming = false; renderGift(); });
   on('claimYes', async () => {
     busy = true; lastErr = ''; renderGift();
-    try { await Store.claim(g.id, state.guest); confirming = false; burst(60); say(`${state.guest}님 고마워요! 꼬리 흔드는 중`, dogFor(SCENES[g.scene].room)); }
+    try { await Store.claim(g.id, state.guest); confirming = false; burst(60); say(`${state.guest}님 고마워요! 꼬리 흔드는 중`, dogFor(giftRoom(g))); }
     catch (e) { lastErr = e.message === 'taken' ? '방금 다른 분이 먼저 찜했어요. 다른 선물을 골라주세요.' : '저장하지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.'; confirming = false; }
     busy = false; renderGift();
   });
@@ -803,19 +1218,26 @@ function renderGift() {
   $('#giftSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
 }
 
-/* ---------- 선물 수첩 / 방 이동 ---------- */
 function renderNotebook() {
   const claimedN = GIFTS.filter(g => state.claims[g.id]).length;
-  const rows = GIFTS.map(g => {
-    const found = state.found.has(g.id); const c = state.claims[g.id]; const room = ROOM_NAMES[SCENES[g.scene].room];
-    if (!found) return `<li><div class="nb-item locked"><span class="em">${g.emoji}</span><span class="t"><b>???</b><span>${esc(room)} 어딘가</span></span><span class="st">못 찾음</span></div></li>`;
-    const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
-    return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(room)} · ${esc(g.price)}</span></span>${st}</button></li>`;
+  const open = openGifts().length;
+  const rows = ROOM_ORDER.flatMap(r => {
+    const items = GIFTS.filter(g => giftRoom(g) === r);
+    if (!items.length) return [];
+    if (!state.cleared.has(r)) {
+      return [`<li><button class="nb-item locked" data-room="${r}"><span class="em">🔒</span><span class="t"><b>???</b><span>${esc(ROOM_NAMES[r])} · 미니게임을 깨면 열려요</span></span><span class="st">${items.length}개</span></button></li>`];
+    }
+    return items.map(g => {
+      const c = state.claims[g.id];
+      const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
+      return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(ROOM_NAMES[r])} · ${esc(g.price)}</span></span>${st}</button></li>`;
+    });
   }).join('');
   $('#nbSheet').innerHTML = `
     <div class="grip"></div>
-    <div class="nb-head"><h2>선물 수첩</h2><span>찾음 ${state.found.size}/${GIFTS.length} · 찜 ${claimedN}</span></div>
+    <div class="nb-head"><h2>내가 찾은 위시리스트</h2><span>열림 ${open}/${GIFTS.length} · 찜 ${claimedN}</span></div>
     <ul class="nb-list">${rows}</ul>
+    <div class="actions"><button class="btn btn-ghost" id="againInvite">💌 초대장 다시 보기</button></div>
     ${Store.mode === 'demo' ? '<p class="demo-note">체험 모드예요. 찜한 내용은 이 기기에만 저장돼요. ‘민지 (예시)’는 화면 예시입니다.</p>' : ''}`;
   $('#nbSheet').querySelectorAll('[data-gift]').forEach(b => b.onclick = () => {
     closeSheets();
@@ -823,13 +1245,20 @@ function renderNotebook() {
     if (g.scene !== state.scene) goScene(g.scene, { silent: true });
     setTimeout(() => openGift(g.id), 260);
   });
+  $('#nbSheet').querySelectorAll('[data-room]').forEach(b => b.onclick = () => {
+    const r = b.dataset.room;
+    closeSheets();
+    if (curRoom() !== r) goScene(ROOM_ENTRY[r], { silent: true });
+    setTimeout(() => openGame(r), 300);
+  });
+  const ai = $('#againInvite'); if (ai) ai.onclick = () => { closeSheets(); setTimeout(openInvite, 240); };
 }
 function renderRooms() {
-  const order = ['entry', 'living', 'kitchen', 'small', 'bed2', 'dress', 'bath2', 'bed1', 'bath1', 'utility'];
-  $('#roomSheet').innerHTML = `<div class="grip"></div><div class="nb-head"><h2>방 이동</h2><span>바로 가볼 방을 고르세요</span></div>
-    <ul class="room-grid">${order.map(r => {
-      const left = GIFTS.filter(g => SCENES[g.scene].room === r && !state.found.has(g.id)).length;
-      return `<li><button class="room-btn ${curRoom() === r ? 'here' : ''}" data-room="${r}"><b>${ROOM_NAMES[r]}</b><span>${left ? `반짝이 ${left}개 남음` : '다 찾음'}</span></button></li>`;
+  $('#roomSheet').innerHTML = `<div class="grip"></div><div class="nb-head"><h2>방 이동</h2><span>열린 방 ${[...state.cleared].length}/${ROOM_ORDER.length}</span></div>
+    <ul class="room-grid">${ROOM_ORDER.map(r => {
+      const done = state.cleared.has(r);
+      const n = GIFTS.filter(g => giftRoom(g) === r).length;
+      return `<li><button class="room-btn ${curRoom() === r ? 'here' : ''} ${done ? 'done' : ''}" data-room="${r}"><b>${ROOM_NAMES[r]}</b><span>${done ? `✓ 위시리스트 ${n}개` : '🎮 미니게임 남음'}</span></button></li>`;
     }).join('')}</ul>`;
   $('#roomSheet').querySelectorAll('[data-room]').forEach(b => b.onclick = () => { closeSheets(); goScene(ROOM_ENTRY[b.dataset.room]); });
 }
@@ -837,14 +1266,9 @@ function showSheet(sel) { document.querySelectorAll('.sheet').forEach(s => s.cla
 function closeSheets() { document.querySelectorAll('.sheet').forEach(s => s.classList.remove('on')); $('#scrim').classList.remove('on'); openGiftId = null; }
 
 function refresh() {
-  $('#foundN').textContent = state.found.size;
+  $('#foundN').textContent = openGifts().length;
   $('#totalN').textContent = GIFTS.length;
-  document.querySelectorAll('.gift').forEach(b => {
-    const id = b.dataset.gift;
-    b.classList.toggle('found', state.found.has(id));
-    b.classList.toggle('claimed', !!state.claims[id]);
-    if (state.found.has(id)) b.setAttribute('aria-label', GIFTS.find(g => g.id === id).name);
-  });
+  document.querySelectorAll('.wish').forEach(b => b.classList.toggle('claimed', !!state.claims[b.dataset.gift]));
   if (openGiftId) renderGift();
   if ($('#nbSheet').classList.contains('on')) renderNotebook();
 }
@@ -860,35 +1284,79 @@ function burst(n) {
   }
 }
 
+/* ================================================================
+   노크 → 마중 → 입장
+   ================================================================ */
+let knocks = 0;
+function setupKnock() {
+  const door = $('#door');
+  door.addEventListener('click', () => {
+    if (knocks >= 2) return;
+    knocks++;
+    door.classList.remove('knock'); void door.offsetWidth; door.classList.add('knock');
+    const m = document.createElement('div');
+    m.className = 'knockmark'; m.textContent = '똑';
+    door.parentElement.appendChild(m);
+    setTimeout(() => m.remove(), 750);
+    if (knocks === 1) $('#introSub').innerHTML = '한 번만 더요!';
+    if (knocks === 2) setTimeout(greet, 420);
+  });
+}
+function greet() {
+  $('#door').classList.add('open');
+  $('#introSub').innerHTML = '마중 나왔어요!';
+  $('#greeters').hidden = false;
+  setTimeout(() => {
+    $('#introSay').hidden = false;
+    $('#introSay').textContent = SITE.knockAsk;
+    $('#enterForm').hidden = false;
+    $('#guestName').focus({ preventScroll: true });
+  }, 420);
+}
 function enterHouse(name) {
-  state.guest = name; ls('hw_guest', name);
-  $('#door').classList.add('open'); $('#intro').classList.add('gone');
-  say(`${name}님 어서 오세요! 화살표를 눌러 걸어 다니고, 그림을 두 번 누르면 가까이 보여요`, 'doria');
+  state.guest = name; ls('hw2_guest', name);
+  $('#intro').classList.add('gone');
+  say(SITE.welcome(name), 'doria');
+  updateCta();
+  if (!state.thanked) {
+    setTimeout(() => {
+      state.cueReady = true;
+      say(SITE.thanksCue, 'tube');
+      updateCta();
+    }, 3400);
+  }
 }
 
 function start() {
   document.title = SITE.title;
-  $('#siteTitle').textContent = SITE.title; $('#introTitle').textContent = SITE.title;
-  $('#introSub').innerHTML = SITE.intro; $('#doorPlate').textContent = SITE.doorPlate;
+  $('#siteTitle').textContent = SITE.title;
+  $('#introTitle').textContent = SITE.title;
+  $('#doorPlate').textContent = SITE.doorPlate;
 
   Store.onChange(refresh); Store.init();
-  setupDrag();
+  setupDrag(); setupKnock();
   showScene(state.scene, 'fwd');
-  updateChip();
-  refresh();
+  updateChip(); refresh();
 
   $('#scrim').onclick = closeSheets;
   $('#countBtn').onclick = () => { renderNotebook(); showSheet('#nbSheet'); };
   $('#roomsBtn').onclick = () => { renderRooms(); showSheet('#roomSheet'); };
   $('#zoomBtn').onclick = () => setZoom(1);
-  $('#avatarBtn').onclick = () => giveHint(speaker === 'tube' ? 'doria' : 'tube');
+  $('#avatarBtn').onclick = () => dogTalk(speaker === 'tube' ? 'doria' : 'tube');
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheets(); });
   $('#enterForm').addEventListener('submit', (e) => { e.preventDefault(); const v = $('#guestName').value.trim(); if (v) enterHouse(v); });
 
-  if (state.guest) { $('#intro').classList.add('gone'); say(`${state.guest}님 또 오셨네요! 아직 ${GIFTS.length - state.found.size}개 숨어 있어요`, 'tube'); }
-  else say('화살표를 눌러 걸어 다니고, 그림을 두 번 누르면 가까이 볼 수 있어요', 'doria');
-  setTimeout(() => $('#howto').classList.add('fade'), 9000);
-  window.__hw = { goScene };
+  if (state.guest) {
+    $('#intro').classList.add('gone');
+    state.cueReady = true;
+    const left = ROOM_ORDER.filter(r => GAMES[r] && !state.cleared.has(r)).length;
+    say(left ? `${state.guest}님 또 오셨네요! 아직 미니게임 ${left}개가 남았어요` : `${state.guest}님 또 오셨네요! 위시리스트 다 열어두셨어요`, 'tube');
+  } else {
+    say('문을 두 번 두드려 주세요. 저희가 마중 나갈게요!', 'doria');
+  }
+  updateCta();
+  setTimeout(() => $('#howto').classList.add('fade'), 8000);
+  window.__hw = { goScene, openGame, openInvite, state };
 }
 start();
 </script>
