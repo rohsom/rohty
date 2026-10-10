@@ -43,12 +43,12 @@ body {
 button { font: inherit; color: inherit; }
 button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
-.app { height: 100%; display: grid; grid-template-rows: auto 1fr auto auto; padding-inline: 16px; padding-top: env(safe-area-inset-top, 0px); }
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr auto auto; padding-top: env(safe-area-inset-top, 0px); }
 
-.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 13px 9px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px 7px; }
 .brand { min-width: 0; }
-.brand h1 { margin: 0; font: 700 20px/1.2 var(--font-display); letter-spacing: -0.01em; }
-.brand p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+.brand h1 { margin: 0; font: 700 18px/1.2 var(--font-display); letter-spacing: -0.01em; }
+.brand p { margin: 1px 0 0; color: var(--muted); font-size: 11.5px; }
 .count {
   flex: none; display: flex; align-items: center; gap: 7px; padding: 8px 13px;
   border: 1.5px solid var(--brass); border-radius: 999px; background: var(--surface);
@@ -60,9 +60,9 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 
 /* ---------- the sketchbook stage ---------- */
 .stage {
-  position: relative; min-height: 0; border-radius: 16px; overflow: hidden;
+  position: relative; min-height: 0; overflow: hidden;
   background: var(--paper);
-  box-shadow: 0 0 0 1px var(--line), 0 14px 30px -20px rgba(70,58,38,.55);
+  border-block: 1px solid var(--line);
   touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
 }
 .stage.grabbing { cursor: grabbing; }
@@ -116,8 +116,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 
 /* 아래 큰 버튼 — 지금 할 일 */
 .cta {
-  margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 9px;
-  height: 56px; border-radius: 16px; border: 0; cursor: pointer;
+  margin: 9px 16px 0; display: flex; align-items: center; justify-content: center; gap: 9px;
+  height: 52px; border-radius: 16px; border: 0; cursor: pointer;
   font-weight: 700; font-size: 16px; letter-spacing: -.01em;
   animation: rise .4s ease both;
 }
@@ -136,9 +136,9 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 @keyframes glow { 0%, 100% { filter: brightness(1); } 55% { filter: brightness(1.09); } }
 
 /* dock — 강아지 말풍선 */
-.dock { display: flex; align-items: stretch; gap: 10px; padding-block: 10px calc(14px + env(safe-area-inset-bottom, 0px)); }
+.dock { display: flex; align-items: stretch; gap: 10px; padding: 9px 16px calc(11px + env(safe-area-inset-bottom, 0px)); }
 .avatar {
-  flex: none; width: 52px; height: 52px; align-self: end; border-radius: 50%; background: var(--surface);
+  flex: none; width: 48px; height: 48px; align-self: end; border-radius: 50%; background: var(--surface);
   border: 2.5px solid var(--line); overflow: hidden; cursor: pointer; padding: 0;
   box-shadow: 0 3px 8px rgba(80,70,50,.2);
 }
@@ -149,8 +149,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   position: relative; flex: 1; min-width: 0; align-self: end;
   background: var(--b-bg, var(--surface)); color: var(--b-ink, var(--ink));
   border: 2px solid var(--b-line, var(--line));
-  border-radius: 16px 16px 16px 5px; padding: 9px 14px 10px;
-  font: 700 18px/1.35 var(--font-dog); min-height: 52px; display: flex; align-items: center;
+  border-radius: 16px 16px 16px 5px; padding: 8px 13px 9px;
+  font: 700 17.5px/1.32 var(--font-dog); min-height: 48px; display: flex; align-items: center;
   box-shadow: 0 3px 10px rgba(80,70,50,.14);
 }
 .bubble[data-who="tube"] { --b-bg: var(--tube-bg); --b-line: var(--tube-line); --b-ink: var(--tube-ink); }
@@ -260,6 +260,22 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .tile.ok { border-color: #a8cdb6; }
 .puz-ref { display: flex; align-items: center; gap: 10px; margin-top: 12px; color: var(--muted); font-size: 12.5px; }
 .puz-ref img { width: 54px; border-radius: 6px; border: 1px solid var(--line); }
+
+.timer { font: 700 16px var(--font-body); color: var(--brass); font-variant-numeric: tabular-nums; white-space: nowrap; flex: none; }
+.mazec { width: 100%; display: block; border-radius: 12px; border: 1px solid var(--line); background: var(--paper); touch-action: none; cursor: pointer; }
+
+.shellbox { position: relative; height: 180px; margin-top: 6px; }
+.cup {
+  position: absolute; bottom: 34px; left: 0; width: 29%; padding: 0; border: 0; background: none; cursor: pointer;
+  transform: translateX(calc(var(--p) * 122%));
+  transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+}
+.cup svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 5px 7px rgba(90,82,66,.28)); }
+.cup .bone { position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); font-size: 27px; opacity: 0; transition: opacity .18s; }
+.cup.up { transform: translateX(calc(var(--p) * 122%)) translateY(-38px) rotate(-7deg); }
+.cup.up.has .bone { opacity: 1; transform: translate(-50%, 40px) rotate(7deg); }
+.shellbox::after { content: ""; position: absolute; left: 2%; right: 2%; bottom: 26px; height: 2px; background: #ded5c0; border-radius: 2px; }
+.shelltip { text-align: center; margin: 10px 0 0; font: 700 17px var(--font-dog); color: var(--ink-2); }
 
 .won { text-align: center; padding: 6px 0 0; }
 .won .big { font-size: 46px; }
@@ -477,7 +493,7 @@ const SCENES = {
     exits: [
       ['kitchen', '주방', 34, 82],
       ['bath1-toilet', '거실 욕실', 56, 91],
-      ['entry-art', '현관 쪽', 78, 82],
+      ['entry-art', '현관 쪽', 73, 82],
       ['living-window', '창가 쪽', 26, 95, 'back'],
     ],
   },
@@ -538,7 +554,7 @@ const SCENES = {
     exits: [
       ['bedroom-bed', '침실', 26, 84],
       ['dress', '드레스룸', 42, 93],
-      ['studio-drum', '드럼 쪽', 76, 84],
+      ['studio-drum', '드럼 쪽', 72, 84],
       ['kitchen', '주방으로', 58, 95, 'back'],
     ],
     dogs: [['doria', 54, 76, .8]],
@@ -551,7 +567,7 @@ const SCENES = {
   'bedroom-bed': {
     room: 'bed2', sub: '침대 쪽', img: 'rooms/bedroom-bed.webp',
     exits: [
-      ['bedroom-closet', '장롱 쪽', 76, 86],
+      ['bedroom-closet', '장롱 쪽', 72, 86],
       ['studio-desk', '작업실로', 44, 95, 'back'],
     ],
     dogs: [['doria', 56, 99, .7]],
@@ -559,7 +575,7 @@ const SCENES = {
   'bedroom-closet': {
     room: 'bed2', sub: '장롱 쪽', img: 'rooms/bedroom-closet.webp',
     exits: [
-      ['bedroom-bed', '침대 쪽', 74, 86],
+      ['bedroom-bed', '침대 쪽', 70, 86],
       ['studio-desk', '작업실로', 34, 94, 'back'],
     ],
   },
@@ -594,35 +610,61 @@ const ROOM_ENTRY = {
       quiz   = 집주인 퀴즈 (q 질문 / a 보기 / c 정답 번호, 0부터)
       puzzle = 그림 조각 맞추기 (scene 그림으로)
    ================================================================ */
-const GAMES = {
-  entry: {
-    type: 'quiz', title: '초대 확인 퀴즈', lede: '초대받은 분이 맞는지 확인할게요. 세 문제!',
-    qs: [
-      { q: '이 집 강아지 두 마리의 이름은?', a: ['유튜브와 유도리', '튜브와 도리', '뽀삐와 초코'], c: 0 },
-      { q: '닥스훈트 유튜브의 털 색은?', a: ['새까만 블랙', '크림빛 골드', '회색 그레이'], c: 1 },
-      { q: '집주인이 인테리어에 제일 공들인 공간은?', a: ['베란다', '다용도실', '주방'], c: 2 },
-    ],
-  },
-  living: { type: 'spot', title: '거실 틀린 그림 찾기', lede: '아래 그림에서 위와 다른 곳 4군데를 찾아 눌러주세요', scene: 'living-kitchen', count: 4 },
-  kitchen: {
-    type: 'memory', title: '주방 짝 맞추기', lede: '여덟 쌍을 다 맞춰야 통과예요. 적게 뒤집을수록 좋아요',
-    pairs: ['🍷', '☕', '🍳', '🥄', '🧂', '🫖', '🔪', '🍶'],
-  },
-  small: { type: 'spot', title: '작업실 틀린 그림 찾기', lede: '제일 어려운 방이에요. 다른 곳 5군데!', scene: 'studio-desk', count: 5 },
-  bed2: { type: 'spot', title: '침실 틀린 그림 찾기', lede: '다른 곳 3군데를 찾아주세요', scene: 'bedroom-bed', count: 3 },
-  dress: {
-    type: 'quiz', title: '드레스룸 퀴즈', lede: '집을 둘러본 분이라면 풀 수 있어요',
-    qs: [
-      { q: '이 집 인테리어의 메인 컬러는?', a: ['파스텔 핑크', '그레이·블랙·화이트', '우드 브라운'], c: 1 },
-      { q: '안방 벽을 철거해서 만든 공간의 별명은?', a: ['작업실(히든룸)', '서재', '홈바'], c: 0 },
-      { q: '주방과 작업실 사이에 숨어 있는 것은?', a: ['비밀 금고', '벽과 똑같은 히든도어', '계단'], c: 1 },
-    ],
-  },
-  bath2: { type: 'detail', title: '안쪽 욕실 돋보기', lede: '확대된 조각이 그림의 어디인지 짚어주세요', scene: 'bath2-tub', rounds: 3 },
-  bed1: { type: 'detail', title: '손님방 돋보기', lede: '확대된 조각이 그림의 어디인지 짚어주세요', scene: 'guest', rounds: 3 },
-  bath1: { type: 'puzzle', title: '거실 욕실 그림 맞추기', lede: '조각 두 개를 눌러 자리를 바꿔요. 적게 움직일수록 별이 많아요', scene: 'bath1-sink' },
-  utility: { type: 'detail', title: '다용도실 돋보기', lede: '몸풀기 두 판이에요', scene: 'utility', rounds: 2 },
+/* 집주인 퀴즈 — 이 세 문제 안에서만 랜덤 출제 */
+const QUIZ_POOL = [
+  { q: '집주인이 집에서 가장 공들인 곳은?', a: ['주방', '베란다', '다용도실', '드레스룸'], c: 0 },
+  { q: '집주인이 이사간 지역은?', a: ['영종도', '송도', '청라', '검단'], c: 0 },
+  { q: '집주인의 강아지 이름은?', a: ['유도리와 유튜브', '튜브와 도리', '뽀삐와 초코', '유재석과 유도리'], c: 0 },
+];
+/* 짝 맞추기 카드 세트 */
+const MEMO_SETS = [
+  ['🍷', '☕', '🍳', '🥄', '🧂', '🫖', '🔪', '🍶'],
+  ['🛋️', '🪴', '🕯️', '🖼️', '🧺', '🛏️', '🪟', '🧸'],
+  ['🐾', '🦴', '🎾', '🧣', '🏠', '🍖', '🪥', '💧'],
+];
+/* 방마다 쓰는 그림 (가로로 긴 그림이 있는 방만 '틀린 그림 찾기'가 나옵니다) */
+const ROOM_SCENE = {
+  entry: 'entry-art', living: 'living-window', kitchen: 'kitchen', utility: 'utility', bath1: 'bath1-sink',
+  bed1: 'guest', small: 'studio-desk', bed2: 'bedroom-bed', dress: 'dress', bath2: 'bath2-tub',
 };
+const ROOM_WIDE = { living: 'living-kitchen', small: 'studio-desk', bed2: 'bedroom-bed' };
+const GAME_KINDS = ['detail', 'memory', 'quiz', 'puzzle', 'maze', 'shell'];
+
+/* 한 판 시작할 때마다 종류를 새로 뽑습니다 */
+function makeGameDef(room) {
+  const kinds = GAME_KINDS.concat(ROOM_WIDE[room] ? ['spot', 'spot'] : []);
+  const type = pick(kinds);
+  const rn = ROOM_NAMES[room];
+  if (type === 'spot') {
+    const n = 3 + Math.floor(Math.random() * 3);
+    return { type, scene: ROOM_WIDE[room], count: n, title: `${rn} 틀린 그림 찾기`, lede: `아래 그림에서 위와 다른 곳 ${n}군데를 찾아 눌러주세요` };
+  }
+  if (type === 'detail') {
+    const n = 2 + Math.floor(Math.random() * 2);
+    return { type, scene: ROOM_SCENE[room], rounds: n, title: `${rn} 돋보기`, lede: '확대된 조각이 그림의 어디인지 짚어주세요' };
+  }
+  if (type === 'memory') {
+    const set = pick(MEMO_SETS);
+    const n = 6 + Math.floor(Math.random() * 3);
+    return { type, pairs: set.slice(0, n), title: `${rn} 짝 맞추기`, lede: `${n}쌍을 다 맞춰야 통과예요. 적게 뒤집을수록 별이 많아요` };
+  }
+  if (type === 'quiz') {
+    const qs = [...QUIZ_POOL].sort(() => Math.random() - 0.5).slice(0, 2).map(q => {
+      const right = q.a[q.c];
+      const a = [...q.a].sort(() => Math.random() - 0.5);
+      return { q: q.q, a, c: a.indexOf(right) };
+    });
+    return { type, qs, title: `${rn} 집주인 퀴즈`, lede: '집주인을 잘 아는 분이라면 쉬워요' };
+  }
+  if (type === 'puzzle') {
+    return { type, scene: ROOM_SCENE[room], title: `${rn} 그림 맞추기`, lede: '조각 두 개를 눌러 자리를 바꿔요. 적게 움직일수록 별이 많아요' };
+  }
+  if (type === 'maze') {
+    const lv = pick([[5, 7], [6, 8], [7, 10]]);
+    return { type, cols: lv[0], rows: lv[1], title: `${rn} 미로 찾기`, lede: '발자국에서 손가락을 떼지 말고 간식까지 끌어주세요' };
+  }
+  return { type: 'shell', rounds: 3, title: `${rn} 야바위`, lede: '간식이 어느 그릇에 있는지 끝까지 따라가 보세요' };
+}
 
 /* ================================================================
    5) 위시리스트 (지금은 예시) — 방의 미니게임을 깨면 공개됩니다
@@ -639,7 +681,7 @@ const GIFTS = [
   { id: 'guestbed',   scene: 'guest',          x: 34, y: 60, emoji: '🛌', name: '손님용 침구 세트',     price: '8~15만원',  note: '놀러 와서 자고 가실 분들을 위한 포근한 이불이 필요해요.' },
   { id: 'monitorarm', scene: 'studio-desk',    x: 25, y: 41, emoji: '🖥️', name: '듀얼 모니터암',        price: '5~10만원',  note: '작업실 책상 두 개 위가 선으로 정신없어요.' },
   { id: 'plant',      scene: 'studio-desk',    x: 57, y: 44, emoji: '🪴', name: '반려식물 화분',        price: '3~8만원',   note: '베란다가 아직 텅 비어 있어요.' },
-  { id: 'cabinet',    scene: 'studio-drum',    x: 74, y: 72, emoji: '🗄️', name: '작업실 수납장',        price: '10~20만원', note: '짐이 아직 박스에 들어 있어요. 수납장이 생기면 작업실 정리 끝!' },
+  { id: 'cabinet',    scene: 'studio-drum',    x: 70, y: 72, emoji: '🗄️', name: '작업실 수납장',        price: '10~20만원', note: '짐이 아직 박스에 들어 있어요. 수납장이 생기면 작업실 정리 끝!' },
   { id: 'fountain',   scene: 'studio-drum',    x: 26, y: 60, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '유튜브와 유도리가 물을 더 많이 마셨으면 해서요.' },
   { id: 'bedding',    scene: 'bedroom-bed',    x: 32, y: 70, emoji: '🛏️', name: '킹사이즈 호텔 침구',   price: '15~30만원', note: '브라운 가죽 침대 프레임이 왔어요! 이제 어울리는 호텔 침구만 있으면 돼요.' },
   { id: 'towels',     scene: 'bath2-tub',      x: 82, y: 37, emoji: '🛁', name: '호텔 수건 세트',       price: '4~8만원',   note: '욕조 있는 화장실에 두툼한 수건을 두고 싶어요.' },
@@ -800,7 +842,7 @@ function fitLayer(el) {
   if (!W || !H) return;
   const contain = Math.min(W / natural.w, H / natural.h);
   const cover = Math.max(W / natural.w, H / natural.h);
-  const base = contain * Math.min(cover / contain, 1.45);
+  const base = contain * Math.min(cover / contain, 1.62);
   const w = natural.w * base * zoom, h = natural.h * base * zoom;
   el.style.width = w + 'px'; el.style.height = h + 'px';
   el.style.left = ((W - w) / 2) + 'px'; el.style.top = ((H - h) / 2) + 'px';
@@ -888,8 +930,7 @@ function announce(prevRoom) {
     const n = GIFTS.filter(g => giftRoom(g) === room).length;
     say(n ? `${ROOM_NAMES[room]}은 이미 열었어요. 위시리스트 ${n}개가 놓여 있어요` : `${ROOM_NAMES[room]}은 다 보셨어요!`, who);
   } else {
-    const g = GAMES[room];
-    say(g ? `${ROOM_NAMES[room]}에 도착! ‘${g.title}’을 깨면 위시리스트가 열려요` : `${ROOM_NAMES[room]}이에요. 편하게 둘러보세요`, who);
+    say(`${ROOM_NAMES[room]}에 도착! 미니게임을 깨면 위시리스트가 열려요`, who);
   }
 }
 
@@ -905,7 +946,7 @@ function updateCta() {
     return;
   }
   const room = curRoom();
-  const g = GAMES[room];
+  const g = ROOM_SCENE[room];
   if (g && !state.cleared.has(room)) {
     b.hidden = false; b.className = 'cta game';
     b.innerHTML = `<em>🎮</em> ${esc(ROOM_NAMES[room])} 미니게임`;
@@ -1030,18 +1071,17 @@ function spreadPicks(cells, n, minDist, margin) {
 }
 
 function openGame(room) {
-  const def = GAMES[room];
-  if (!def) return;
-  game = { room, def, hearts: 3, moves: 0, t0: Date.now() };
+  if (!ROOM_SCENE[room]) return;
+  game = { room, def: makeGameDef(room), hearts: 3, moves: 0, t0: Date.now() };
   showSheet('#gameSheet');
   renderGame();
 }
 const heartsHtml = () => `<span class="hearts">${'♥'.repeat(game.hearts)}<i>${'♥'.repeat(3 - game.hearts)}</i></span>`;
-function gameHead(score) {
+function gameHead(score, right) {
   const g = game.def;
   return `<div class="grip"></div>
     <div class="eyebrow">${esc(ROOM_NAMES[game.room])} 미니게임</div>
-    <div class="game-top"><h2>${esc(g.title)}</h2>${heartsHtml()}</div>
+    <div class="game-top"><h2>${esc(g.title)}</h2>${right || heartsHtml()}</div>
     <p class="lede">${esc(g.lede)}</p>
     ${score ? `<div class="score" id="score">${score}</div>` : ''}`;
 }
@@ -1057,6 +1097,8 @@ function renderGame() {
   else if (t === 'memory') renderMemory();
   else if (t === 'quiz') renderQuiz();
   else if (t === 'puzzle') renderPuzzle();
+  else if (t === 'maze') renderMaze();
+  else if (t === 'shell') renderShell();
 }
 function loseHeart(msg) {
   game.hearts--;
@@ -1377,15 +1419,185 @@ function renderPuzzle() {
   wireFoot();
 }
 
+/* ---------- 미로 찾기 ---------- */
+function genMaze(cols, rows) {
+  const c = Array.from({ length: rows }, () => Array.from({ length: cols }, () => ({ n: 1, e: 1, s: 1, w: 1, v: 0 })));
+  const stack = [[0, 0]]; c[0][0].v = 1;
+  const D = [[0, -1, 'n', 's'], [1, 0, 'e', 'w'], [0, 1, 's', 'n'], [-1, 0, 'w', 'e']];
+  while (stack.length) {
+    const [x, y] = stack[stack.length - 1];
+    const open = D.filter(([dx, dy]) => {
+      const nx = x + dx, ny = y + dy;
+      return nx >= 0 && ny >= 0 && nx < cols && ny < rows && !c[ny][nx].v;
+    });
+    if (!open.length) { stack.pop(); continue; }
+    const [dx, dy, a, b] = open[Math.floor(Math.random() * open.length)];
+    c[y][x][a] = 0; c[y + dy][x + dx][b] = 0; c[y + dy][x + dx].v = 1;
+    stack.push([x + dx, y + dy]);
+  }
+  return c;
+}
+function renderMaze() {
+  const def = game.def, cols = def.cols, rows = def.rows;
+  const maze = genMaze(cols, rows);
+  game.path = [[0, 0]]; game.t0 = null; game.tick = null;
+  $('#gameSheet').innerHTML = gameHead('', `<span class="timer" id="tmr">0.0초</span>`) + `
+    <div class="board"><canvas id="maze" class="mazec"></canvas></div>
+    <div class="actions"><button class="btn btn-ghost" id="again">처음부터</button><button class="btn btn-ghost" data-close>나중에 할게요</button></div>`;
+  const cv = $('#maze');
+  const draw = () => {
+    const W = cv.clientWidth || 320;
+    const cell = W / cols, H = Math.round(cell * rows);
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    cv.style.height = H + 'px';
+    const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, W, H);
+    g.fillStyle = '#fcfaf4'; g.fillRect(0, 0, W, H);
+    /* 지나온 길 */
+    g.strokeStyle = 'rgba(217,165,80,.55)'; g.lineWidth = cell * 0.5; g.lineJoin = 'round'; g.lineCap = 'round';
+    g.beginPath();
+    game.path.forEach(([x, y], i) => { const px = (x + .5) * cell, py = (y + .5) * cell; i ? g.lineTo(px, py) : g.moveTo(px, py); });
+    g.stroke();
+    /* 벽 — 손으로 그은 듯 살짝 흔들리게 */
+    g.strokeStyle = '#3b3630'; g.lineWidth = 2.6; g.lineCap = 'round';
+    const j = () => (Math.random() - .5) * 1.4;
+    const line = (x1, y1, x2, y2) => { g.beginPath(); g.moveTo(x1 + j(), y1 + j()); g.lineTo(x2 + j(), y2 + j()); g.stroke(); };
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      const c = maze[y][x], L = x * cell, T = y * cell, R = L + cell, B = T + cell;
+      if (c.n) line(L, T, R, T);
+      if (c.w) line(L, T, L, B);
+      if (x === cols - 1 && c.e) line(R, T, R, B);
+      if (y === rows - 1 && c.s) line(L, B, R, B);
+    }
+    /* 출발 · 도착 */
+    g.font = `${Math.round(cell * .62)}px serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('🐾', cell * .5, cell * .5);
+    g.fillText('🦴', (cols - .5) * cell, (rows - .5) * cell);
+    /* 현재 위치 */
+    const [cx, cy] = game.path[game.path.length - 1];
+    g.fillStyle = '#c0544a'; g.beginPath(); g.arc((cx + .5) * cell, (cy + .5) * cell, cell * .17, 0, 7); g.fill();
+    game.cell = cell;
+  };
+  requestAnimationFrame(() => { draw(); });
+  const startTimer = () => {
+    if (game.t0) return;
+    game.t0 = Date.now();
+    game.tick = setInterval(() => {
+      const t = $('#tmr'); if (!t) return clearInterval(game.tick);
+      t.textContent = ((Date.now() - game.t0) / 1000).toFixed(1) + '초';
+    }, 100);
+  };
+  let dragging = false;
+  const at = (e) => {
+    const r = cv.getBoundingClientRect();
+    return [Math.floor((e.clientX - r.left) / (r.width / cols)), Math.floor((e.clientY - r.top) / (r.height / rows))];
+  };
+  const step = (e) => {
+    if (!dragging) return;
+    const [x, y] = at(e);
+    if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+    const [px, py] = game.path[game.path.length - 1];
+    if (x === px && y === py) return;
+    if (game.path.length > 1) {
+      const [bx, by] = game.path[game.path.length - 2];
+      if (x === bx && y === by) { game.path.pop(); draw(); return; }
+    }
+    const dx = x - px, dy = y - py;
+    if (Math.abs(dx) + Math.abs(dy) !== 1) return;
+    const c = maze[py][px];
+    if ((dx === 1 && c.e) || (dx === -1 && c.w) || (dy === 1 && c.s) || (dy === -1 && c.n)) return;
+    game.path.push([x, y]); draw();
+    if (x === cols - 1 && y === rows - 1) {
+      dragging = false; clearInterval(game.tick);
+      game.secs = (Date.now() - game.t0) / 1000;
+      setTimeout(winGame, 420);
+    }
+  };
+  cv.addEventListener('pointerdown', (e) => {
+    const [x, y] = at(e); const [px, py] = game.path[game.path.length - 1];
+    if (Math.abs(x - px) + Math.abs(y - py) > 1) return;
+    dragging = true; startTimer(); try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    step(e);
+  });
+  cv.addEventListener('pointermove', step);
+  cv.addEventListener('pointerup', () => { dragging = false; });
+  cv.addEventListener('pointercancel', () => { dragging = false; });
+  $('#again').onclick = () => { clearInterval(game.tick); renderMaze(); };
+  wireFoot();
+}
+
+/* ---------- 야바위 ---------- */
+const BOWL = `<svg viewBox="0 0 80 64" aria-hidden="true"><path d="M6 18h68c0 24-13 40-34 40S6 42 6 18z" fill="#f6efe0" stroke="#3b3630" stroke-width="2.6" stroke-linejoin="round"/><ellipse cx="40" cy="18" rx="34" ry="8" fill="#fffdf7" stroke="#3b3630" stroke-width="2.6"/><path d="M18 30c2 12 9 20 16 23" fill="none" stroke="#b6ab97" stroke-width="2" stroke-linecap="round"/></svg>`;
+function renderShell() {
+  const def = game.def;
+  game.round = game.round || 0;
+  game.prize = Math.floor(Math.random() * 3);
+  game.slot = [0, 1, 2];
+  $('#gameSheet').innerHTML = gameHead(`${game.round + 1} / ${def.rounds} 판`) + `
+    <div class="board"><div class="shellbox" id="shell">
+      ${[0, 1, 2].map(i => `<button class="cup" type="button" data-i="${i}" style="--p:${i}" aria-label="그릇 ${i + 1}">${BOWL}<span class="bone">🦴</span></button>`).join('')}
+    </div><p class="shelltip" id="stip">간식이 어디 있는지 잘 보세요…</p></div>` + gameFoot();
+  const my = game;
+  const alive = () => game === my && document.body.contains($('#shell'));
+  const cups = [...$('#shell').querySelectorAll('.cup')];
+  const place = () => cups.forEach((c, i) => c.style.setProperty('--p', my.slot[i]));
+  cups[my.prize].classList.add('has');
+  cups[my.prize].classList.add('up');
+  let lock = true;
+  const shuffles = 5 + game.round * 3;
+  const speed = Math.max(170, 400 - game.round * 90);
+  setTimeout(() => {
+    if (!alive()) return;
+    cups[my.prize].classList.remove('up');
+    $('#stip').textContent = '섞는 중…';
+    let k = 0;
+    const once = () => {
+      if (!alive()) return;
+      if (k++ >= shuffles) {
+        lock = false;
+        $('#stip').textContent = '간식이 든 그릇을 골라주세요!';
+        return;
+      }
+      let a = Math.floor(Math.random() * 3), b = Math.floor(Math.random() * 3);
+      while (b === a) b = Math.floor(Math.random() * 3);
+      const ia = my.slot.indexOf(a), ib = my.slot.indexOf(b);
+      [my.slot[ia], my.slot[ib]] = [my.slot[ib], my.slot[ia]];
+      cups.forEach(c => c.style.transitionDuration = speed + 'ms');
+      place();
+      setTimeout(once, speed + 40);
+    };
+    setTimeout(once, 420);
+  }, 1200);
+  cups.forEach(c => c.onclick = () => {
+    if (lock || !alive()) return;
+    lock = true;
+    c.classList.add('up');
+    if (c.classList.contains('has')) {
+      say(pick(['정답! 눈 안 깜빡이셨죠?', '우와, 끝까지 따라오셨네요!']), dogFor(my.room));
+      my.round++;
+      setTimeout(() => { if (!alive()) return; if (my.round >= def.rounds) winGame(); else renderShell(); }, 900);
+    } else {
+      cups[my.prize].classList.add('up');
+      if (!loseHeart(pick(['아깝다! 저기였어요', '으악, 한 끗 차이!']))) {
+        setTimeout(() => { if (alive()) renderShell(); }, 1100);
+      }
+    }
+  });
+  wireFoot();
+}
+
 /* ---------- 통과! ---------- */
 function gradeOf() {
   const t = game.def.type;
   if (t === 'puzzle') return game.moves <= 12 ? 3 : game.moves <= 20 ? 2 : 1;
-  if (t === 'memory') return game.moves <= 14 ? 3 : game.moves <= 22 ? 2 : 1;
+  if (t === 'memory') return game.moves <= game.def.pairs.length * 1.9 ? 3 : game.moves <= game.def.pairs.length * 3 ? 2 : 1;
+  if (t === 'maze') { const par = game.def.cols * game.def.rows * 0.42; return game.secs <= par ? 3 : game.secs <= par * 1.9 ? 2 : 1; }
   return Math.max(1, game.hearts);
 }
 const starStr = (n) => '★'.repeat(n) + '☆'.repeat(3 - n);
 function winGame() {
+  clearInterval(game.tick);
   const room = game.room;
   const isNew = !state.cleared.has(room);
   const grade = gradeOf();
@@ -1562,7 +1774,7 @@ function renderRooms() {
   $('#roomSheet').querySelectorAll('[data-room]').forEach(b => b.onclick = () => { closeSheets(); goScene(ROOM_ENTRY[b.dataset.room]); });
 }
 function showSheet(sel) { document.querySelectorAll('.sheet').forEach(s => s.classList.toggle('on', s.matches(sel))); $('#scrim').classList.add('on'); }
-function closeSheets() { document.querySelectorAll('.sheet').forEach(s => s.classList.remove('on')); $('#scrim').classList.remove('on'); openGiftId = null; }
+function closeSheets() { if (game && game.tick) clearInterval(game.tick); document.querySelectorAll('.sheet').forEach(s => s.classList.remove('on')); $('#scrim').classList.remove('on'); openGiftId = null; }
 
 function refresh() {
   $('#foundN').textContent = openGifts().length;
@@ -1648,14 +1860,17 @@ function start() {
   if (state.guest) {
     $('#intro').classList.add('gone');
     state.cueReady = true;
-    const left = ROOM_ORDER.filter(r => GAMES[r] && !state.cleared.has(r)).length;
+    const left = ROOM_ORDER.filter(r => !state.cleared.has(r)).length;
     say(left ? `${state.guest}님 또 오셨네요! 아직 미니게임 ${left}개가 남았어요` : `${state.guest}님 또 오셨네요! 위시리스트 다 열어두셨어요`, 'tube');
   } else {
     say('문을 두 번 두드려 주세요. 저희가 마중 나갈게요!', 'doria');
   }
   updateCta();
   setTimeout(() => $('#howto').classList.add('fade'), 8000);
-  window.__hw = { goScene, openGame, openInvite, state, peekDiffs: () => (game && game.diffs) || null };
+  window.__hw = { goScene, openGame, openInvite, state,
+    forceGame: (room, kind) => { game = { room, def: null, hearts: 3, moves: 0, t0: Date.now() }; let d; do { d = makeGameDef(room); } while (d.type !== kind); game.def = d; showSheet('#gameSheet'); renderGame(); },
+    pathLen: () => (game && game.path ? game.path.length : 0),
+    peekDiffs: () => (game && game.diffs) || null };
 }
 start();
 </script>
