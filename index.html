@@ -440,13 +440,11 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .thanks span:nth-child(2) { animation-delay: .1s; }
 @keyframes hop2 { from { transform: translateY(0) rotate(-2deg) } to { transform: translateY(-9px) rotate(2deg) } }
 .duo { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 0; }
-.ch { width: 42vw; max-width: 182px; height: auto; display: block; }
+.ch { width: 41vw; max-width: 176px; height: auto; display: block; filter: drop-shadow(0 8px 10px rgba(96,80,56,.22)); }
 .ch-her { animation: danceA .62s ease-in-out infinite; transform-origin: 50% 100%; }
-.ch-him { animation: danceB .62s ease-in-out infinite; transform-origin: 50% 100%; margin-left: -6px; }
+.ch-him { animation: danceB .62s ease-in-out infinite; transform-origin: 50% 100%; margin-left: -10px; }
 @keyframes danceA { 0%, 100% { transform: translateY(0) rotate(-5deg) } 50% { transform: translateY(-14px) rotate(5deg) } }
 @keyframes danceB { 0%, 100% { transform: translateY(-14px) rotate(6deg) } 50% { transform: translateY(0) rotate(-6deg) } }
-.ch .arm { transform-box: fill-box; transform-origin: 10% 92%; animation: swing .31s ease-in-out infinite alternate; }
-@keyframes swing { from { transform: rotate(-17deg) } to { transform: rotate(17deg) } }
 .fin-sub { position: relative; margin-top: 14px; text-align: center; font: 700 18px/1.5 var(--font-dog); color: var(--ink-2); }
 .fin-sub b { color: var(--brass); }
 .fin-close {
@@ -474,7 +472,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .go .disc, .dog img, .wish span, .cta, .cta.gold { animation: none; }
   .greeters img, .say-bubble, .enter, .card-invite { animation: none; }
   .keyslot.new, .unlockbig, .invite-stage .env, .invite-stage .cap { animation: none; }
-  .ch-her, .ch-him, .ch .arm, .thanks span, .notes i { animation: none; }
+  .ch-her, .ch-him, .thanks span, .notes i { animation: none; }
 }
 </style>
 </head>
@@ -566,76 +564,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   <div class="fin-eyebrow">CURTAIN CALL</div>
   <div class="thanks"><span>감사합니다!</span> <span>감사합니다~</span></div>
   <div class="duo">
-    <svg class="ch ch-her" viewBox="0 0 130 210" role="img" aria-label="집주인 1">
-      <g stroke="#2b2620" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none">
-        <path d="M55 180 L54 196 M76 180 L77 196" stroke-width="7" stroke="#e6dece"/>
-        <path d="M48 198 h13 M70 198 h13" stroke-width="8" stroke="#3b332b"/>
-        <path d="M40 62 C36 28 49 15 65 15 C81 15 94 28 90 62 L92 108 C80 114 50 114 38 108 Z" fill="#2b2521" stroke="#2b2521"/>
-        <path d="M44 100 C28 106 22 126 22 150 L22 176 C22 180 25 182 29 182 L101 182 C105 182 108 180 108 176 L108 150 C108 126 102 106 86 100 Z" fill="#fdf7ea"/>
-        <path d="M30 132 L30 174 M100 132 L100 174 M38 152 L38 176 M92 152 L92 176" stroke-width="1.5" opacity=".38"/>
-        <path d="M50 101 C56 116 74 116 80 101"/>
-        <path d="M58 103 L64 126 L65 182 M72 103 L66 126"/>
-        <path d="M43 76 C40 94 41 108 44 118" stroke="#2b2521" stroke-width="8"/>
-        <path d="M87 76 C90 94 89 108 86 118" stroke="#2b2521" stroke-width="8"/>
-        <ellipse cx="65" cy="58" rx="25" ry="27" fill="#fff5e9"/>
-        <path d="M40 54 C40 28 52 18 65 18 C79 18 91 29 90 53 C84 40 76 34 64 36 C55 37 46 43 40 54 Z" fill="#2b2521" stroke="#2b2521"/>
-        <circle cx="54" cy="60" r="11" fill="#ffffff" fill-opacity=".5"/>
-        <circle cx="77" cy="60" r="11" fill="#ffffff" fill-opacity=".5"/>
-        <path d="M65 59 h1 M43 58 L38 55 M88 58 L93 55"/>
-        <path d="M50 60 q4 -5 8 0" stroke-width="2.8"/>
-        <path d="M73 60 q4 -5 8 0" stroke-width="2.8"/>
-        <path d="M59 75 q6 7 12 0" stroke-width="2.6"/>
-        <circle cx="45" cy="70" r="4.5" fill="#f2c0b0" stroke="none"/>
-        <circle cx="86" cy="70" r="4.5" fill="#f2c0b0" stroke="none"/>
-        <g>
-          <path d="M40 112 C28 122 26 140 32 150" stroke-width="8" stroke="#fdf7ea"/>
-          <path d="M40 112 C28 122 26 140 32 150"/>
-          <path d="M20 146 L40 146 L36 176 L24 176 Z" fill="#1d6f72"/>
-          <path d="M20 146 q10 -11 20 0" fill="#e9f4f4"/>
-          <path d="M30 130 L31 146" stroke-width="2.2"/>
-          <rect x="20.5" y="155" width="19" height="10" fill="#fffdf7"/>
-        </g>
-        <g class="arm">
-          <path d="M90 112 C102 116 108 104 107 92" stroke-width="8" stroke="#fdf7ea"/>
-          <path d="M90 112 C102 116 108 104 107 92"/>
-          <circle cx="107" cy="87" r="7.5" fill="#fff5e9"/>
-          <path d="M103 81 L101 74 M107 79 L107 72 M111 81 L113 74" stroke-width="2.4"/>
-        </g>
-      </g>
-    </svg>
-    <svg class="ch ch-him" viewBox="0 0 130 210" role="img" aria-label="집주인 2">
-      <g stroke="#2b2620" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none">
-        <path d="M55 180 L54 196 M76 180 L77 196" stroke-width="8" stroke="#2a2724"/>
-        <path d="M48 198 h13 M70 198 h13" stroke-width="8" stroke="#1d1b19"/>
-        <path d="M38 60 C34 26 48 13 66 13 C84 13 98 26 94 60 L96 82 C84 88 48 88 36 82 Z" fill="#241f1c" stroke="#241f1c"/>
-        <path d="M44 98 C26 104 19 124 19 150 L19 176 C19 180 22 182 26 182 L104 182 C108 182 111 180 111 176 L111 150 C111 124 104 104 86 98 Z" fill="#22201e"/>
-        <path d="M50 101 C54 88 78 88 82 101 C74 108 58 108 50 101 Z" fill="#332f2b"/>
-        <path d="M62 92 L62 83 M70 92 L70 83" stroke-width="2" stroke="#a79e90"/>
-        <path d="M65 110 L65 150 M36 152 h18 M76 152 h18" stroke-width="1.6" stroke="#4e4a43"/>
-        <path d="M40 66 C38 74 39 82 42 88" stroke="#241f1c" stroke-width="9"/>
-        <path d="M90 66 C92 74 91 82 88 88" stroke="#241f1c" stroke-width="9"/>
-        <ellipse cx="65" cy="57" rx="25" ry="27" fill="#fff2e4"/>
-        <path d="M38 52 C36 24 50 15 66 15 C84 15 95 26 93 52 C86 38 78 31 64 33 C53 34 44 41 38 52 Z" fill="#241f1c" stroke="#241f1c"/>
-        <circle cx="53" cy="59" r="12" fill="#6d5a45" fill-opacity=".45"/>
-        <circle cx="79" cy="59" r="12" fill="#6d5a45" fill-opacity=".45"/>
-        <path d="M65.5 58 h1.5 M41 56 L35 53 M91 56 L97 53"/>
-        <path d="M49 60 q4 -4 8 0" stroke-width="2.4" opacity=".9"/>
-        <path d="M75 60 q4 -4 8 0" stroke-width="2.4" opacity=".9"/>
-        <path d="M57 74 q8 4 15 -1" stroke-width="2.4"/>
-        <g>
-          <path d="M40 110 C29 122 29 140 35 150" stroke-width="9" stroke="#22201e"/>
-          <path d="M40 110 C29 122 29 140 35 150" stroke="#5c564e" stroke-width="2"/>
-          <circle cx="35" cy="155" r="7" fill="#fff2e4"/>
-        </g>
-        <g class="arm">
-          <path d="M90 110 C102 104 108 92 106 80" stroke-width="9" stroke="#22201e"/>
-          <path d="M90 110 C102 104 108 92 106 80" stroke="#5c564e" stroke-width="2"/>
-          <circle cx="106" cy="76" r="8" fill="#fff2e4"/>
-          <path d="M101 69 L96 55 M111 69 L115 55" stroke-width="3.6"/>
-          <path d="M102 79 q4 4 8 0" stroke-width="2"/>
-        </g>
-      </g>
-    </svg>
+    <img class="ch ch-her" src="rooms/me-her.webp" alt="집주인 1" draggable="false">
+    <img class="ch ch-him" src="rooms/me-him.webp" alt="집주인 2" draggable="false">
   </div>
   <p class="fin-sub" id="finSub"></p>
   <button class="fin-close" id="finClose">집 구경 계속하기</button>
