@@ -1025,6 +1025,20 @@ const GIFTS = [
     url: 'https://link.coupang.com/a/hLpT8PCNwG',
     note: '5년 넘게 쓴 청소기가 너무 무거워서 이제 보내주려고요. 800g밖에 안 된다는 이 제품이 참 괜찮아 보여요!' },
 
+  { id: 'artcapek', tier: 'must', scene: 'kitchen', x: 22, y: 32, emoji: '🎨',
+    name: '요세프 차페크 동물 일러스트 액자 (2점)',
+    price: '89,800원 (2점)',
+    opt: '세잔느화실 · JC-09 + JC-14 · 프리미엄 캔버스 50×70cm · 점당 44,900원 · 무료배송',
+    url: 'https://naver.me/5xg2bT8t',
+    note: '주방 벽에 나란히 걸 그림 두 점이에요. 흑백 라인 드로잉이라 블랙 세라믹 주방이랑 잘 어울릴 것 같아요.' },
+
+  { id: 'artelephant', tier: 'must', scene: 'kitchen', x: 84, y: 38, emoji: '🐘',
+    name: '마들렌 코끼리 포스터 캔버스 액자',
+    price: '29,800원',
+    opt: '미드센츄리 모던 포스터 7 · 캔버스액자 45×53cm',
+    url: 'https://link.coupang.com/a/hLEt7lDMvQ',
+    note: '주방 한쪽에 포인트로 걸 노랑·파랑 코끼리 포스터예요. 보기만 해도 기분이 좋아져요!' },
+
   { id: 'moonjar', tier: 'want', scene: 'entry-art', x: 32, y: 64, emoji: '🏮',
     name: '달항아리 조명 LED 무드램프',
     price: '34,800원',
@@ -2082,7 +2096,7 @@ function openInvite() {
    ================================================================ */
 let openGiftId = null, confirming = false, busy = false, lastErr = '';
 function openGift(gid) { openGiftId = gid; confirming = false; lastErr = ''; renderGift(); showSheet('#giftSheet'); }
-const shopOf = (u) => (/coupang/i.test(u) ? '쿠팡' : '오늘의집');
+const shopOf = (u) => (/coupang/i.test(u) ? '쿠팡' : /naver/i.test(u) ? '네이버' : '오늘의집');
 function renderGift() {
   if (!openGiftId) return;
   const g = GIFTS.find(x => x.id === openGiftId);
