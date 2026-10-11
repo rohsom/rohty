@@ -945,6 +945,13 @@ const GIFTS = [
     url: 'https://ozip.me/zevOkoj',
     note: '소파 앞에 둘 낮은 티테이블이에요. 집들이 때 여기에 과일이랑 커피 올려두려고요!' },
 
+  { id: 'vacuum', tier: 'must', scene: 'utility', x: 36, y: 62, emoji: '🧹',
+    name: '가벼운 무선 청소기',
+    price: '링크에서 확인해 주세요',
+    opt: '쿠팡 링크의 제품으로 부탁드려요',
+    url: 'https://link.coupang.com/a/hLpT8PCNwG',
+    note: '5년 넘게 쓴 청소기가 너무 무거워서 이제 보내주려고요. 가볍다는 이 제품이 참 괜찮아 보여요!' },
+
   { id: 'moonjar', tier: 'want', scene: 'entry-art', x: 32, y: 64, emoji: '🏮',
     name: '달항아리 조명 LED 무드램프',
     price: '34,800원',
@@ -1978,6 +1985,7 @@ function openInvite() {
    ================================================================ */
 let openGiftId = null, confirming = false, busy = false, lastErr = '';
 function openGift(gid) { openGiftId = gid; confirming = false; lastErr = ''; renderGift(); showSheet('#giftSheet'); }
+const shopOf = (u) => (/coupang/i.test(u) ? '쿠팡' : '오늘의집');
 function renderGift() {
   if (!openGiftId) return;
   const g = GIFTS.find(x => x.id === openGiftId);
@@ -2005,7 +2013,7 @@ function renderGift() {
       <div><h2 id="giftName">${esc(g.name)}</h2><div class="price">${esc(g.price)}</div>${g.opt ? `<div class="opt">${esc(g.opt)}</div>` : ''}</div>
     </div>
     <div class="note">“${esc(g.note)}”<small>집주인 한마디</small></div>
-    ${g.url ? `<a class="link" href="${esc(g.url)}" target="_blank" rel="noopener">오늘의집에서 제품 보기 ↗</a>` : ''}
+    ${g.url ? `<a class="link" href="${esc(g.url)}" target="_blank" rel="noopener">${shopOf(g.url)}에서 제품 보기 ↗</a>` : ''}
     <div class="actions">${action}${lastErr ? `<div class="err">${esc(lastErr)}</div>` : ''}</div>`;
   const on = (id, fn) => { const b = document.getElementById(id); if (b) b.onclick = fn; };
   on('claimBtn', () => { confirming = true; renderGift(); });
