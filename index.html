@@ -5,6 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>유씨네 집들이</title>
 <meta name="description" content="유튜브와 유도리가 안내하는 우리 집 구경 · 미니게임으로 여는 위시리스트">
+
+<!-- 카톡·메신저에 링크를 붙였을 때 보이는 미리보기 (SITE_URL 은 배포 주소) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="유씨네 집들이">
+<meta property="og:title" content="유씨네 집들이에 초대합니다">
+<meta property="og:description" content="유튜브와 유도리가 집을 안내해요. 미니게임 3판을 깨면 위시리스트가 열립니다 🐾">
+<meta property="og:url" content="https://rohsom.github.io/rohty/">
+<meta property="og:image" content="https://rohsom.github.io/rohty/rooms/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#e9e2d4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="유씨네 집들이">
+<link rel="icon" href="rooms/face-doria.webp" type="image/webp">
+<link rel="apple-touch-icon" href="rooms/face-doria.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Gaegu:wght@700&display=swap">
@@ -43,7 +60,7 @@ body {
 button { font: inherit; color: inherit; }
 button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
-.app { height: 100%; display: grid; grid-template-rows: auto 1fr auto auto; padding-top: env(safe-area-inset-top, 0px); }
+.app { height: 100%; display: grid; grid-template-rows: auto auto 1fr auto auto; padding-top: env(safe-area-inset-top, 0px); }
 
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px 7px; }
 .brand { min-width: 0; }
@@ -57,6 +74,13 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 }
 .count svg { width: 16px; height: 16px; flex: none; }
 .count b { font-weight: 700; }
+
+/* 저장소가 연결되지 않았을 때만 뜨는 알림 */
+.modebar {
+  margin: 0 16px 2px; padding: 8px 13px; border-radius: 11px;
+  background: #fdf0d6; border: 1.5px solid #e0b96a; color: #7a4f12;
+  font-size: 12.5px; font-weight: 600; line-height: 1.45; text-align: center;
+}
 
 /* ---------- the sketchbook stage ---------- */
 .stage {
@@ -575,6 +599,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
     </button>
     </div>
   </header>
+
+  <div class="modebar" id="modeBar" hidden></div>
 
   <main class="stage" id="stage">
     <div class="chip place" id="placeChip">현관</div>
@@ -1116,15 +1142,14 @@ const Store = {
   emit() { this.listeners.forEach(fn => fn()); },
   async init() {
     if (FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey) {
-      try { await this.initLive(); return; } catch (e) { console.warn('Firebase 연결 실패, 체험 모드로 전환', e); }
+      try { await this.initLive(); return; } catch (e) { console.warn('Firebase 연결 실패, 체험 모드로 전환', e); this.failed = true; }
     }
     this.initDemo();
+    showModeBar();
   },
   initDemo() {
     this.mode = 'demo';
-    let c = ls('hw2_claims');
-    if (!c) { c = { glasses: { name: '민지 (예시)', uid: 'example', at: Date.now() } }; ls('hw2_claims', c); }
-    state.claims = c;
+    state.claims = ls('hw2_claims') || {};
     window.addEventListener('storage', (e) => { if (e.key === 'hw2_claims') { state.claims = ls('hw2_claims') || {}; this.emit(); } });
     this.emit();
   },
@@ -1150,6 +1175,15 @@ const Store = {
   async unclaim(gid) { const c = ls('hw2_claims') || {}; delete c[gid]; ls('hw2_claims', c); state.claims = c; this.emit(); },
 };
 const isMine = (c) => c && c.uid === Store.uid;
+/* 찜이 공유 저장소에 안 들어가는 상황이면 숨기지 않고 알려줍니다 */
+function showModeBar() {
+  const b = document.getElementById('modeBar'); if (!b) return;
+  if (Store.mode !== 'demo') { b.hidden = true; return; }
+  b.hidden = false;
+  b.innerHTML = Store.failed
+    ? '⚠️ 지금 인터넷 연결이 불안정해요. 찜한 내용이 다른 분께 안 보일 수 있어요'
+    : '⚠️ 아직 저장소가 연결되지 않았어요 (집주인 확인 필요) · 찜은 이 기기에만 저장돼요';
+}
 
 /* ---------- 강아지 ---------- */
 const DOGS = {
@@ -2183,7 +2217,7 @@ function renderNotebook() {
       <button class="btn btn-ghost" id="againInvite">💌 초대장 다시 보기</button>
       <button class="btn btn-ghost" id="againFinale">💃 집주인 인사 다시 보기</button>
     </div>
-    ${Store.mode === 'demo' ? '<p class="demo-note">체험 모드예요. 찜한 내용은 이 기기에만 저장돼요. ‘민지 (예시)’는 화면 예시입니다.</p>' : ''}`;
+    ${Store.mode === 'demo' ? '<p class="demo-note">지금은 체험 모드라 찜한 내용이 이 기기에만 저장돼요.</p>' : ''}`;
   $('#nbSheet').querySelectorAll('[data-gift]').forEach(b => b.onclick = () => {
     closeSheets();
     const g = GIFTS.find(x => x.id === b.dataset.gift);
