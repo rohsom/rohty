@@ -391,6 +391,39 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .coupon span { font-size: 12.5px; color: #6f6859; }
 .card-invite .sign { margin-top: 14px; text-align: right; font: 700 16px var(--font-dog); color: #4a443b; }
 
+/* ---------- 입장 인사: 화면 중앙에서 도리·튜브가 맞이합니다 ---------- */
+.greet {
+  position: fixed; inset: 0; z-index: 8; display: flex; align-items: center; justify-content: center;
+  padding: calc(18px + env(safe-area-inset-top, 0px)) 16px calc(18px + env(safe-area-inset-bottom, 0px));
+  background: radial-gradient(ellipse at 50% 42%, #fffaef 0%, #f7eedc 48%, #e9dcc3 100%);
+  overflow: auto; transition: opacity .5s ease;
+}
+.greet.out { opacity: 0; pointer-events: none; }
+.greet-inner { margin: auto; width: 100%; max-width: 380px; display: grid; justify-items: center; gap: 14px; }
+.greet-dogs { display: flex; align-items: flex-end; justify-content: center; gap: 0; transition: transform .55s cubic-bezier(.4,0,.2,1); }
+.greet.out .greet-dogs { transform: translateY(40vh) scale(.6); }
+.greet-dogs img { width: 42vw; max-width: 158px; height: auto; display: block; filter: drop-shadow(0 6px 8px rgba(90,82,66,.3)); animation: greetHop .9s cubic-bezier(.2,.9,.3,1.3) both; }
+.greet-dogs img:last-child { width: 46vw; max-width: 172px; margin-left: -14px; animation-delay: .12s; }
+@keyframes greetHop { from { opacity: 0; transform: translateY(34px) scale(.86) } to { opacity: 1; transform: none } }
+.greet-bubble {
+  width: 100%; border-radius: 18px; padding: 14px 16px; min-height: 0;
+  font: 700 19px/1.45 var(--font-dog); text-align: center;
+  background: var(--b-bg, var(--surface)); color: var(--b-ink, var(--ink)); border: 2px solid var(--b-line, var(--line));
+  box-shadow: 0 6px 16px -8px rgba(80,70,50,.4); animation: rise .4s ease both;
+}
+.greet-bubble[data-who="tube"] { --b-bg: var(--tube-bg); --b-line: var(--tube-line); --b-ink: var(--tube-ink); }
+.greet-bubble[data-who="doria"] { --b-bg: var(--doria-bg); --b-line: var(--doria-line); --b-ink: var(--doria-ink); }
+.greet-bubble small { display: block; font: 700 11.5px var(--font-body); letter-spacing: .04em; opacity: .75; margin-bottom: 3px; }
+.greet-next { width: 100%; max-width: 300px; animation: rise .4s .12s ease both; }
+.greet-env { display: grid; justify-items: center; gap: 14px; width: 100%; cursor: pointer; animation: rise .45s .1s ease both; }
+.greet-env .env { width: 62vw; max-width: 236px; margin: 0; animation: floatEnv 3.2s ease-in-out infinite; }
+.greet-env .env-body { box-shadow: 0 20px 36px -20px rgba(60,48,30,.75); }
+.greet-env .cap {
+  text-align: center; font: 700 18px var(--font-dog); color: #2b2620;
+  background: var(--brass-fill); border: 2px solid #b68a3e; border-radius: 999px; padding: 10px 22px;
+  box-shadow: 0 6px 16px -8px rgba(120,90,40,.7); animation: capPulse 2.2s ease-in-out infinite;
+}
+
 /* ---------- intro / knock ---------- */
 .intro {
   position: fixed; inset: 0; z-index: 20; background: var(--bg);
@@ -503,6 +536,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .greeters img, .say-bubble, .enter, .card-invite { animation: none; }
   .keyslot.new, .unlockbig, .invite-stage .env, .invite-stage .cap { animation: none; }
   .ts-card, .bubble.more::after { animation: none; }
+  .greet-dogs img, .greet-bubble, .greet-next, .greet-env, .greet-env .env, .greet-env .cap { animation: none; }
   .ch-her, .ch-him, .thanks span, .notes i { animation: none; }
 }
 </style>
@@ -594,6 +628,21 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
       <input id="guestName" name="guestName" maxlength="20" placeholder="예: 김민지" required>
       <button class="btn btn-primary" type="submit">이름 알려주기</button>
     </form>
+  </div>
+</div>
+
+<div class="greet" id="greetStage" hidden>
+  <div class="greet-inner">
+    <div class="greet-dogs">
+      <img src="rooms/dog-doria.webp" alt="유도리" draggable="false">
+      <img src="rooms/dog-tube.webp" alt="유튜브" draggable="false">
+    </div>
+    <div class="greet-bubble" id="greetBubble" data-who="doria"></div>
+    <button class="btn btn-primary greet-next" id="greetNext"></button>
+    <div class="greet-env" id="greetEnv" hidden role="button" tabindex="0" aria-label="초대장 열어보기">
+      <div class="env"><div class="env-body"><div class="flap"></div><div class="seal">유</div></div></div>
+      <div class="cap">💌 눌러서 초대장 열어보기</div>
+    </div>
   </div>
 </div>
 
@@ -1280,7 +1329,7 @@ function announce(prevRoom) {
 /* 아래쪽 큰 버튼: 초대장 → 미니게임 → 완료 */
 function updateCta() {
   const b = $('#ctaBtn');
-  if (!state.guest) { b.hidden = true; return; }
+  if (!state.guest || greeting) { b.hidden = true; return; }
   const room = curRoom();
   const g = ROOM_SCENE[room];
   if (g && !state.cleared.has(room)) {
@@ -1297,8 +1346,12 @@ function updateCta() {
     b.hidden = false; b.className = 'cta ghost';
     b.innerHTML = `<em>🎁</em> 위시리스트 보기`;
     b.onclick = () => { renderNotebook(); showSheet('#nbSheet'); };
+  } else if (room === 'entry') {
+    /* 현관 — 집 안으로 */
+    b.hidden = false; b.className = 'cta game';
+    b.innerHTML = `<em>🚪</em> 집으로 들어가 미니게임 도전하기`;
+    b.onclick = () => goScene(ROOM_ENTRY.living);
   } else {
-    /* 게임이 없는 방 — 게임 있는 방으로 안내 */
     b.hidden = false; b.className = 'cta game';
     b.innerHTML = `<em>🎮</em> 미니게임 하러 가기`;
     b.onclick = () => { renderRooms(); showSheet('#roomSheet'); };
@@ -1979,6 +2032,7 @@ function openInvite() {
       <div class="actions"><button class="btn btn-primary" data-close>집 구경 시작하기</button></div>`;
     $('#inviteSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = () => {
       closeSheets();
+      if (greeting) { endGreeting(); return; }
       say(`${ROOM_NAMES[curRoom()]}부터 둘러볼까요? 아무 방에서나 미니게임 ${KEYS_NEEDED}판을 깨면 위시리스트가 열려요!`, 'doria');
     });
     state.thanked = true; ls('hw2_thanked', 1);
@@ -2455,17 +2509,45 @@ function greet() {
     $('#guestName').focus({ preventScroll: true });
   }, 420);
 }
+/* 입장하면 도리·튜브가 화면 중앙에서 맞이하고, 초대장을 열어야 집이 열립니다 */
+let greeting = false, greetStep = 0;
+function startGreeting() {
+  greeting = true; greetStep = 0;
+  const g = $('#greetStage');
+  g.classList.remove('out'); g.hidden = false;
+  renderGreet(); updateCta();
+}
+function renderGreet() {
+  const bubble = $('#greetBubble'), next = $('#greetNext'), env = $('#greetEnv');
+  if (greetStep === 0) {
+    bubble.dataset.who = 'doria';
+    bubble.innerHTML = `<small>유도리</small>${esc(SITE.welcome(state.guest))}`;
+    next.hidden = false; next.textContent = '네, 들어갈게요 ▸';
+    env.hidden = true;
+  } else {
+    bubble.dataset.who = 'tube';
+    bubble.innerHTML = `<small>유튜브</small>${esc(SITE.thanksCue)}`;
+    next.hidden = true;
+    env.hidden = false;
+  }
+}
+function endGreeting() {
+  if (!greeting) return;
+  greeting = false;
+  const g = $('#greetStage');
+  g.classList.add('out');
+  setTimeout(() => { g.hidden = true; g.classList.remove('out'); }, 620);
+  state.cueReady = true;
+  updateCta(); updateInviteStage(); updateThanksChip();
+  say('이제 집 안으로 들어가 볼까요? 아래 버튼을 눌러주세요!', 'doria');
+}
 function enterHouse(name) {
   state.guest = name; ls('hw2_guest', name);
   $('#intro').classList.add('gone');
+  if (!state.thanked) { startGreeting(); return; }
+  state.cueReady = true;
   say(SITE.welcome(name), 'doria');
   updateCta();
-  if (!state.thanked) {
-    queueSay(SITE.thanksCue, 'tube', () => {
-      state.cueReady = true;
-      updateCta(); updateInviteStage();
-    });
-  }
 }
 
 function start() {
@@ -2489,6 +2571,9 @@ function start() {
   $('#thanksGo').onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hideThanksStage(); showFinale(); } };
   $('#thanksLater').onclick = () => { hideThanksStage(); state.thanksSeen = true; ls('hw2_thanksseen', 1); updateThanksChip(); };
   $('#thanksAgain').onclick = showFinale;
+  $('#greetNext').onclick = () => { greetStep = 1; renderGreet(); };
+  $('#greetEnv').onclick = openInvite;
+  $('#greetEnv').onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openInvite(); } };
   $('#bubble').onclick = () => { if (!flushPending()) dogTalk(speaker === 'tube' ? 'doria' : 'tube'); };
   $('#finClose').onclick = hideFinale;
   updateMuteBtn();
@@ -2498,7 +2583,10 @@ function start() {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheets(); });
   $('#enterForm').addEventListener('submit', (e) => { e.preventDefault(); const v = $('#guestName').value.trim(); if (v) enterHouse(v); });
 
-  if (state.guest) {
+  if (state.guest && !state.thanked) {
+    $('#intro').classList.add('gone');
+    startGreeting();
+  } else if (state.guest) {
     $('#intro').classList.add('gone');
     state.cueReady = true;
     const left = ROOM_ORDER.filter(r => hasGame(r) && !state.cleared.has(r)).length;
