@@ -48,7 +48,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px 7px; }
 .brand { min-width: 0; }
 .brand h1 { margin: 0; font: 700 18px/1.2 var(--font-display); letter-spacing: -0.01em; }
-.brand p { margin: 1px 0 0; color: var(--muted); font-size: 11.5px; }
+.brand p { margin: 1px 0 0; color: var(--muted); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .count {
   flex: none; display: flex; align-items: center; gap: 7px; padding: 8px 13px;
   border: 1.5px solid var(--brass); border-radius: 999px; background: var(--surface);
@@ -405,6 +405,65 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .enter input { height: 52px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); padding: 0 16px; font-size: 16px; }
 .enter input::placeholder { color: #a79e8f; }
 
+/* ---------- 배경음악 버튼 ---------- */
+.topright { flex: none; display: flex; align-items: center; gap: 8px; }
+.mute {
+  flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  border: 1.5px solid var(--line); background: var(--surface); font-size: 17px; cursor: pointer;
+  box-shadow: 0 2px 0 var(--line-soft);
+}
+.mute.off { color: var(--muted); opacity: .75; }
+.fin-mute { position: absolute; right: 16px; top: calc(14px + env(safe-area-inset-top, 0px)); z-index: 2; }
+
+/* ---------- 피날레: 집주인 커튼콜 ---------- */
+.finale {
+  position: fixed; inset: 0; z-index: 26; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px; overflow: hidden;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  background: radial-gradient(ellipse at 50% 40%, #fffaef 0%, #f6ecd9 45%, #e6d9c0 100%);
+  animation: finIn .45s ease both;
+}
+@keyframes finIn { from { opacity: 0 } to { opacity: 1 } }
+.finale .spot {
+  position: absolute; left: 50%; top: -14%; width: 150%; height: 108%; transform: translateX(-50%);
+  background: radial-gradient(ellipse at 50% 76%, rgba(255,246,222,.95) 0%, rgba(255,246,222,0) 62%);
+  pointer-events: none;
+}
+.duo::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -4px; height: 14px; border-radius: 50%; background: rgba(120,100,70,.18); filter: blur(5px); }
+.fin-eyebrow { position: relative; font: 700 12px var(--font-body); letter-spacing: .14em; color: var(--brass); }
+.thanks {
+  position: relative; text-align: center; font: 700 34px/1.15 var(--font-dog); color: #8a4420;
+  text-shadow: 0 2px 0 #fff6e0; margin: 2px 0 10px;
+}
+.thanks b { color: var(--brass); }
+.thanks span { display: inline-block; animation: hop2 .62s ease-in-out infinite alternate; }
+.thanks span:nth-child(2) { animation-delay: .1s; }
+@keyframes hop2 { from { transform: translateY(0) rotate(-2deg) } to { transform: translateY(-9px) rotate(2deg) } }
+.duo { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 0; }
+.ch { width: 42vw; max-width: 182px; height: auto; display: block; }
+.ch-her { animation: danceA .62s ease-in-out infinite; transform-origin: 50% 100%; }
+.ch-him { animation: danceB .62s ease-in-out infinite; transform-origin: 50% 100%; margin-left: -6px; }
+@keyframes danceA { 0%, 100% { transform: translateY(0) rotate(-5deg) } 50% { transform: translateY(-14px) rotate(5deg) } }
+@keyframes danceB { 0%, 100% { transform: translateY(-14px) rotate(6deg) } 50% { transform: translateY(0) rotate(-6deg) } }
+.ch .arm { transform-box: fill-box; transform-origin: 10% 92%; animation: swing .31s ease-in-out infinite alternate; }
+@keyframes swing { from { transform: rotate(-17deg) } to { transform: rotate(17deg) } }
+.fin-sub { position: relative; margin-top: 14px; text-align: center; font: 700 18px/1.5 var(--font-dog); color: var(--ink-2); }
+.fin-sub b { color: var(--brass); }
+.fin-close {
+  position: relative; margin-top: 18px; height: 50px; padding: 0 26px; border-radius: 14px; border: 0; cursor: pointer;
+  font-weight: 700; font-size: 15.5px; background: linear-gradient(180deg, #f0cb84, #d9a550); color: #3b2a10; box-shadow: 0 4px 0 #ad7f33;
+}
+.notes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.notes i {
+  position: absolute; bottom: 24%; font-style: normal; font-size: 26px; color: var(--brass); opacity: 0;
+  animation: noteUp 2.6s linear infinite;
+}
+@keyframes noteUp {
+  0% { opacity: 0; transform: translateY(0) rotate(-10deg) scale(.7) }
+  15% { opacity: .9 }
+  100% { opacity: 0; transform: translateY(-62vh) rotate(22deg) scale(1.15) }
+}
+
 .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 30; overflow: hidden; }
 .confetti i { position: absolute; top: -12px; width: 7px; height: 12px; border-radius: 1px; animation: fall var(--t, 1.6s) cubic-bezier(.25,.6,.4,1) forwards; }
 @keyframes fall { to { transform: translate(var(--x, 0), 105vh) rotate(var(--r, 540deg)); opacity: .9; } }
@@ -415,6 +474,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .go .disc, .dog img, .wish span, .cta, .cta.gold { animation: none; }
   .greeters img, .say-bubble, .enter, .card-invite { animation: none; }
   .keyslot.new, .unlockbig, .invite-stage .env, .invite-stage .cap { animation: none; }
+  .ch-her, .ch-him, .ch .arm, .thanks span, .notes i { animation: none; }
 }
 </style>
 </head>
@@ -424,12 +484,15 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   <header class="top">
     <div class="brand">
       <h1 id="siteTitle">유씨네 집들이</h1>
-      <p id="brandSub">미니게임 3판이면 위시리스트가 열려요</p>
+      <p id="brandSub">게임 3판이면 위시리스트가 열려요</p>
     </div>
+    <div class="topright">
+    <button class="mute" id="muteBtn" aria-label="배경음악 끄기"><span id="muteIcon">🔈</span></button>
     <button class="count" id="countBtn" aria-label="위시리스트 열기">
       <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="6" width="12" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6h13M8 6v8M8 6C6 2 3.5 3 5 5.2 6 6 8 6 8 6zm0 0c2-4 4.5-3 3-0.8C10 6 8 6 8 6z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
       <span id="countLabel">열쇠 <b>0</b>/3</span>
     </button>
+    </div>
   </header>
 
   <main class="stage" id="stage">
@@ -494,6 +557,88 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
       <button class="btn btn-primary" type="submit">이름 알려주기</button>
     </form>
   </div>
+</div>
+
+<div class="finale" id="finale" hidden>
+  <button class="mute fin-mute" id="finMute" aria-label="배경음악 끄기"><span id="finMuteIcon">🔈</span></button>
+  <div class="spot"></div>
+  <div class="notes" id="finNotes"></div>
+  <div class="fin-eyebrow">CURTAIN CALL</div>
+  <div class="thanks"><span>감사합니다!</span> <span>감사합니다~</span></div>
+  <div class="duo">
+    <svg class="ch ch-her" viewBox="0 0 130 210" role="img" aria-label="집주인 1">
+      <g stroke="#2b2620" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M55 180 L54 196 M76 180 L77 196" stroke-width="7" stroke="#e6dece"/>
+        <path d="M48 198 h13 M70 198 h13" stroke-width="8" stroke="#3b332b"/>
+        <path d="M40 62 C36 28 49 15 65 15 C81 15 94 28 90 62 L92 108 C80 114 50 114 38 108 Z" fill="#2b2521" stroke="#2b2521"/>
+        <path d="M44 100 C28 106 22 126 22 150 L22 176 C22 180 25 182 29 182 L101 182 C105 182 108 180 108 176 L108 150 C108 126 102 106 86 100 Z" fill="#fdf7ea"/>
+        <path d="M30 132 L30 174 M100 132 L100 174 M38 152 L38 176 M92 152 L92 176" stroke-width="1.5" opacity=".38"/>
+        <path d="M50 101 C56 116 74 116 80 101"/>
+        <path d="M58 103 L64 126 L65 182 M72 103 L66 126"/>
+        <path d="M43 76 C40 94 41 108 44 118" stroke="#2b2521" stroke-width="8"/>
+        <path d="M87 76 C90 94 89 108 86 118" stroke="#2b2521" stroke-width="8"/>
+        <ellipse cx="65" cy="58" rx="25" ry="27" fill="#fff5e9"/>
+        <path d="M40 54 C40 28 52 18 65 18 C79 18 91 29 90 53 C84 40 76 34 64 36 C55 37 46 43 40 54 Z" fill="#2b2521" stroke="#2b2521"/>
+        <circle cx="54" cy="60" r="11" fill="#ffffff" fill-opacity=".5"/>
+        <circle cx="77" cy="60" r="11" fill="#ffffff" fill-opacity=".5"/>
+        <path d="M65 59 h1 M43 58 L38 55 M88 58 L93 55"/>
+        <path d="M50 60 q4 -5 8 0" stroke-width="2.8"/>
+        <path d="M73 60 q4 -5 8 0" stroke-width="2.8"/>
+        <path d="M59 75 q6 7 12 0" stroke-width="2.6"/>
+        <circle cx="45" cy="70" r="4.5" fill="#f2c0b0" stroke="none"/>
+        <circle cx="86" cy="70" r="4.5" fill="#f2c0b0" stroke="none"/>
+        <g>
+          <path d="M40 112 C28 122 26 140 32 150" stroke-width="8" stroke="#fdf7ea"/>
+          <path d="M40 112 C28 122 26 140 32 150"/>
+          <path d="M20 146 L40 146 L36 176 L24 176 Z" fill="#1d6f72"/>
+          <path d="M20 146 q10 -11 20 0" fill="#e9f4f4"/>
+          <path d="M30 130 L31 146" stroke-width="2.2"/>
+          <rect x="20.5" y="155" width="19" height="10" fill="#fffdf7"/>
+        </g>
+        <g class="arm">
+          <path d="M90 112 C102 116 108 104 107 92" stroke-width="8" stroke="#fdf7ea"/>
+          <path d="M90 112 C102 116 108 104 107 92"/>
+          <circle cx="107" cy="87" r="7.5" fill="#fff5e9"/>
+          <path d="M103 81 L101 74 M107 79 L107 72 M111 81 L113 74" stroke-width="2.4"/>
+        </g>
+      </g>
+    </svg>
+    <svg class="ch ch-him" viewBox="0 0 130 210" role="img" aria-label="집주인 2">
+      <g stroke="#2b2620" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M55 180 L54 196 M76 180 L77 196" stroke-width="8" stroke="#2a2724"/>
+        <path d="M48 198 h13 M70 198 h13" stroke-width="8" stroke="#1d1b19"/>
+        <path d="M38 60 C34 26 48 13 66 13 C84 13 98 26 94 60 L96 82 C84 88 48 88 36 82 Z" fill="#241f1c" stroke="#241f1c"/>
+        <path d="M44 98 C26 104 19 124 19 150 L19 176 C19 180 22 182 26 182 L104 182 C108 182 111 180 111 176 L111 150 C111 124 104 104 86 98 Z" fill="#22201e"/>
+        <path d="M50 101 C54 88 78 88 82 101 C74 108 58 108 50 101 Z" fill="#332f2b"/>
+        <path d="M62 92 L62 83 M70 92 L70 83" stroke-width="2" stroke="#a79e90"/>
+        <path d="M65 110 L65 150 M36 152 h18 M76 152 h18" stroke-width="1.6" stroke="#4e4a43"/>
+        <path d="M40 66 C38 74 39 82 42 88" stroke="#241f1c" stroke-width="9"/>
+        <path d="M90 66 C92 74 91 82 88 88" stroke="#241f1c" stroke-width="9"/>
+        <ellipse cx="65" cy="57" rx="25" ry="27" fill="#fff2e4"/>
+        <path d="M38 52 C36 24 50 15 66 15 C84 15 95 26 93 52 C86 38 78 31 64 33 C53 34 44 41 38 52 Z" fill="#241f1c" stroke="#241f1c"/>
+        <circle cx="53" cy="59" r="12" fill="#6d5a45" fill-opacity=".45"/>
+        <circle cx="79" cy="59" r="12" fill="#6d5a45" fill-opacity=".45"/>
+        <path d="M65.5 58 h1.5 M41 56 L35 53 M91 56 L97 53"/>
+        <path d="M49 60 q4 -4 8 0" stroke-width="2.4" opacity=".9"/>
+        <path d="M75 60 q4 -4 8 0" stroke-width="2.4" opacity=".9"/>
+        <path d="M57 74 q8 4 15 -1" stroke-width="2.4"/>
+        <g>
+          <path d="M40 110 C29 122 29 140 35 150" stroke-width="9" stroke="#22201e"/>
+          <path d="M40 110 C29 122 29 140 35 150" stroke="#5c564e" stroke-width="2"/>
+          <circle cx="35" cy="155" r="7" fill="#fff2e4"/>
+        </g>
+        <g class="arm">
+          <path d="M90 110 C102 104 108 92 106 80" stroke-width="9" stroke="#22201e"/>
+          <path d="M90 110 C102 104 108 92 106 80" stroke="#5c564e" stroke-width="2"/>
+          <circle cx="106" cy="76" r="8" fill="#fff2e4"/>
+          <path d="M101 69 L96 55 M111 69 L115 55" stroke-width="3.6"/>
+          <path d="M102 79 q4 4 8 0" stroke-width="2"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <p class="fin-sub" id="finSub"></p>
+  <button class="fin-close" id="finClose">집 구경 계속하기</button>
 </div>
 
 <div class="confetti" id="confetti"></div>
@@ -1845,7 +1990,11 @@ function renderGift() {
   on('claimNo', () => { confirming = false; renderGift(); });
   on('claimYes', async () => {
     busy = true; lastErr = ''; renderGift();
-    try { await Store.claim(g.id, state.guest); confirming = false; burst(60); say(`${state.guest}님 고마워요! 꼬리 흔드는 중`, dogFor(giftRoom(g))); }
+    try {
+      await Store.claim(g.id, state.guest); confirming = false;
+      say(`${state.guest}님 고마워요! 꼬리 흔드는 중`, dogFor(giftRoom(g)));
+      setTimeout(() => { closeSheets(); showFinale(); }, 420);
+    }
     catch (e) { lastErr = e.message === 'taken' ? '방금 다른 분이 먼저 찜했어요. 다른 선물을 골라주세요.' : '저장하지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.'; confirming = false; }
     busy = false; renderGift();
   });
@@ -1889,7 +2038,10 @@ function renderNotebook() {
     <div class="grip"></div>
     <div class="nb-head"><h2>위시리스트</h2><span>전체 ${GIFTS.length} · 찜 ${claimedN}</span></div>
     <ul class="nb-list">${rows}</ul>
-    <div class="actions"><button class="btn btn-ghost" id="againInvite">💌 초대장 다시 보기</button></div>
+    <div class="actions">
+      <button class="btn btn-ghost" id="againInvite">💌 초대장 다시 보기</button>
+      <button class="btn btn-ghost" id="againFinale">💃 집주인 인사 다시 보기</button>
+    </div>
     ${Store.mode === 'demo' ? '<p class="demo-note">체험 모드예요. 찜한 내용은 이 기기에만 저장돼요. ‘민지 (예시)’는 화면 예시입니다.</p>' : ''}`;
   $('#nbSheet').querySelectorAll('[data-gift]').forEach(b => b.onclick = () => {
     closeSheets();
@@ -1898,6 +2050,7 @@ function renderNotebook() {
     setTimeout(() => openGift(g.id), 260);
   });
   const ai = $('#againInvite'); if (ai) ai.onclick = () => { closeSheets(); setTimeout(openInvite, 240); };
+  const af = $('#againFinale'); if (af) af.onclick = () => { closeSheets(); setTimeout(showFinale, 240); };
 }
 function renderRooms() {
   $('#roomSheet').innerHTML = `<div class="grip"></div><div class="nb-head"><h2>방 이동</h2><span>🔑 ${keyCount()}/${KEYS_NEEDED} · ★ ${ROOM_ORDER.reduce((a, r) => a + (state.stars[r] || 0), 0)}</span></div>
@@ -1933,6 +2086,184 @@ function burst(n) {
 }
 
 /* ================================================================
+   배경음악 — 파일 없이 Web Audio 로 직접 연주합니다
+      lobby : 호텔 라운지풍 느린 재즈 (기본)
+      dance : 집주인 커튼콜용 들썩이는 뽕짝
+   ================================================================ */
+const MIDI = (n) => 440 * Math.pow(2, (n - 69) / 12);
+function makeIR(ctx, dur, decay) {
+  const len = Math.max(1, Math.floor(ctx.sampleRate * dur));
+  const buf = ctx.createBuffer(2, len, ctx.sampleRate);
+  for (let c = 0; c < 2; c++) {
+    const d = buf.getChannelData(c);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+  }
+  return buf;
+}
+/* 라운지: Fmaj7 – Dm7 – Gm7 – C7 – Am7 – Dm7 – Gm7 – C7 */
+const LOBBY_CH = [
+  [53, 57, 60, 64], [50, 53, 57, 60], [55, 58, 62, 65], [48, 52, 55, 58],
+  [57, 60, 64, 67], [50, 53, 57, 60], [55, 58, 62, 65], [48, 52, 55, 58],
+];
+/* 커튼콜: C – C – F – G 위에 우스꽝스러운 리프 */
+const DANCE_CH = [[48, 52, 55], [48, 52, 55], [53, 57, 60], [55, 59, 62]];
+const DANCE_RIFF = [
+  72, null, 72, 74, 76, null, 74, 72,
+  76, 76, 77, 76, 74, null, 72, null,
+  77, null, 77, 76, 74, null, 76, 77,
+  79, null, 77, 74, 72, null, 71, 74,
+];
+
+const Music = {
+  on: ls('hw2_music') !== 0,
+  ctx: null, kind: null, timer: 0, step: 0, next: 0,
+  ensure() {
+    if (this.ctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    try { this.ctx = new AC(); } catch (e) { return false; }
+    const c = this.ctx;
+    this.master = c.createGain(); this.master.gain.value = 0; this.master.connect(c.destination);
+    this.bus = c.createGain(); this.bus.connect(this.master);
+    try {
+      this.verb = c.createConvolver(); this.verb.buffer = makeIR(c, 2.6, 2.4);
+      this.wet = c.createGain(); this.wet.gain.value = .3;
+      this.verb.connect(this.wet); this.wet.connect(this.master);
+    } catch (e) { this.verb = null; }
+    return true;
+  },
+  vol() { return this.on ? (this.kind === 'dance' ? .72 : .42) : 0; },
+  fade(v, sec) {
+    const g = this.master.gain, t = this.ctx.currentTime;
+    g.cancelScheduledValues(t); g.setValueAtTime(Math.max(g.value, .0001), t);
+    g.linearRampToValueAtTime(Math.max(v, .0001), t + sec);
+  },
+  start(kind) {
+    if (!this.ensure()) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    if (!this.on) { this.kind = kind; return; }
+    if (this.kind === kind && this.timer) { this.fade(this.vol(), .4); return; }
+    this.kind = kind; this.step = 0; this.next = this.ctx.currentTime + .12;
+    clearInterval(this.timer);
+    this.timer = setInterval(() => this.tick(), 25);
+    this.fade(this.vol(), kind === 'dance' ? .2 : 1.6);
+    if (kind === 'dance') this.whistle(this.ctx.currentTime + .05);
+  },
+  stop() { clearInterval(this.timer); this.timer = 0; if (this.ctx) this.fade(0, .4); },
+  toggle() {
+    this.on = !this.on; ls('hw2_music', this.on ? 1 : 0);
+    if (this.on) this.start(this.kind || 'lobby'); else this.stop();
+    updateMuteBtn();
+  },
+  tick() {
+    const c = this.ctx; if (!c) return;
+    const dance = this.kind === 'dance';
+    const spb = dance ? 60 / 152 / 2 : 60 / 68 / 2;
+    let guard = 0;
+    while (this.next < c.currentTime + .3 && guard++ < 40) {
+      try { dance ? this.danceStep(this.step, this.next) : this.lobbyStep(this.step, this.next); } catch (e) { }
+      this.next += spb; this.step++;
+    }
+  },
+  voice(type, freq, t, dur, gain, o) {
+    o = o || {};
+    const c = this.ctx, osc = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter();
+    osc.type = type; osc.frequency.setValueAtTime(freq, t);
+    if (o.detune) osc.detune.setValueAtTime(o.detune, t);
+    f.type = 'lowpass'; f.frequency.setValueAtTime(o.cut || 2400, t);
+    const a = o.a === undefined ? .012 : o.a, r = o.r === undefined ? .18 : o.r;
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.linearRampToValueAtTime(gain, t + a);
+    g.gain.setTargetAtTime(.0001, t + dur, r / 3);
+    osc.connect(f); f.connect(g); g.connect(this.bus);
+    if (o.verb && this.verb) g.connect(this.verb);
+    osc.start(t); osc.stop(t + dur + r + .3);
+  },
+  noise(t, dur, gain, cut, hp) {
+    const c = this.ctx, len = Math.floor(c.sampleRate * (dur + .05));
+    const b = c.createBuffer(1, len, c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    const src = c.createBufferSource(); src.buffer = b;
+    const f = c.createBiquadFilter(); f.type = hp ? 'highpass' : 'lowpass'; f.frequency.value = cut;
+    const g = c.createGain();
+    g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(gain, t + .005);
+    g.gain.setTargetAtTime(.0001, t + .01, dur / 3);
+    src.connect(f); f.connect(g); g.connect(this.bus);
+    if (this.verb) g.connect(this.verb);
+    src.start(t); src.stop(t + dur + .1);
+  },
+  whistle(t) {
+    const c = this.ctx, o = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(380, t);
+    o.frequency.exponentialRampToValueAtTime(1500, t + .45);
+    g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(.12, t + .05);
+    g.gain.setTargetAtTime(.0001, t + .36, .08);
+    o.connect(g); g.connect(this.bus); o.start(t); o.stop(t + .9);
+  },
+  lobbyStep(i, t) {
+    const bar = Math.floor(i / 8) % LOBBY_CH.length, ch = LOBBY_CH[bar], b = i % 8;
+    if (b === 0) ch.forEach((n, k) => this.voice('triangle', MIDI(n), t, 1.9, .045 - k * .004, { a: .35, r: 1.1, cut: 1500, verb: 1 }));
+    if (b % 2 === 0) {
+      const n = ch[(i / 2 + bar) % ch.length] + 12;
+      this.voice('sine', MIDI(n), t + (b % 4 === 2 ? .055 : 0), .5, .085, { a: .006, r: .5, cut: 3000, verb: 1 });
+    }
+    if (b === 3 || b === 7) this.noise(t, .16, .012, 6500, true);
+    if (b === 0 && bar % 2 === 0) this.voice('sine', MIDI(ch[0] - 12), t, 1.2, .07, { a: .04, r: .5, cut: 500 });
+  },
+  danceStep(i, t) {
+    const bar = Math.floor(i / 8) % DANCE_CH.length, ch = DANCE_CH[bar], b = i % 8;
+    if (b % 4 === 0) {
+      this.voice('square', MIDI(ch[0] - 12), t, .13, .14, { cut: 700, r: .06 });
+      const k = this.ctx.createOscillator(), g = this.ctx.createGain();
+      k.type = 'sine'; k.frequency.setValueAtTime(130, t); k.frequency.exponentialRampToValueAtTime(45, t + .11);
+      g.gain.setValueAtTime(.22, t); g.gain.setTargetAtTime(.0001, t + .02, .035);
+      k.connect(g); g.connect(this.bus); k.start(t); k.stop(t + .3);
+    }
+    if (b % 4 === 2) {
+      ch.forEach(n => this.voice('square', MIDI(n), t, .1, .055, { cut: 1700, r: .05 }));
+      this.noise(t, .1, .07, 2200, true);
+    }
+    const m = DANCE_RIFF[i % DANCE_RIFF.length];
+    if (m) this.voice('sawtooth', MIDI(m), t, .13, .075, { cut: 2300, r: .07, detune: (i % 2 ? 7 : -7), verb: 1 });
+    if (i % 32 === 31) this.whistle(t);
+  },
+};
+function updateMuteBtn() {
+  const b = $('#muteBtn'); if (!b) return;
+  b.classList.toggle('off', !Music.on);
+  $('#muteIcon').textContent = Music.on ? '🔈' : '🔇';
+  b.setAttribute('aria-label', Music.on ? '배경음악 끄기' : '배경음악 켜기');
+  const fb = $('#finMute');
+  if (fb) { fb.classList.toggle('off', !Music.on); $('#finMuteIcon').textContent = Music.on ? '🔈' : '🔇'; fb.setAttribute('aria-label', b.getAttribute('aria-label')); }
+}
+
+/* ================================================================
+   피날레 — 집주인 둘이 나와서 인사하는 커튼콜
+   ================================================================ */
+let finaleT = 0;
+function showFinale() {
+  const f = $('#finale'); if (!f) return;
+  $('#finSub').innerHTML = state.guest
+    ? `<b>${esc(state.guest)}</b>님, 덕분에 집들이가 더 따뜻해졌어요<br>집에서 꼭 뵐게요 🐾`
+    : '덕분에 집들이가 더 따뜻해졌어요<br>집에서 꼭 뵐게요 🐾';
+  const notes = $('#finNotes');
+  notes.innerHTML = ['♪', '♫', '♬', '♩', '♪', '♫'].map((n, k) =>
+    `<i style="left:${8 + k * 15 + Math.random() * 6}%;animation-delay:${(k * .42).toFixed(2)}s">${n}</i>`).join('');
+  f.hidden = false;
+  Music.start('dance');
+  burst(120);
+  clearTimeout(finaleT);
+  finaleT = setTimeout(hideFinale, 16000);
+}
+function hideFinale() {
+  clearTimeout(finaleT);
+  const f = $('#finale'); if (!f || f.hidden) return;
+  f.hidden = true;
+  Music.start('lobby');
+  say('감사합니다 감사합니다~ 또 놀러 오세요 멍!', 'tube');
+}
+
+/* ================================================================
    노크 → 마중 → 입장
    ================================================================ */
 let knocks = 0;
@@ -1940,6 +2271,7 @@ function setupKnock() {
   const door = $('#door');
   door.addEventListener('click', () => {
     if (knocks >= 2) return;
+    Music.start('lobby');
     knocks++;
     door.classList.remove('knock'); void door.offsetWidth; door.classList.add('knock');
     const m = document.createElement('div');
@@ -1990,6 +2322,12 @@ function start() {
   $('#countBtn').onclick = () => { renderNotebook(); showSheet('#nbSheet'); };
   $('#roomsBtn').onclick = () => { renderRooms(); showSheet('#roomSheet'); };
   $('#zoomBtn').onclick = () => setZoom(1);
+  $('#muteBtn').onclick = () => Music.toggle();
+  $('#finMute').onclick = () => Music.toggle();
+  $('#finClose').onclick = hideFinale;
+  updateMuteBtn();
+  const kick = () => Music.start(Music.kind || 'lobby');
+  ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, kick, { once: true }));
   $('#avatarBtn').onclick = () => dogTalk(speaker === 'tube' ? 'doria' : 'tube');
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheets(); });
   $('#enterForm').addEventListener('submit', (e) => { e.preventDefault(); const v = $('#guestName').value.trim(); if (v) enterHouse(v); });
