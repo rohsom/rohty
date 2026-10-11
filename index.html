@@ -1240,7 +1240,7 @@ function announce(prevRoom) {
 /* 아래쪽 큰 버튼: 초대장 → 미니게임 → 완료 */
 function updateCta() {
   const b = $('#ctaBtn');
-  if (!state.guest || !state.thanked) { b.hidden = true; return; }
+  if (!state.guest) { b.hidden = true; return; }
   const room = curRoom();
   const g = ROOM_SCENE[room];
   if (g && !state.cleared.has(room)) {
@@ -1252,8 +1252,16 @@ function updateCta() {
     b.hidden = false; b.className = 'cta ghost';
     b.innerHTML = `<em>${st >= 3 ? '🏆' : '⭐'}</em> ${esc(ROOM_NAMES[room])} ${starStr(st)} ${st >= 3 ? '· 한 판 더' : '· 기록 깨기'}`;
     b.onclick = () => openGame(room);
+  } else if (unlocked()) {
+    /* 게임이 없는 방(현관) + 이미 다 열린 경우 */
+    b.hidden = false; b.className = 'cta ghost';
+    b.innerHTML = `<em>🎁</em> 위시리스트 보기`;
+    b.onclick = () => { renderNotebook(); showSheet('#nbSheet'); };
   } else {
-    b.hidden = true;
+    /* 게임이 없는 방 — 게임 있는 방으로 안내 */
+    b.hidden = false; b.className = 'cta game';
+    b.innerHTML = `<em>🎮</em> 미니게임 하러 가기`;
+    b.onclick = () => { renderRooms(); showSheet('#roomSheet'); };
   }
 }
 
