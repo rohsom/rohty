@@ -208,6 +208,10 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .nb-item.locked { cursor: pointer; background: #f7f2e7; }
 .nb-item.locked .em { opacity: .5; filter: grayscale(1); }
 .nb-item.locked b { color: var(--muted); letter-spacing: .1em; }
+.nb-sec { padding: 10px 12px 8px; background: #faf3e6; display: grid; gap: 2px; }
+.nb-sec b { font-size: 12.5px; font-weight: 800; color: var(--brass); letter-spacing: .02em; }
+.nb-sec span { font-size: 11.5px; color: var(--muted); }
+.gift-hero .opt { margin-top: 4px; font-size: 12px; color: var(--muted); line-height: 1.45; }
 .demo-note { margin-top: 14px; font-size: 12px; color: var(--muted); }
 .room-grid { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .room-btn { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: #faf6ec; text-align: left; cursor: pointer; }
@@ -778,25 +782,65 @@ function makeGameDef(room) {
 }
 
 /* ================================================================
-   5) 위시리스트 (지금은 예시) — 방의 미니게임을 깨면 공개됩니다
-      scene/x/y 는 공개된 뒤 그림 위에 놓일 자리입니다
+   5) 위시리스트 — 집주인이 실제로 담아둔 목록
+      tier  : must = 꼭 필요한 위시 / want = 우선순위는 아니지만 가지고 싶은 위시
+      scene/x/y : 열쇠 3개를 모으면 그림 위 이 자리에 선물 태그가 뜹니다
+      url   : 오늘의집 공유 링크 (ozip.me)
    ================================================================ */
+const TIER_ORDER = ['must', 'want'];
+const WISH_TIERS = {
+  must: { label: '꼭 필요한 위시', hint: '집들이 전에 꼭 채우고 싶어요' },
+  want: { label: '가지고 싶은 위시', hint: '우선순위는 아니지만 마음에 담아뒀어요' },
+};
 const GIFTS = [
-  { id: 'shoerack',   scene: 'entry-art',      x: 18, y: 74, emoji: '👟', name: '현관 슈즈 벤치',      price: '5~10만원',  note: '앉아서 신발 신을 자리가 있으면 좋겠어요. 카펫 위에 신발도 덜 굴러다니고요.' },
-  { id: 'sofa',       scene: 'living-window',  x: 50, y: 74, emoji: '🛋️', name: '거실 소파 (함께 보태기)', price: '여럿이 조금씩', note: '소파가 생기면 빈백 존을 싹 정리할 거예요. 몇 분이 같이 보태주셔도 좋아요!' },
-  { id: 'soundbar',   scene: 'living-beanbag', x: 72, y: 62, emoji: '🔊', name: '블루투스 사운드바',    price: '10~20만원', note: '빔프로젝터로 영화 보는데 소리가 너무 작아요.' },
-  { id: 'glasses',    scene: 'kitchen',        x: 44, y: 66, emoji: '🍷', name: '와인잔 세트',          price: '5~10만원',  note: '아일랜드 식탁에서 집들이 건배하고 싶어요.' },
-  { id: 'coffee',     scene: 'kitchen',        x: 58, y: 50, emoji: '☕', name: '캡슐 커피머신',        price: '15~25만원', note: '주방 창가 쪽에 커피머신 자리를 비워뒀어요.' },
-  { id: 'dryrack',    scene: 'utility',        x: 38, y: 47, emoji: '🧺', name: '빨래 바구니 & 건조대', price: '3~6만원',   note: '유튜브·유도리 담요 빨래가 매일 한가득이에요.' },
-  { id: 'bathmat',    scene: 'bath1-sink',     x: 54, y: 60, emoji: '🧼', name: '욕실 매트 & 디스펜서', price: '3~6만원',   note: '세면대에 어울리는 디스펜서 세트가 갖고 싶어요.' },
-  { id: 'guestbed',   scene: 'guest',          x: 34, y: 60, emoji: '🛌', name: '손님용 침구 세트',     price: '8~15만원',  note: '놀러 와서 자고 가실 분들을 위한 포근한 이불이 필요해요.' },
-  { id: 'monitorarm', scene: 'studio-desk',    x: 25, y: 41, emoji: '🖥️', name: '듀얼 모니터암',        price: '5~10만원',  note: '작업실 책상 두 개 위가 선으로 정신없어요.' },
-  { id: 'plant',      scene: 'studio-desk',    x: 57, y: 44, emoji: '🪴', name: '반려식물 화분',        price: '3~8만원',   note: '베란다가 아직 텅 비어 있어요.' },
-  { id: 'cabinet',    scene: 'studio-drum',    x: 70, y: 72, emoji: '🗄️', name: '작업실 수납장',        price: '10~20만원', note: '짐이 아직 박스에 들어 있어요. 수납장이 생기면 작업실 정리 끝!' },
-  { id: 'fountain',   scene: 'studio-drum',    x: 26, y: 60, emoji: '🐾', name: '강아지 자동 정수기',   price: '4~7만원',   note: '유튜브와 유도리가 물을 더 많이 마셨으면 해서요.' },
-  { id: 'bedding',    scene: 'bedroom-bed',    x: 32, y: 70, emoji: '🛏️', name: '킹사이즈 호텔 침구',   price: '15~30만원', note: '브라운 가죽 침대 프레임이 왔어요! 이제 어울리는 호텔 침구만 있으면 돼요.' },
-  { id: 'towels',     scene: 'bath2-tub',      x: 82, y: 37, emoji: '🛁', name: '호텔 수건 세트',       price: '4~8만원',   note: '욕조 있는 화장실에 두툼한 수건을 두고 싶어요.' },
-  { id: 'candle',     scene: 'dress',          x: 48, y: 57, emoji: '🪔', name: '캔들워머',             price: '3~6만원',   note: '화장대 위에 은은한 불빛 하나 있으면 좋겠어요.' },
+  { id: 'sofa', tier: 'must', scene: 'living-beanbag', x: 62, y: 70, emoji: '🛋️',
+    name: '멜로우 스윙 4인 구스 모듈소파',
+    price: '649,000원',
+    opt: '마루이 · 크림아이보리(갤럭시 부클레) · 좌형+우형+암리스 · 배송비 7만원 착불',
+    url: 'https://ozip.me/0y1mXiI',
+    note: '거실에서 제일 기다리는 아이예요. 소파가 들어오면 빈백 존을 싹 정리할 거예요. 제일 큰 위시라 여러 분이 조금씩 보태주셔도 정말 좋아요!' },
+
+  { id: 'tray', tier: 'must', scene: 'entry-art', x: 20, y: 54, emoji: '🖼️',
+    name: '디어리튼 프레임 트레이',
+    price: '48,000원',
+    opt: '베이직 · 블랙+아쿠아',
+    url: 'https://ozip.me/nGALHBo',
+    note: '현관을 호텔처럼 만들고 싶어서 선반 위에 올려둘 트레이를 골랐어요. 열쇠랑 향초를 올려둘 거예요.' },
+
+  { id: 'barchair', tier: 'must', scene: 'kitchen', x: 42, y: 66, emoji: '🪑',
+    name: '아나스 바텐 아일랜드 식탁의자 (1+1)',
+    price: '89,500원',
+    opt: '체어팩토리 · 그레이+그레이 · 두 개 한 세트',
+    url: 'https://ozip.me/ToOD9vv',
+    note: '제일 공들인 주방인데 정작 앉을 의자가 없어요. 두 개 세트라 집들이 날 바로 앉아볼 수 있어요!' },
+
+  { id: 'sidetable', tier: 'must', scene: 'living-window', x: 58, y: 68, emoji: '🛞',
+    name: '아르비아 원형 수납 높낮이 이동식테이블 700',
+    price: '318,000원 (1개 159,000원)',
+    opt: '미드센추리모던 · 실버 1 + 블랙 1 · 한 개만 골라주셔도 좋아요',
+    url: 'https://ozip.me/bNXfRpr',
+    note: '소파 옆에서 커피도 올리고 노트북도 올릴 테이블이에요. 두 개 중 한 색만 맡아주셔도 충분해요!' },
+
+  { id: 'mirror', tier: 'must', scene: 'dress', x: 48, y: 26, emoji: '🪞',
+    name: '프렌치 엔틱 브릿지 우드 인테리어 거울',
+    price: '99,900원',
+    opt: '미드센추리 · 단품 · 무료배송',
+    url: 'https://ozip.me/XXJrhpm',
+    note: '드레스룸에 전신으로 비춰볼 거울이 아직 없어요. 앤틱 우드 프레임이 집 톤이랑 딱 맞더라고요.' },
+
+  { id: 'moonjar', tier: 'want', scene: 'bedroom-bed', x: 66, y: 48, emoji: '🏮',
+    name: '달항아리 조명 LED 무드램프',
+    price: '34,800원',
+    opt: '로피어스 · 대(지름 20cm) · 3D프린팅 오브제',
+    url: 'https://ozip.me/KeGuG1q',
+    note: '침대 옆에 달빛 하나 두고 싶어요. 급한 건 아닌데 자꾸 눈에 밟혀요 🌙' },
+
+  { id: 'blueblack', tier: 'want', scene: 'studio-desk', x: 32, y: 70, emoji: '💙',
+    name: '블루블랙 컬러 위시',
+    price: '링크에서 확인해 주세요',
+    opt: '색상은 블루블랙으로 부탁드려요',
+    url: 'https://ozip.me/1kTjJf4',
+    note: '작업실에 두려고 찜해둔 아이예요. 색은 꼭 블루블랙으로요!' },
 ];
 
 /* ================================================================
@@ -1684,11 +1728,7 @@ function winGame() {
       ${ring(KEYS_NEEDED, true)}
       <p>집 안에 숨겨둔 <b>위시리스트 ${GIFTS.length}개</b>가 모두 열렸어요</p>
     </div>
-    <ul class="nb-list">${GIFTS.map(g => {
-      const c = state.claims[g.id];
-      const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
-      return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(ROOM_NAMES[giftRoom(g)])} · ${esc(g.price)}</span></span>${st}</button></li>`;
-    }).join('')}</ul>`;
+    <ul class="nb-list">${wishRows()}</ul>`;
   } else if (unlocked()) {
     body = `<div class="won">
       <div class="big">${grade === 3 ? '🏆' : '🎉'}</div>
@@ -1792,13 +1832,13 @@ function renderGift() {
   }
   $('#giftSheet').innerHTML = `
     <div class="grip"></div>
-    <div class="eyebrow">${esc(ROOM_NAMES[giftRoom(g)])} 위시리스트</div>
+    <div class="eyebrow">${esc(WISH_TIERS[g.tier || 'must'].label)} · ${esc(ROOM_NAMES[giftRoom(g)])}</div>
     <div class="gift-hero">
       <div class="gift-emoji" aria-hidden="true">${g.emoji}</div>
-      <div><h2 id="giftName">${esc(g.name)}</h2><div class="price">${esc(g.price)}</div></div>
+      <div><h2 id="giftName">${esc(g.name)}</h2><div class="price">${esc(g.price)}</div>${g.opt ? `<div class="opt">${esc(g.opt)}</div>` : ''}</div>
     </div>
     <div class="note">“${esc(g.note)}”<small>집주인 한마디</small></div>
-    ${g.url ? `<a class="link" href="${esc(g.url)}" target="_blank" rel="noopener">이런 제품이면 좋아요 ↗</a>` : ''}
+    ${g.url ? `<a class="link" href="${esc(g.url)}" target="_blank" rel="noopener">오늘의집에서 제품 보기 ↗</a>` : ''}
     <div class="actions">${action}${lastErr ? `<div class="err">${esc(lastErr)}</div>` : ''}</div>`;
   const on = (id, fn) => { const b = document.getElementById(id); if (b) b.onclick = fn; };
   on('claimBtn', () => { confirming = true; renderGift(); });
@@ -1817,6 +1857,17 @@ function renderGift() {
   $('#giftSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
 }
 
+const wishRow = (g) => {
+  const c = state.claims[g.id];
+  const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
+  return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(ROOM_NAMES[giftRoom(g)])} · ${esc(g.price)}</span></span>${st}</button></li>`;
+};
+const wishRows = () => TIER_ORDER.map(t => {
+  const list = GIFTS.filter(g => (g.tier || 'must') === t);
+  if (!list.length) return '';
+  return `<li class="nb-sec"><b>${WISH_TIERS[t].label} ${list.length}</b><span>${WISH_TIERS[t].hint}</span></li>` + list.map(wishRow).join('');
+}).join('');
+
 function renderNotebook() {
   const claimedN = GIFTS.filter(g => state.claims[g.id]).length;
   if (!unlocked()) {
@@ -1833,11 +1884,7 @@ function renderNotebook() {
     $('#goRooms').onclick = () => { closeSheets(); setTimeout(() => { renderRooms(); showSheet('#roomSheet'); }, 240); };
     return;
   }
-  const rows = ROOM_ORDER.flatMap(r => GIFTS.filter(g => giftRoom(g) === r).map(g => {
-    const c = state.claims[g.id];
-    const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
-    return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(ROOM_NAMES[r])} · ${esc(g.price)}</span></span>${st}</button></li>`;
-  })).join('');
+  const rows = wishRows();
   $('#nbSheet').innerHTML = `
     <div class="grip"></div>
     <div class="nb-head"><h2>위시리스트</h2><span>전체 ${GIFTS.length} · 찜 ${claimedN}</span></div>
