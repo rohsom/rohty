@@ -317,6 +317,31 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .unlockbig { font-size: 56px; text-align: center; animation: unlockPop .8s cubic-bezier(.2,.9,.3,1.5) both; }
 @keyframes unlockPop { 0% { transform: scale(.3) rotate(-25deg); opacity: 0 } 60% { transform: scale(1.25) rotate(8deg); opacity: 1 } 100% { transform: none } }
 
+/* 화면 중앙 감사인사 버튼 */
+.thanks-stage {
+  position: absolute; inset: 0; z-index: 6; display: grid; place-content: center; justify-items: center; gap: 14px;
+  background: rgba(250,247,240,.66); padding: 16px;
+}
+.ts-card {
+  display: grid; justify-items: center; gap: 4px; cursor: pointer;
+  padding: 22px 26px; border-radius: 20px; background: var(--surface); border: 2px solid var(--brass);
+  box-shadow: 0 18px 34px -18px rgba(90,70,40,.8); text-align: center;
+  animation: tsPop .45s cubic-bezier(.2,.9,.3,1.4) both, capPulse 2.2s ease-in-out .5s infinite;
+}
+.ts-card .e { font-size: 44px; line-height: 1.1; }
+.ts-card b { font: 700 19px var(--font-display); }
+.ts-card span { font-size: 12.5px; color: var(--muted); }
+@keyframes tsPop { from { opacity: 0; transform: scale(.7) translateY(14px) } to { opacity: 1; transform: none } }
+.ts-later { background: none; border: 0; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-2); text-decoration: underline; padding: 6px 10px; }
+.chip.again { right: 10px; top: 52px; cursor: pointer; font-weight: 600; }
+/* 말풍선에 다음 멘트가 남아 있을 때 */
+.bubble.more { cursor: pointer; }
+.bubble.more::after {
+  content: "👆"; position: absolute; right: 9px; bottom: 5px; font-size: 14px;
+  animation: tapHint 1.1s ease-in-out infinite;
+}
+@keyframes tapHint { 0%, 100% { transform: translateY(0); opacity: .55 } 50% { transform: translateY(-4px); opacity: 1 } }
+
 /* 화면 중앙 초대장 */
 .invite-stage {
   position: absolute; inset: 0; z-index: 6; display: grid; place-content: center; justify-items: center;
@@ -472,6 +497,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .go .disc, .dog img, .wish span, .cta, .cta.gold { animation: none; }
   .greeters img, .say-bubble, .enter, .card-invite { animation: none; }
   .keyslot.new, .unlockbig, .invite-stage .env, .invite-stage .cap { animation: none; }
+  .ts-card, .bubble.more::after { animation: none; }
   .ch-her, .ch-him, .thanks span, .notes i { animation: none; }
 }
 </style>
@@ -505,6 +531,15 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
       전체 보기
     </button>
     <div class="howto" id="howto">화살표를 누르면 걸어가고, 그림을 두 번 누르면 가까이 보여요</div>
+    <button class="chip again" id="thanksAgain" hidden>💃 감사 인사 다시 보기</button>
+    <div class="thanks-stage" id="thanksStage" hidden>
+      <div class="ts-card" id="thanksGo" role="button" tabindex="0">
+        <span class="e">💐</span>
+        <b>감사 인사 보러 가기</b>
+        <span>집주인이 인사를 준비했어요</span>
+      </div>
+      <button class="ts-later" id="thanksLater">나중에 볼게요</button>
+    </div>
     <div class="invite-stage" id="inviteStage" hidden role="button" tabindex="0" aria-label="초대장 열어보기">
       <div class="env"><div class="env-body"><div class="flap"></div><div class="seal">유</div></div></div>
       <div class="cap">💌 눌러서 초대장 열어보기</div>
@@ -938,6 +973,7 @@ const state = {
   cleared: new Set(ls('hw2_cleared') || []),
   stars: ls('hw2_stars') || {},
   thanked: !!ls('hw2_thanked'),
+  thanksSeen: !!ls('hw2_thanksseen'),
   cueReady: false,
   claims: {},
   scene: FIRST_SCENE,
@@ -1000,12 +1036,32 @@ const DOGS = {
 };
 let speaker = 'doria';
 const dogFor = (room) => (['small', 'utility', 'bed1', 'bath2', 'kitchen'].includes(room) ? 'tube' : 'doria');
-function say(text, who) {
+let sayPending = null, sayTimer = 0;
+function say(text, who, keepPending) {
+  if (!keepPending) clearPending();
   speaker = who || speaker; const d = DOGS[speaker];
   $('#avatarImg').src = d.face; $('#avatarImg').alt = d.name;
   $('#avatarBtn').dataset.who = speaker;
   $('#bubble').dataset.who = speaker;
   $('#bubble').innerHTML = `<div><small>${d.name}</small>${esc(text)}</div>`;
+}
+/* 다음 멘트는 말풍선을 눌러야 넘어갑니다 (오래 안 누르면 알아서 넘어가요) */
+function queueSay(text, who, after) {
+  sayPending = { text, who, after };
+  $('#bubble').classList.add('more');
+  clearTimeout(sayTimer);
+  sayTimer = setTimeout(flushPending, 14000);
+}
+function flushPending() {
+  const q = sayPending; if (!q) return false;
+  clearPending();
+  say(q.text, q.who);
+  if (q.after) q.after();
+  return true;
+}
+function clearPending() {
+  sayPending = null; clearTimeout(sayTimer);
+  const b = $('#bubble'); if (b) b.classList.remove('more');
 }
 function dogTalk(who) {
   const room = curRoom();
@@ -1207,7 +1263,7 @@ function setupDrag() {
   let drag = null, pinch = null, lastTap = 0;
   const rel = (e) => { const r = stage.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
   stage.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('button, #inviteStage')) return;
+    if (e.target.closest('button, #inviteStage, #thanksStage')) return;
     pts.set(e.pointerId, e);
     try { stage.setPointerCapture(e.pointerId); } catch (err) {}
     if (pts.size === 2) {
@@ -1923,7 +1979,7 @@ function renderGift() {
     try {
       await Store.claim(g.id, state.guest); confirming = false;
       say(`${state.guest}님 고마워요! 꼬리 흔드는 중`, dogFor(giftRoom(g)));
-      setTimeout(() => { closeSheets(); showFinale(); }, 420);
+      setTimeout(() => { closeSheets(); showThanksStage(); }, 600);
     }
     catch (e) { lastErr = e.message === 'taken' ? '방금 다른 분이 먼저 찜했어요. 다른 선물을 골라주세요.' : '저장하지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.'; confirming = false; }
     busy = false; renderGift();
@@ -2171,6 +2227,22 @@ function updateMuteBtn() {
    피날레 — 집주인 둘이 나와서 인사하는 커튼콜
    ================================================================ */
 let finaleT = 0;
+function updateThanksChip() {
+  const c = $('#thanksAgain'); if (!c) return;
+  c.hidden = !(state.thanksSeen && $('#finale').hidden && $('#thanksStage').hidden);
+}
+function showThanksStage() {
+  if (!state.guest) return;
+  $('#inviteStage').hidden = true;
+  $('#thanksStage').hidden = false;
+  updateThanksChip();
+  say('주인님이 인사를 준비하셨어요! 가운데 버튼을 눌러보세요', 'doria');
+}
+function hideThanksStage() {
+  $('#thanksStage').hidden = true;
+  updateThanksChip();
+  updateInviteStage();
+}
 function showFinale() {
   const f = $('#finale'); if (!f) return;
   $('#finSub').innerHTML = state.guest
@@ -2180,6 +2252,8 @@ function showFinale() {
   notes.innerHTML = ['♪', '♫', '♬', '♩', '♪', '♫'].map((n, k) =>
     `<i style="left:${8 + k * 15 + Math.random() * 6}%;animation-delay:${(k * .42).toFixed(2)}s">${n}</i>`).join('');
   f.hidden = false;
+  $('#thanksStage').hidden = true;
+  updateThanksChip();
   Music.start('dance');
   burst(120);
   clearTimeout(finaleT);
@@ -2189,6 +2263,8 @@ function hideFinale() {
   clearTimeout(finaleT);
   const f = $('#finale'); if (!f || f.hidden) return;
   f.hidden = true;
+  if (!state.thanksSeen) { state.thanksSeen = true; ls('hw2_thanksseen', 1); }
+  updateThanksChip();
   Music.start('lobby');
   say('감사합니다 감사합니다~ 또 놀러 오세요 멍!', 'tube');
 }
@@ -2229,11 +2305,10 @@ function enterHouse(name) {
   say(SITE.welcome(name), 'doria');
   updateCta();
   if (!state.thanked) {
-    setTimeout(() => {
+    queueSay(SITE.thanksCue, 'tube', () => {
       state.cueReady = true;
-      say(SITE.thanksCue, 'tube');
       updateCta(); updateInviteStage();
-    }, 3400);
+    });
   }
 }
 
@@ -2254,11 +2329,16 @@ function start() {
   $('#zoomBtn').onclick = () => setZoom(1);
   $('#muteBtn').onclick = () => Music.toggle();
   $('#finMute').onclick = () => Music.toggle();
+  $('#thanksGo').onclick = () => { hideThanksStage(); showFinale(); };
+  $('#thanksGo').onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hideThanksStage(); showFinale(); } };
+  $('#thanksLater').onclick = () => { hideThanksStage(); state.thanksSeen = true; ls('hw2_thanksseen', 1); updateThanksChip(); };
+  $('#thanksAgain').onclick = showFinale;
+  $('#bubble').onclick = () => { if (!flushPending()) dogTalk(speaker === 'tube' ? 'doria' : 'tube'); };
   $('#finClose').onclick = hideFinale;
   updateMuteBtn();
   const kick = () => Music.start(Music.kind || 'lobby');
   ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, kick, { once: true }));
-  $('#avatarBtn').onclick = () => dogTalk(speaker === 'tube' ? 'doria' : 'tube');
+  $('#avatarBtn').onclick = () => { if (!flushPending()) dogTalk(speaker === 'tube' ? 'doria' : 'tube'); };
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheets(); });
   $('#enterForm').addEventListener('submit', (e) => { e.preventDefault(); const v = $('#guestName').value.trim(); if (v) enterHouse(v); });
 
@@ -2270,7 +2350,7 @@ function start() {
   } else {
     say('문을 두 번 두드려 주세요. 저희가 마중 나갈게요!', 'doria');
   }
-  updateCta(); updateInviteStage();
+  updateCta(); updateInviteStage(); updateThanksChip();
   $('#inviteStage').onclick = openInvite;
   setTimeout(() => $('#howto').classList.add('fade'), 8000);
   window.__hw = { goScene, openGame, openInvite, state,
