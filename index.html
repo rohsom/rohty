@@ -1417,6 +1417,7 @@ function spreadPicks(cells, n, minDist, margin) {
 function openGame(room) {
   if (!ROOM_SCENE[room]) return;
   game = { room, def: makeGameDef(room), hearts: 3, moves: 0, t0: Date.now() };
+  Music.start('game');
   showSheet('#gameSheet');
   renderGame();
 }
@@ -2098,7 +2099,13 @@ function renderRooms() {
   $('#roomSheet').querySelectorAll('[data-room]').forEach(b => b.onclick = () => { closeSheets(); goScene(ROOM_ENTRY[b.dataset.room]); });
 }
 function showSheet(sel) { document.querySelectorAll('.sheet').forEach(s => s.classList.toggle('on', s.matches(sel))); $('#scrim').classList.add('on'); }
-function closeSheets() { if (game && game.tick) clearInterval(game.tick); document.querySelectorAll('.sheet').forEach(s => s.classList.remove('on')); $('#scrim').classList.remove('on'); openGiftId = null; }
+function closeSheets() {
+  if (game && game.tick) clearInterval(game.tick);
+  const wasGame = $('#gameSheet').classList.contains('on');
+  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('on'));
+  $('#scrim').classList.remove('on'); openGiftId = null;
+  if (wasGame && Music.kind === 'game') Music.start('lobby');
+}
 
 function refresh() {
   $('#countLabel').innerHTML = unlocked()
@@ -2135,10 +2142,34 @@ function makeIR(ctx, dur, decay) {
   }
   return buf;
 }
-/* 라운지: Fmaj7 – Dm7 – Gm7 – C7 – Am7 – Dm7 – Gm7 – C7 */
+/* 라운지: 보사노바 — F 키, 8마디 한 바퀴 (b 베이스 / v 기타 보이싱) */
 const LOBBY_CH = [
-  [53, 57, 60, 64], [50, 53, 57, 60], [55, 58, 62, 65], [48, 52, 55, 58],
-  [57, 60, 64, 67], [50, 53, 57, 60], [55, 58, 62, 65], [48, 52, 55, 58],
+  { b: 41, v: [57, 60, 64, 65] },  /* Fmaj7 */
+  { b: 43, v: [59, 62, 65, 67] },  /* G7    */
+  { b: 43, v: [58, 62, 65, 67] },  /* Gm7   */
+  { b: 48, v: [58, 60, 64, 67] },  /* C7    */
+  { b: 41, v: [57, 60, 64, 65] },  /* Fmaj7 */
+  { b: 45, v: [57, 60, 64, 67] },  /* Am7   */
+  { b: 43, v: [58, 62, 65, 67] },  /* Gm7   */
+  { b: 48, v: [58, 60, 64, 67] },  /* C7    */
+];
+/* 보사 클라베(3-2): 두 마디 32스텝 중 치는 자리 */
+const BOSSA_CLAVE = [0, 3, 6, 18, 24];
+/* 기타 컴핑: 한 마디 안에서 치는 16분 자리 */
+const BOSSA_COMP = [0, 2, 6, 10, 14];
+
+/* 미니게임: 흥미진진한 추격 — A단조, 4마디 한 바퀴 */
+const GAME_CH = [
+  { b: 45, v: [57, 60, 64] },      /* Am */
+  { b: 41, v: [57, 60, 65] },      /* F  */
+  { b: 43, v: [55, 59, 62] },      /* G  */
+  { b: 45, v: [57, 60, 64] },      /* Am */
+];
+const GAME_CH2 = [
+  { b: 45, v: [57, 60, 64] },      /* Am */
+  { b: 50, v: [57, 62, 65] },      /* Dm */
+  { b: 40, v: [56, 59, 64] },      /* E7 */
+  { b: 45, v: [57, 60, 64] },      /* Am */
 ];
 /* 커튼콜: C – C – F – G 위에 우스꽝스러운 리프 */
 const DANCE_CH = [[48, 52, 55], [48, 52, 55], [53, 57, 60], [55, 59, 62]];
@@ -2167,7 +2198,7 @@ const Music = {
     } catch (e) { this.verb = null; }
     return true;
   },
-  vol() { return this.on ? (this.kind === 'dance' ? .72 : .42) : 0; },
+  vol() { return this.on ? (this.kind === 'dance' ? .78 : this.kind === 'game' ? .8 : .46) : 0; },
   fade(v, sec) {
     const g = this.master.gain, t = this.ctx.currentTime;
     g.cancelScheduledValues(t); g.setValueAtTime(Math.max(g.value, .0001), t);
@@ -2181,7 +2212,7 @@ const Music = {
     this.kind = kind; this.step = 0; this.next = this.ctx.currentTime + .12;
     clearInterval(this.timer);
     this.timer = setInterval(() => this.tick(), 25);
-    this.fade(this.vol(), kind === 'dance' ? .2 : 1.6);
+    this.fade(this.vol(), kind === 'lobby' ? 1.2 : .25);
     if (kind === 'dance') this.whistle(this.ctx.currentTime + .05);
   },
   stop() { clearInterval(this.timer); this.timer = 0; if (this.ctx) this.fade(0, .4); },
@@ -2192,11 +2223,11 @@ const Music = {
   },
   tick() {
     const c = this.ctx; if (!c) return;
-    const dance = this.kind === 'dance';
-    const spb = dance ? 60 / 152 / 2 : 60 / 68 / 2;
+    const spb = this.kind === 'dance' ? 60 / 152 / 2 : this.kind === 'game' ? 60 / 134 / 4 : 60 / 122 / 4;
+    const fn = this.kind === 'dance' ? this.danceStep : this.kind === 'game' ? this.gameStep : this.lobbyStep;
     let guard = 0;
-    while (this.next < c.currentTime + .3 && guard++ < 40) {
-      try { dance ? this.danceStep(this.step, this.next) : this.lobbyStep(this.step, this.next); } catch (e) { }
+    while (this.next < c.currentTime + .3 && guard++ < 60) {
+      try { fn.call(this, this.step, this.next); } catch (e) { }
       this.next += spb; this.step++;
     }
   },
@@ -2262,14 +2293,63 @@ const Music = {
     o.connect(g); g.connect(this.bus); o.start(t); o.stop(t + .9);
   },
   lobbyStep(i, t) {
-    const bar = Math.floor(i / 8) % LOBBY_CH.length, ch = LOBBY_CH[bar], b = i % 8;
-    if (b === 0) ch.forEach((n, k) => this.voice('triangle', MIDI(n), t, 1.9, .045 - k * .004, { a: .35, r: 1.1, cut: 1500, verb: 1 }));
-    if (b % 2 === 0) {
-      const n = ch[(i / 2 + bar) % ch.length] + 12;
-      this.voice('sine', MIDI(n), t + (b % 4 === 2 ? .055 : 0), .5, .085, { a: .006, r: .5, cut: 3000, verb: 1 });
+    const bar = Math.floor(i / 16) % LOBBY_CH.length, ch = LOBBY_CH[bar];
+    const b = i % 16, two = i % 32;
+
+    /* 베이스: 1박 루트, 3박 5도 (보사 특유의 두 음) */
+    if (b === 0) this.voice('sine', MIDI(ch.b), t, .42, .30, { a: .008, r: .22, cut: 420 });
+    if (b === 8) this.voice('sine', MIDI(ch.b + 7), t, .38, .26, { a: .008, r: .2, cut: 420 });
+    if (b === 14) this.voice('sine', MIDI(ch.b + 7), t, .12, .14, { a: .006, r: .1, cut: 420 });
+
+    /* 나일론 기타 컴핑 */
+    if (BOSSA_COMP.indexOf(b) >= 0) {
+      const soft = b === 0 ? 1 : .78;
+      ch.v.forEach((n, k) => this.voice('triangle', MIDI(n), t + k * .006, .22, .085 * soft, { a: .004, r: .3, cut: 2600, verb: 1 }));
     }
-    if (b === 3 || b === 7) this.noise(t, .16, .012, 6500, true);
-    if (b === 0 && bar % 2 === 0) this.voice('sine', MIDI(ch[0] - 12), t, 1.2, .07, { a: .04, r: .5, cut: 500 });
+
+    /* 림 클릭(클라베) */
+    if (BOSSA_CLAVE.indexOf(two) >= 0) {
+      this.noise(t, .05, .085, 2400, true);
+      this.voice('triangle', MIDI(72), t, .03, .05, { a: .002, r: .04, cut: 3000 });
+    }
+
+    /* 셰이커: 8분마다, 앞박에 악센트 */
+    if (b % 2 === 0) this.noise(t, .055, b % 8 === 0 ? .05 : .028, 7000, true);
+
+    /* 멜로디 한 조각 — 두 마디에 한 번 */
+    if (b === 4 && bar % 2 === 0) this.voice('sine', MIDI(ch.v[2] + 12), t, .3, .075, { a: .01, r: .4, cut: 3200, verb: 1 });
+    if (b === 11 && bar % 2 === 1) this.voice('sine', MIDI(ch.v[1] + 12), t, .26, .07, { a: .01, r: .4, cut: 3200, verb: 1 });
+  },
+  gameStep(i, t) {
+    const cyc = Math.floor(i / 64) % 2;
+    const list = cyc ? GAME_CH2 : GAME_CH;
+    const bar = Math.floor(i / 16) % 4, ch = list[bar], b = i % 16;
+
+    /* 쉴 틈 없는 8분 베이스 */
+    if (b % 2 === 0) {
+      const up = (b === 6 || b === 14) ? 12 : 0;
+      this.voice('square', MIDI(ch.b + up), t, .1, .13, { a: .003, r: .05, cut: 620 });
+    }
+    /* 킥 / 스네어 */
+    if (b === 0 || b === 10) {
+      const k = this.ctx.createOscillator(), g = this.ctx.createGain();
+      k.type = 'sine'; k.frequency.setValueAtTime(140, t); k.frequency.exponentialRampToValueAtTime(46, t + .1);
+      g.gain.setValueAtTime(.26, t); g.gain.setTargetAtTime(.0001, t + .02, .035);
+      k.connect(g); g.connect(this.bus); k.start(t); k.stop(t + .3);
+    }
+    if (b === 8) this.noise(t, .12, .1, 1900, true);
+    /* 하이햇 16분 */
+    this.noise(t, .035, b % 4 === 0 ? .055 : .028, 9000, true);
+
+    /* 추격 아르페지오 */
+    const seq = [0, 1, 2, 1];
+    this.voice('sawtooth', MIDI(ch.v[seq[b % 4]] + (b >= 8 ? 12 : 0)), t, .085, .062,
+      { a: .003, r: .06, cut: 2600, detune: (b % 2 ? 6 : -6), verb: 1 });
+
+    /* 네 마디마다 조여오는 상승음 */
+    if (bar === 3 && b >= 8 && b % 2 === 0) {
+      this.voice('triangle', MIDI(69 + (b - 8)), t, .09, .07, { a: .004, r: .08, cut: 3200, verb: 1 });
+    }
   },
   danceStep(i, t) {
     const bar = Math.floor(i / 8) % DANCE_CH.length, ch = DANCE_CH[bar], b = i % 8;
