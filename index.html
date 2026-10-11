@@ -294,6 +294,40 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .shellbox::after { content: ""; position: absolute; left: 2%; right: 2%; bottom: 26px; height: 2px; background: #ded5c0; border-radius: 2px; }
 .shelltip { text-align: center; margin: 10px 0 0; font: 700 17px var(--font-dog); color: var(--ink-2); }
 
+/* 열쇠 */
+.keyring { display: flex; justify-content: center; gap: 14px; margin: 16px 0 2px; }
+.keyslot {
+  width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; font-size: 26px;
+  border: 2px dashed var(--line); background: #faf6ec; font-style: normal; filter: grayscale(1); opacity: .5;
+}
+.keyslot.on { border: 2px solid var(--brass); background: #fdf3df; filter: none; opacity: 1; box-shadow: 0 3px 10px -4px rgba(169,118,44,.6); }
+.keyslot.new { animation: keyIn .75s cubic-bezier(.2,.9,.3,1.5) both; }
+@keyframes keyIn {
+  0% { transform: translateY(-70px) rotate(-140deg) scale(.3); opacity: 0; }
+  55% { transform: translateY(8px) rotate(12deg) scale(1.22); opacity: 1; }
+  75% { transform: translateY(-3px) rotate(-4deg) scale(.96); }
+  100% { transform: none; opacity: 1; }
+}
+.keymsg { text-align: center; margin: 12px 0 0; font: 700 17px/1.5 var(--font-dog); color: var(--ink-2); }
+.keymsg b { color: var(--brass); }
+.unlockbig { font-size: 56px; text-align: center; animation: unlockPop .8s cubic-bezier(.2,.9,.3,1.5) both; }
+@keyframes unlockPop { 0% { transform: scale(.3) rotate(-25deg); opacity: 0 } 60% { transform: scale(1.25) rotate(8deg); opacity: 1 } 100% { transform: none } }
+
+/* 화면 중앙 초대장 */
+.invite-stage {
+  position: absolute; inset: 0; z-index: 6; display: grid; place-content: center; justify-items: center;
+  background: rgba(250,247,240,.62); cursor: pointer; padding: 16px; gap: 18px;
+}
+.invite-stage .env { width: 74vw; max-width: 290px; margin: 0; animation: floatEnv 3.2s ease-in-out infinite; }
+.invite-stage .env-body { box-shadow: 0 22px 40px -20px rgba(60,48,30,.75); }
+.invite-stage .cap {
+  text-align: center; font: 700 18px var(--font-dog); color: #2b2620;
+  background: var(--brass-fill); border: 2px solid #b68a3e; border-radius: 999px; padding: 9px 20px;
+  box-shadow: 0 6px 16px -8px rgba(120,90,40,.7); animation: capPulse 2.2s ease-in-out infinite;
+}
+@keyframes floatEnv { 0%, 100% { transform: translateY(0) rotate(-1.2deg) } 50% { transform: translateY(-11px) rotate(1.2deg) } }
+@keyframes capPulse { 0%, 100% { transform: scale(1) } 55% { transform: scale(1.05) } }
+
 .won { text-align: center; padding: 6px 0 0; }
 .won .big { font-size: 46px; }
 .won .stars { font-size: 27px; color: #d9a550; letter-spacing: 5px; margin-top: 4px; }
@@ -376,6 +410,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .confetti { display: none; }
   .go .disc, .dog img, .wish span, .cta, .cta.gold { animation: none; }
   .greeters img, .say-bubble, .enter, .card-invite { animation: none; }
+  .keyslot.new, .unlockbig, .invite-stage .env, .invite-stage .cap { animation: none; }
 }
 </style>
 </head>
@@ -385,11 +420,11 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   <header class="top">
     <div class="brand">
       <h1 id="siteTitle">유씨네 집들이</h1>
-      <p id="brandSub">방마다 미니게임이 숨어 있어요</p>
+      <p id="brandSub">미니게임 3판이면 위시리스트가 열려요</p>
     </div>
-    <button class="count" id="countBtn" aria-label="내가 찾은 위시리스트 열기">
+    <button class="count" id="countBtn" aria-label="위시리스트 열기">
       <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="6" width="12" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6h13M8 6v8M8 6C6 2 3.5 3 5 5.2 6 6 8 6 8 6zm0 0c2-4 4.5-3 3-0.8C10 6 8 6 8 6z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
-      <span>위시리스트 <b id="foundN">0</b>/<span id="totalN">0</span></span>
+      <span id="countLabel">열쇠 <b>0</b>/3</span>
     </button>
   </header>
 
@@ -405,6 +440,10 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
       전체 보기
     </button>
     <div class="howto" id="howto">화살표를 누르면 걸어가고, 그림을 두 번 누르면 가까이 보여요</div>
+    <div class="invite-stage" id="inviteStage" hidden role="button" tabindex="0" aria-label="초대장 열어보기">
+      <div class="env"><div class="env-body"><div class="flap"></div><div class="seal">유</div></div></div>
+      <div class="cap">💌 눌러서 초대장 열어보기</div>
+    </div>
   </main>
 
   <button class="cta" id="ctaBtn" hidden></button>
@@ -464,7 +503,7 @@ const SITE = {
   doorPlate: '유튜브 · 유도리',
   knockAsk: '누구세요~? 주인님의 초대로 오셨나요? 이름을 알려주세요 멍!',
   welcome: (n) => `${n}님 VIP명단에 있으시군요! 몰라뵈서 죄송합니다. 어서 들어오세요. 환영합니다`,
-  thanksCue: '주인님이 들러주셔서 감사하다고 하시네요. 아래 버튼을 눌러보세요',
+  thanksCue: '주인님이 들러주셔서 감사하다고 하시네요. 가운데 봉투를 눌러보세요',
   inviteMsg: '먼 길 와주셔서 고맙습니다.\n빈손으로 오셔도 괜찮아요.\n그래도 마음이 쓰이신다면,\n집 안에 저희가 필요한 걸 숨겨뒀어요 🐾',
   inviteSign: '— 유튜브 · 유도리 그리고 집주인 올림',
 };
@@ -787,9 +826,11 @@ const state = {
 ls('hw2_gid', state.guestId);
 const curRoom = () => SCENES[state.scene].room;
 const giftRoom = (g) => SCENES[g.scene].room;
+const KEYS_NEEDED = 3;
 const hasGame = (r) => !!ROOM_SCENE[r];
-const roomOpen = (r) => !hasGame(r) || state.cleared.has(r);
-const openGifts = () => GIFTS.filter(g => roomOpen(giftRoom(g)));
+const keyCount = () => Math.min(KEYS_NEEDED, state.cleared.size);
+const unlocked = () => state.cleared.size >= KEYS_NEEDED;
+const openGifts = () => (unlocked() ? GIFTS : []);
 
 /* ---------- 저장소: 체험 모드(localStorage) / 실서비스(Firebase) ---------- */
 const Store = {
@@ -849,21 +890,26 @@ function say(text, who) {
 }
 function dogTalk(who) {
   const room = curRoom();
+  const need = KEYS_NEEDED - keyCount();
+  if (unlocked()) {
+    const left = GIFTS.filter(g => !state.claims[g.id]);
+    if (left.length) say(`위시리스트에서 ${left[0].name}이(가) 아직 주인이 없어요`, who);
+    else say(pick(['전부 주인이 정해졌어요! 고마워요', '꼬리가 멈추질 않아요 멍멍!']), who);
+    return;
+  }
   if (!hasGame(room)) {
-    say(pick(['여긴 게임 없이 그냥 구경하셔도 돼요!', '편하게 신발 벗고 들어오세요 멍!']), who);
+    say(pick([`여긴 구경만 하는 곳이에요. 열쇠는 다른 방에서 모아요!`, '편하게 신발 벗고 들어오세요 멍!']), who);
     return;
   }
-  if (!state.cleared.has(room)) {
-    say(pick([
-      `${ROOM_NAMES[room]} 미니게임을 깨면 위시리스트가 열려요. 아래 버튼 눌러보세요!`,
-      '게임 한 판이면 이 방에 뭐가 필요한지 알 수 있어요 멍!',
-      '어렵지 않아요. 저희도 다 깼는걸요?',
-    ]), who);
+  if (state.cleared.has(room)) {
+    say(`여긴 이미 열쇠를 드렸어요. 다른 방에서 ${need}개만 더 모으면 돼요!`, who);
     return;
   }
-  const left = GIFTS.filter(g => giftRoom(g) === room && !state.claims[g.id]);
-  if (left.length) say(`이 방엔 ${left[0].name}이(가) 아직 주인이 없어요`, who);
-  else say(pick(['이 방은 다 정해졌어요! 다른 방도 가볼까요?', '고마워요! 꼬리 흔드는 중이에요']), who);
+  say(pick([
+    `이 방에서 한 판 깨면 열쇠 하나! ${need}개만 더 모으면 위시리스트가 열려요`,
+    '아래 버튼 눌러보세요. 깨면 열쇠를 드려요 멍!',
+    `열쇠 ${keyCount()}개 모았어요. 여기서 하나 더 가져가세요!`,
+  ]), who);
 }
 
 /* ---------- 장면 그리기 ---------- */
@@ -893,7 +939,7 @@ function buildScene(id) {
     el.appendChild(h);
   });
 
-  GIFTS.filter(g => g.scene === id && roomOpen(giftRoom(g))).forEach(g => {
+  (unlocked() ? GIFTS.filter(g => g.scene === id) : []).forEach(g => {
     const h = document.createElement('div');
     h.className = 'hot';
     h.style.cssText = `left:${g.x}%;top:${g.y}%`;
@@ -1004,27 +1050,22 @@ function announce(prevRoom) {
   const room = curRoom();
   if (room === prevRoom) return;
   const who = dogFor(room);
-  if (!hasGame(room)) {
+  const need = KEYS_NEEDED - keyCount();
+  if (unlocked()) {
+    say(`${ROOM_NAMES[room]}에 도착! 여기 놓인 선물도 한번 보세요`, who);
+  } else if (!hasGame(room)) {
     say(`${ROOM_NAMES[room]}이에요. 편하게 둘러보세요`, who);
   } else if (state.cleared.has(room)) {
-    const n = GIFTS.filter(g => giftRoom(g) === room).length;
-    say(n ? `${ROOM_NAMES[room]}은 이미 열었어요. 위시리스트 ${n}개가 놓여 있어요` : `${ROOM_NAMES[room]}은 다 보셨어요!`, who);
+    say(`${ROOM_NAMES[room]}은 이미 깼어요. 열쇠 ${need}개만 더!`, who);
   } else {
-    say(`${ROOM_NAMES[room]}에 도착! 미니게임을 깨면 위시리스트가 열려요`, who);
+    say(`${ROOM_NAMES[room]}에 도착! 한 판 깨면 열쇠 하나예요 (${keyCount()}/${KEYS_NEEDED})`, who);
   }
 }
 
 /* 아래쪽 큰 버튼: 초대장 → 미니게임 → 완료 */
 function updateCta() {
   const b = $('#ctaBtn');
-  if (!state.guest) { b.hidden = true; return; }
-  if (!state.thanked && !state.cueReady) { b.hidden = true; return; }
-  if (!state.thanked) {
-    b.hidden = false; b.className = 'cta gold';
-    b.innerHTML = '<em>💌</em> 초대장 열어보기';
-    b.onclick = openInvite;
-    return;
-  }
+  if (!state.guest || !state.thanked) { b.hidden = true; return; }
   const room = curRoom();
   const g = ROOM_SCENE[room];
   if (g && !state.cleared.has(room)) {
@@ -1047,7 +1088,7 @@ function setupDrag() {
   let drag = null, pinch = null, lastTap = 0;
   const rel = (e) => { const r = stage.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
   stage.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('button')) return;
+    if (e.target.closest('button, #inviteStage')) return;
     pts.set(e.pointerId, e);
     try { stage.setPointerCapture(e.pointerId); } catch (err) {}
     if (pts.size === 2) {
@@ -1621,30 +1662,55 @@ const starStr = (n) => '★'.repeat(n) + '☆'.repeat(3 - n);
 function winGame() {
   clearInterval(game.tick);
   const room = game.room;
-  const isNew = !state.cleared.has(room);
+  const wasKeys = keyCount(), wasUnlocked = unlocked();
   const grade = gradeOf();
   const best = state.stars[room] || 0;
   const record = grade > best;
   state.cleared.add(room); ls('hw2_cleared', [...state.cleared]);
   if (record) { state.stars[room] = grade; ls('hw2_stars', state.stars); }
-  burst(grade === 3 ? 100 : 70);
-  const items = GIFTS.filter(g => giftRoom(g) === room);
-  $('#gameSheet').innerHTML = `
-    <div class="grip"></div>
-    <div class="won">
+  const keys = keyCount(), gotKey = keys > wasKeys;
+  const justUnlocked = unlocked() && !wasUnlocked;
+  burst(justUnlocked ? 140 : grade === 3 ? 100 : 70);
+
+  const ring = (n, isNew) => `<div class="keyring">${Array.from({ length: KEYS_NEEDED }, (_, i) =>
+    `<i class="keyslot${i < n ? ' on' : ''}${isNew && i === n - 1 ? ' new' : ''}">${i < n ? '🔑' : '🔒'}</i>`).join('')}</div>`;
+
+  let body;
+  if (justUnlocked) {
+    body = `<div class="won">
+      <div class="unlockbig">🔓</div>
+      <div class="stars">${starStr(grade)}</div>
+      <h2>열쇠 세 개 완성!</h2>
+      ${ring(KEYS_NEEDED, true)}
+      <p>집 안에 숨겨둔 <b>위시리스트 ${GIFTS.length}개</b>가 모두 열렸어요</p>
+    </div>
+    <ul class="nb-list">${GIFTS.map(g => {
+      const c = state.claims[g.id];
+      const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
+      return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(ROOM_NAMES[giftRoom(g)])} · ${esc(g.price)}</span></span>${st}</button></li>`;
+    }).join('')}</ul>`;
+  } else if (unlocked()) {
+    body = `<div class="won">
       <div class="big">${grade === 3 ? '🏆' : '🎉'}</div>
       <div class="stars">${starStr(grade)}</div>
       <h2>${grade === 3 ? '퍼펙트!' : '통과!'}</h2>
-      <p>${isNew && items.length ? `${esc(ROOM_NAMES[room])} 위시리스트 ${items.length}개가 열렸어요` :
-          record ? '최고 기록을 새로 세웠어요!' : `최고 기록은 ${starStr(best)} 예요. 한 번 더?`}</p>
-    </div>
-    ${items.length ? `<ul class="nb-list">${items.map(g => {
-      const c = state.claims[g.id];
-      const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
-      return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(g.price)}</span></span>${st}</button></li>`;
-    }).join('')}</ul>` : ''}
+      <p>${record ? '최고 기록을 새로 세웠어요!' : `${esc(ROOM_NAMES[room])} 최고 기록은 ${starStr(best)} 예요`}</p>
+    </div>`;
+  } else {
+    body = `<div class="won">
+      <div class="big">${grade === 3 ? '🏆' : '🎉'}</div>
+      <div class="stars">${starStr(grade)}</div>
+      <h2>${grade === 3 ? '퍼펙트!' : '통과!'}</h2>
+      ${ring(keys, gotKey)}
+      <p class="keymsg">${gotKey
+        ? `열쇠 ${keys}개 모았어요! ${KEYS_NEEDED - keys}개만 더 모으면 위시리스트가 열려요`
+        : `이 방 열쇠는 이미 받았어요. 다른 방에서 ${KEYS_NEEDED - keys}개만 더!`}</p>
+    </div>`;
+  }
+
+  $('#gameSheet').innerHTML = `<div class="grip"></div>${body}
     <div class="actions">
-      <button class="btn btn-primary" data-close>계속 구경하기</button>
+      <button class="btn btn-primary" data-close>${justUnlocked ? '위시리스트 보러 가기' : '계속 구경하기'}</button>
       ${grade < 3 ? `<button class="btn btn-ghost" id="retry">★★★ 노리고 다시 하기</button>` : ''}
     </div>`;
   $('#gameSheet').querySelectorAll('[data-gift]').forEach(b => b.onclick = () => {
@@ -1652,8 +1718,10 @@ function winGame() {
   });
   const rt = $('#retry'); if (rt) rt.onclick = () => openGame(room);
   wireFoot();
-  say(grade === 3 ? pick(['퍼펙트! 한 번도 안 틀리셨어요!', '우와, 하트를 하나도 안 쓰다니!'])
-    : pick(['통과! 위시리스트가 열렸어요', '잘하시는데요? 멍멍!', '역시 눈썰미가 다르시네요']), dogFor(room));
+  say(justUnlocked ? '열쇠 세 개 완성! 위시리스트가 전부 열렸어요 멍멍!'
+    : gotKey ? `열쇠 ${keys}개째! ${KEYS_NEEDED - keys}개만 더 모아요`
+    : grade === 3 ? pick(['퍼펙트! 한 번도 안 틀리셨어요!', '우와, 하트를 하나도 안 쓰다니!'])
+    : pick(['통과! 잘하시는데요?', '역시 눈썰미가 다르시네요']), dogFor(room));
   showScene(state.scene, 'fwd');
   updateCta(); refresh();
 }
@@ -1662,42 +1730,40 @@ function winGame() {
    초대장
    ================================================================ */
 function couponFor(name) { return COUPONS[hash(name || 'guest') % COUPONS.length]; }
+function updateInviteStage() {
+  $('#inviteStage').hidden = !(state.guest && state.cueReady && !state.thanked);
+}
 function openInvite() {
   const c = couponFor(state.guest);
+  $('#inviteStage').hidden = true;
   $('#inviteSheet').innerHTML = `
     <div class="grip"></div>
     <div class="eyebrow">주인님이 남긴 것</div>
     <h2>초대장이 도착했어요</h2>
-    <p class="lede">봉투를 눌러 열어보세요</p>
-    <div class="env" id="env"><div class="env-body"><div class="flap"></div><div class="seal">유</div></div></div>
-    <div class="actions"><button class="btn btn-primary" id="openEnv">봉투 열기</button></div>`;
+    <p class="lede">봉투를 여는 중…</p>
+    <div class="env" id="env"><div class="env-body"><div class="flap"></div><div class="seal">유</div></div></div>`;
   showSheet('#inviteSheet');
-  $('#openEnv').onclick = () => {
-    $('#env').classList.add('open');
-    $('#openEnv').disabled = true;
-    burst(50);
-    setTimeout(() => {
-      $('#inviteSheet').innerHTML = `
-        <div class="grip"></div>
-        <div class="eyebrow">주인님이 남긴 것</div>
-        <h2>초대장</h2>
-        <div class="card-invite">
-          <div class="to">${esc(state.guest)}님께</div>
-          <div class="msg">${esc(SITE.inviteMsg).replace(/\n/g, '<br>')}</div>
-          <div class="rule"></div>
-          <div class="coupon"><span class="e">${c.e}</span><span><b>${esc(c.t)}</b><span>${esc(c.s)}</span></span></div>
-          <div class="sign">${esc(SITE.inviteSign)}</div>
-        </div>
-        <div class="actions"><button class="btn btn-primary" data-close>집 구경 시작하기</button></div>`;
-      $('#inviteSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = () => {
-        closeSheets();
-        state.thanked = true; ls('hw2_thanked', 1);
-        updateCta();
-        say(`${ROOM_NAMES[curRoom()]}부터 둘러볼까요? 방마다 미니게임이 하나씩 있어요!`, 'doria');
-      });
-      state.thanked = true; ls('hw2_thanked', 1);
-    }, 780);
-  };
+  setTimeout(() => { const e = $('#env'); if (e) e.classList.add('open'); burst(50); }, 380);
+  setTimeout(() => {
+    $('#inviteSheet').innerHTML = `
+      <div class="grip"></div>
+      <div class="eyebrow">주인님이 남긴 것</div>
+      <h2>초대장</h2>
+      <div class="card-invite">
+        <div class="to">${esc(state.guest)}님께</div>
+        <div class="msg">${esc(SITE.inviteMsg).replace(/\n/g, '<br>')}</div>
+        <div class="rule"></div>
+        <div class="coupon"><span class="e">${c.e}</span><span><b>${esc(c.t)}</b><span>${esc(c.s)}</span></span></div>
+        <div class="sign">${esc(SITE.inviteSign)}</div>
+      </div>
+      <div class="actions"><button class="btn btn-primary" data-close>집 구경 시작하기</button></div>`;
+    $('#inviteSheet').querySelectorAll('[data-close]').forEach(b => b.onclick = () => {
+      closeSheets();
+      say(`${ROOM_NAMES[curRoom()]}부터 둘러볼까요? 아무 방에서나 미니게임 ${KEYS_NEEDED}판을 깨면 위시리스트가 열려요!`, 'doria');
+    });
+    state.thanked = true; ls('hw2_thanked', 1);
+    updateCta(); updateInviteStage();
+  }, 1150);
 }
 
 /* ================================================================
@@ -1753,22 +1819,28 @@ function renderGift() {
 
 function renderNotebook() {
   const claimedN = GIFTS.filter(g => state.claims[g.id]).length;
-  const open = openGifts().length;
-  const rows = ROOM_ORDER.flatMap(r => {
-    const items = GIFTS.filter(g => giftRoom(g) === r);
-    if (!items.length) return [];
-    if (!roomOpen(r)) {
-      return [`<li><button class="nb-item locked" data-room="${r}"><span class="em">🔒</span><span class="t"><b>???</b><span>${esc(ROOM_NAMES[r])} · 미니게임을 깨면 열려요</span></span><span class="st">${items.length}개</span></button></li>`];
-    }
-    return items.map(g => {
-      const c = state.claims[g.id];
-      const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
-      return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(ROOM_NAMES[r])} · ${esc(g.price)}</span></span>${st}</button></li>`;
-    });
-  }).join('');
+  if (!unlocked()) {
+    const keys = keyCount();
+    $('#nbSheet').innerHTML = `
+      <div class="grip"></div>
+      <div class="nb-head"><h2>위시리스트</h2><span>열쇠 ${keys}/${KEYS_NEEDED}</span></div>
+      <div class="won" style="padding-top:12px">
+        <div class="big">🔒</div>
+        <div class="keyring">${Array.from({ length: KEYS_NEEDED }, (_, i) => `<i class="keyslot${i < keys ? ' on' : ''}">${i < keys ? '🔑' : '🔒'}</i>`).join('')}</div>
+        <p class="keymsg">아무 방에서나 미니게임 <b>${KEYS_NEEDED}판</b>을 깨면<br>집 안에 숨겨둔 위시리스트 ${GIFTS.length}개가 한 번에 열려요</p>
+      </div>
+      <div class="actions"><button class="btn btn-primary" id="goRooms">열쇠 모으러 가기</button></div>`;
+    $('#goRooms').onclick = () => { closeSheets(); setTimeout(() => { renderRooms(); showSheet('#roomSheet'); }, 240); };
+    return;
+  }
+  const rows = ROOM_ORDER.flatMap(r => GIFTS.filter(g => giftRoom(g) === r).map(g => {
+    const c = state.claims[g.id];
+    const st = c ? (isMine(c) ? `<span class="st mine">내가 찜함</span>` : `<span class="st claimed">${esc(c.name)}</span>`) : `<span class="st">찜 가능</span>`;
+    return `<li><button class="nb-item" data-gift="${g.id}"><span class="em">${g.emoji}</span><span class="t"><b>${esc(g.name)}</b><span>${esc(ROOM_NAMES[r])} · ${esc(g.price)}</span></span>${st}</button></li>`;
+  })).join('');
   $('#nbSheet').innerHTML = `
     <div class="grip"></div>
-    <div class="nb-head"><h2>내가 찾은 위시리스트</h2><span>열림 ${open}/${GIFTS.length} · 찜 ${claimedN}</span></div>
+    <div class="nb-head"><h2>위시리스트</h2><span>전체 ${GIFTS.length} · 찜 ${claimedN}</span></div>
     <ul class="nb-list">${rows}</ul>
     <div class="actions"><button class="btn btn-ghost" id="againInvite">💌 초대장 다시 보기</button></div>
     ${Store.mode === 'demo' ? '<p class="demo-note">체험 모드예요. 찜한 내용은 이 기기에만 저장돼요. ‘민지 (예시)’는 화면 예시입니다.</p>' : ''}`;
@@ -1778,16 +1850,10 @@ function renderNotebook() {
     if (g.scene !== state.scene) goScene(g.scene, { silent: true });
     setTimeout(() => openGift(g.id), 260);
   });
-  $('#nbSheet').querySelectorAll('[data-room]').forEach(b => b.onclick = () => {
-    const r = b.dataset.room;
-    closeSheets();
-    if (curRoom() !== r) goScene(ROOM_ENTRY[r], { silent: true });
-    setTimeout(() => openGame(r), 300);
-  });
   const ai = $('#againInvite'); if (ai) ai.onclick = () => { closeSheets(); setTimeout(openInvite, 240); };
 }
 function renderRooms() {
-  $('#roomSheet').innerHTML = `<div class="grip"></div><div class="nb-head"><h2>방 이동</h2><span>별 ${ROOM_ORDER.reduce((a, r) => a + (state.stars[r] || 0), 0)} / ${ROOM_ORDER.filter(hasGame).length * 3}</span></div>
+  $('#roomSheet').innerHTML = `<div class="grip"></div><div class="nb-head"><h2>방 이동</h2><span>🔑 ${keyCount()}/${KEYS_NEEDED} · ★ ${ROOM_ORDER.reduce((a, r) => a + (state.stars[r] || 0), 0)}</span></div>
     <ul class="room-grid">${ROOM_ORDER.map(r => {
       if (!hasGame(r)) return `<li><button class="room-btn ${curRoom() === r ? 'here' : ''}" data-room="${r}"><b>${ROOM_NAMES[r]}</b><span>구경하는 곳</span></button></li>`;
       const done = state.cleared.has(r);
@@ -1800,8 +1866,9 @@ function showSheet(sel) { document.querySelectorAll('.sheet').forEach(s => s.cla
 function closeSheets() { if (game && game.tick) clearInterval(game.tick); document.querySelectorAll('.sheet').forEach(s => s.classList.remove('on')); $('#scrim').classList.remove('on'); openGiftId = null; }
 
 function refresh() {
-  $('#foundN').textContent = openGifts().length;
-  $('#totalN').textContent = GIFTS.length;
+  $('#countLabel').innerHTML = unlocked()
+    ? `위시리스트 <b>${GIFTS.length}</b>개`
+    : `열쇠 <b>${keyCount()}</b>/${KEYS_NEEDED}`;
   document.querySelectorAll('.wish').forEach(b => b.classList.toggle('claimed', !!state.claims[b.dataset.gift]));
   if (openGiftId) renderGift();
   if ($('#nbSheet').classList.contains('on')) renderNotebook();
@@ -1856,7 +1923,7 @@ function enterHouse(name) {
     setTimeout(() => {
       state.cueReady = true;
       say(SITE.thanksCue, 'tube');
-      updateCta();
+      updateCta(); updateInviteStage();
     }, 3400);
   }
 }
@@ -1888,11 +1955,13 @@ function start() {
   } else {
     say('문을 두 번 두드려 주세요. 저희가 마중 나갈게요!', 'doria');
   }
-  updateCta();
+  updateCta(); updateInviteStage();
+  $('#inviteStage').onclick = openInvite;
   setTimeout(() => $('#howto').classList.add('fade'), 8000);
   window.__hw = { goScene, openGame, openInvite, state,
     forceGame: (room, kind) => { game = { room, def: null, hearts: 3, moves: 0, t0: Date.now() }; let d; do { d = makeGameDef(room); } while (d.type !== kind); game.def = d; showSheet('#gameSheet'); renderGame(); },
     pathLen: () => (game && game.path ? game.path.length : 0),
+    peekQuiz: () => (game && game.def && game.def.qs ? game.def.qs[game.qi||0].c : 0),
     peekDiffs: () => (game && game.diffs) || null };
 }
 start();
