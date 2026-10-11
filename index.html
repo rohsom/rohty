@@ -379,6 +379,11 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 @keyframes cardIn { from { opacity: 0; transform: translateY(26px) rotate(-1.5deg); } to { opacity: 1; transform: none; } }
 .card-invite .to { font: 700 25px/1.2 var(--font-dog); }
 .card-invite .msg { font: 700 18px/1.55 var(--font-dog); margin-top: 10px; color: #4a443b; }
+.card-invite .msg .hi {
+  color: #8a2f1e; font-weight: 700;
+  background: linear-gradient(180deg, transparent 20%, #ffd978 20%, #ffd978 97%, transparent 97%);
+  padding: 0 3px; border-radius: 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
 .card-invite .rule { height: 1px; background: #e2d9c4; margin: 16px 0; }
 .coupon { display: flex; gap: 12px; align-items: center; padding: 13px; border: 2px dashed #c49a5c; border-radius: 10px; background: #fff8e6; }
 .coupon .e { font-size: 32px; flex: none; }
@@ -618,7 +623,7 @@ const SITE = {
   knockAsk: '누구세요~? 주인님의 초대로 오셨나요? 이름을 알려주세요 멍!',
   welcome: (n) => `${n}님 VIP명단에 있으시군요! 몰라뵈서 죄송합니다. 어서 들어오세요. 환영합니다`,
   thanksCue: '주인님이 들러주셔서 감사하다고 하시네요. 가운데 봉투를 눌러보세요',
-  inviteMsg: '먼 길 와주셔서 고맙습니다.\n빈손으로 오셔도 괜찮아요.\n그래도 마음이 쓰이신다면,\n집 안에 저희가 필요한 걸 숨겨뒀어요 🐾',
+  inviteMsg: '먼 길 와주셔서 고맙습니다.\n빈손으로 오셔도 괜찮아요.\n*그래도 마음이 쓰이신다면,*\n*집 안에 저희가 필요한 걸 숨겨뒀어요* 🐾',
   inviteSign: '— 유튜브 · 유도리 그리고 집주인 올림',
 };
 
@@ -1965,7 +1970,7 @@ function openInvite() {
       <h2>초대장</h2>
       <div class="card-invite">
         <div class="to">${esc(state.guest)}님께</div>
-        <div class="msg">${esc(SITE.inviteMsg).replace(/\n/g, '<br>')}</div>
+        <div class="msg">${esc(SITE.inviteMsg).replace(/\*([^*]+)\*/g, '<b class="hi">$1</b>').replace(/\n/g, '<br>')}</div>
         <div class="rule"></div>
         <div class="coupon"><span class="e">${c.e}</span><span><b>${esc(c.t)}</b><span>${esc(c.s)}</span></span></div>
         <div class="sign">${esc(SITE.inviteSign)}</div>
@@ -2222,6 +2227,32 @@ const Music = {
     if (this.verb) g.connect(this.verb);
     src.start(t); src.stop(t + dur + .1);
   },
+  /* 문 두드리는 소리 — 나무 울림 + 타격음 */
+  knock(delay) {
+    if (!this.on || !this.ensure()) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    const c = this.ctx, t = c.currentTime + (delay || 0) + .01;
+    const sfx = this.sfx || (this.sfx = (() => { const g = c.createGain(); g.gain.value = .9; g.connect(c.destination); return g; })());
+    const o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(230, t);
+    o.frequency.exponentialRampToValueAtTime(74, t + .085);
+    f.type = 'lowpass'; f.frequency.setValueAtTime(1100, t);
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.linearRampToValueAtTime(.42, t + .004);
+    g.gain.exponentialRampToValueAtTime(.0001, t + .17);
+    o.connect(f); f.connect(g); g.connect(sfx);
+    o.start(t); o.stop(t + .3);
+    const len = Math.floor(c.sampleRate * .09), b = c.createBuffer(1, len, c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+    const src = c.createBufferSource(); src.buffer = b;
+    const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1500; bp.Q.value = 1.1;
+    const ng = c.createGain();
+    ng.gain.setValueAtTime(.0001, t); ng.gain.linearRampToValueAtTime(.3, t + .003);
+    ng.gain.exponentialRampToValueAtTime(.0001, t + .07);
+    src.connect(bp); bp.connect(ng); ng.connect(sfx);
+    src.start(t); src.stop(t + .12);
+  },
   whistle(t) {
     const c = this.ctx, o = c.createOscillator(), g = c.createGain();
     o.type = 'sine'; o.frequency.setValueAtTime(380, t);
@@ -2321,6 +2352,7 @@ function setupKnock() {
   const door = $('#door');
   door.addEventListener('click', () => {
     if (knocks >= 2) return;
+    Music.knock();
     Music.start('lobby');
     knocks++;
     door.classList.remove('knock'); void door.offsetWidth; door.classList.add('knock');
