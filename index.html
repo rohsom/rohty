@@ -1166,6 +1166,13 @@ const GIFTS = [
     opt: '살림씨 · A타입(인타룩) 레드 2장 + 블랙 2장 · 장당 4,900원 · 배송비 3,000원',
     url: 'https://ozip.me/0BWAyqu',
     note: '집들이 상 차릴 때 깔 식탁매트예요. 레드랑 블랙 두 장씩이요!' },
+
+  { id: 'cooktray', tier: 'want', scene: 'kitchen', x: 28, y: 58, emoji: '🫖',
+    name: '리빙크리에이터 쿡트레이',
+    price: '링크에서 골라주세요',
+    opt: '어떤 트레이든 다 좋아요 · 모양·크기 마음에 드시는 걸로',
+    url: 'https://livingcreator.com/lvcrcooktray',
+    note: '여기 트레이는 뭘 주셔도 다 좋아요! 주방에 두고 음식 나를 때 쓸 거예요 ☺️' },
 ];
 
 /* ================================================================
@@ -2197,7 +2204,7 @@ function openInvite() {
    ================================================================ */
 let openGiftId = null, confirming = false, busy = false, lastErr = '';
 function openGift(gid) { openGiftId = gid; confirming = false; lastErr = ''; renderGift(); showSheet('#giftSheet'); }
-const shopOf = (u) => (/coupang/i.test(u) ? '쿠팡' : /naver/i.test(u) ? '네이버' : '오늘의집');
+const shopOf = (u) => (/coupang/i.test(u) ? '쿠팡' : /naver/i.test(u) ? '네이버' : /livingcreator/i.test(u) ? '리빙크리에이터' : '오늘의집');
 function renderGift() {
   if (!openGiftId) return;
   const g = GIFTS.find(x => x.id === openGiftId);
